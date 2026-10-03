@@ -1,0 +1,31 @@
+[project]
+name = "tcomp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Esteban", email = "estebanstaniscia@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "gudhi>=3.13.0",
+    "manim>=0.21.0",
+    "marimo>=0.25.1",
+    "matplotlib>=3.11.2",
+    "networkx>=3.7",
+    "numpy>=2.5.3",
+    "persim>=0.3.8",
+    "ripser>=0.6.15",
+    "scipy>=1.18.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.22,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]

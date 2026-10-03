@@ -1,0 +1,30 @@
+project:
+  type: website
+  output-dir: _site
+  render:            
+    - index.qmd
+    - capitulos/**/*.qmd
+
+lang: es
+
+website:
+  title: "Topología Computacional"
+  sidebar:
+    style: docked
+    search: true
+    contents:
+      - index.qmd
+      - section: "Parte A · Topología geométrica computacional"
+        contents:
+          - capitulos/01-grafos/index.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    html-math-method: mathjax
+    code-fold: true
+    code-tools: true
+
+execute:
+  freeze: auto       

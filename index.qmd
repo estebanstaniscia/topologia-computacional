@@ -1,0 +1,43 @@
+---
+title: "Topología Computacional"
+subtitle: "Disección de Edelsbrunner & Harer"
+---
+
+Producto de conocimiento en construcción. Esta página verifica el pipeline.
+
+## Prueba: homología persistente de un círculo con ruido
+
+```{python}
+import numpy as np
+import gudhi
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(0)
+t = rng.uniform(0, 2 * np.pi, 60)
+X = np.c_[np.cos(t), np.sin(t)] + rng.normal(0, 0.05, (60, 2))
+
+st = gudhi.RipsComplex(points=X, max_edge_length=2.0).create_simplex_tree(max_dimension=2)
+diagrama = st.persistence()
+gudhi.plot_persistence_diagram(diagrama)
+plt.show()
+```
+
+Debería verse un único punto de dimensión 1 lejos de la diagonal: el agujero del círculo.
+
+## Prueba: figura interactiva con Observable JS
+
+```{ojs}
+viewof r = Inputs.range([0.1, 2], {value: 0.5, step: 0.05, label: "Radio"})
+Plot.plot({
+  aspectRatio: 1,
+  x: {domain: [-2.5, 2.5]}, y: {domain: [-2.5, 2.5]},
+  marks: [Plot.dot([[0, 0]], {r: r * 60, fill: "steelblue", fillOpacity: 0.3})]
+})
+```
+
+## Prueba: diagrama Mermaid
+
+```{mermaid}
+flowchart LR
+  A[Grafos] --> B[Complejos] --> C[Homología] --> D[Persistencia]
+```

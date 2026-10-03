@@ -1,0 +1,12 @@
+{
+  "hash": "e6e6c53a7dcf02230683dc147c7361e9",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Topología Computacional\"\nsubtitle: \"Disección de Edelsbrunner & Harer\"\n---\n\nProducto de conocimiento en construcción. Esta página verifica el pipeline.\n\n## Prueba: homología persistente de un círculo con ruido\n\n::: {#ffc1aee1 .cell execution_count=1}\n``` {.python .cell-code}\nimport numpy as np\nimport gudhi\nimport matplotlib.pyplot as plt\n\nrng = np.random.default_rng(0)\nt = rng.uniform(0, 2 * np.pi, 60)\nX = np.c_[np.cos(t), np.sin(t)] + rng.normal(0, 0.05, (60, 2))\n\nst = gudhi.RipsComplex(points=X, max_edge_length=2.0).create_simplex_tree(max_dimension=2)\ndiagrama = st.persistence()\ngudhi.plot_persistence_diagram(diagrama)\nplt.show()\n```\n\n::: {.cell-output .cell-output-stderr}\n```\n/home/esteb/proyectos/Apuntes/Computational_Topology/.venv/lib/python3.12/site-packages/gudhi/persistence_graphical_tools.py:160: UserWarning: usetex mode requires dvipng.\n  warnings.warn(\"usetex mode requires dvipng.\")\n```\n:::\n\n::: {.cell-output .cell-output-display}\n![](index_files/figure-html/cell-2-output-2.png){width=606 height=463}\n:::\n:::\n\n\nDebería verse un único punto de dimensión 1 lejos de la diagonal: el agujero del círculo.\n\n## Prueba: figura interactiva con Observable JS\n\n```{ojs}\nviewof r = Inputs.range([0.1, 2], {value: 0.5, step: 0.05, label: \"Radio\"})\nPlot.plot({\n  aspectRatio: 1,\n  x: {domain: [-2.5, 2.5]}, y: {domain: [-2.5, 2.5]},\n  marks: [Plot.dot([[0, 0]], {r: r * 60, fill: \"steelblue\", fillOpacity: 0.3})]\n})\n```\n\n## Prueba: diagrama Mermaid\n\n```{mermaid}\nflowchart LR\n  A[Grafos] --> B[Complejos] --> C[Homología] --> D[Persistencia]\n```\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
