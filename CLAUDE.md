@@ -1,31 +1,63 @@
-# CLAUDE.md
+# CLAUDE.md: Topología Computacional
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Qué es este proyecto
+Producto de conocimiento que disecciona el libro *Computational Topology: An
+Introduction* (Edelsbrunner y Harer, AMS 2010) usando todo un stack tecnológico:
+texto, código, tests, animaciones, figuras interactivas y verificación formal.
+Es el proyecto piloto de una infraestructura de producción de conocimiento y
+alimenta un proyecto de finanzas cuantitativas (análisis topológico de datos).
 
-## Project
+Contexto completo: @docs/contexto-proyecto.md
 
-`tcomp` is a Python package for computational topology notes/experiments ("Apuntes" = course notes). It's a freshly scaffolded `uv` project: `src/tcomp/__init__.py` holds only a placeholder `hello()` and there are no tests or modules yet, so most structure still needs to be decided.
+## Usuario
+Esteban: estudiante de Matemática (UNLP) que trabaja en finanzas cuantitativas.
+Nivel avanzado en matemática y Python. Quiere explicaciones profundas y el porqué
+de cada decisión.
 
-Main dependencies and what they're for:
-- **gudhi**, **ripser**, **persim**: persistent homology (simplicial complexes, Vietoris–Rips/alpha filtrations, persistence diagrams, and distances between them)
-- **numpy**, **scipy**, **networkx**: numerics, distance matrices, graphs
-- **matplotlib**: static plots; **manim**: animations
-- **marimo** (and **jupyter** in the dev group): interactive notebooks
+## Idioma
+Todo el contenido, comentarios, docstrings y mensajes de commit en español.
 
-## Commands
+## Arquitectura
+- `capitulos/`: un directorio por capítulo; un `.qmd` por sección. Quarto es el hub
+  (`_quarto.yml` solo renderiza `index.qmd` y `capitulos/**/*.qmd`).
+- `src/tcomp/`: implementaciones PROPIAS de los algoritmos del libro (paquete `uv`, src layout).
+- `tests/`: validación de `tcomp` contra GUDHI, ripser y networkx.
+- `animaciones/`: escenas de Manim; los videos finales van a `capitulos/*/media/`.
+- `notebooks/`: exploraciones en marimo (archivos .py).
+- `lean/`: formalizaciones selectas con Lean 4 + Mathlib (aún no creado; se genera con `lake new`).
+- `bocetos/`: zona de trabajo de Cowork (ver "Flujo con Cowork"). Solo lectura para Claude Code.
+- `docs/`: documentación interna (contexto del proyecto, notas previas). No se publica.
+- `_freeze/`: resultados congelados de Quarto. SÍ se commitea. `_site/` NO.
 
-Uses `uv` with Python 3.12 (`.python-version`) and the `uv_build` backend (src layout).
+## Material local (ignorado por Git)
+- `textos_base/`: PDF del libro. Solo lectura local. NUNCA se commitea ni se publica.
+  No leerlo completo salvo pedido expreso de Esteban (es grande); leer solo la sección pedida.
+- `archivos_utiles/`: material de consulta personal. Leer solo si Esteban lo pide.
 
-```bash
-uv sync                          # install deps + dev group into .venv
-uv run python -c "import tcomp"  # run code against the package
-uv run pytest                    # run tests (no tests/ dir exists yet)
-uv run pytest path/to/test_x.py::test_name   # single test
-uv run ruff check . && uv run ruff format .  # lint / format (default ruff config)
-uv run marimo edit notebook.py   # edit a marimo notebook
-uv run manim -pql scene.py SceneName  # render a manim scene (low quality preview)
-uv add <pkg> / uv add --dev <pkg>     # add dependencies
-```
+## Comandos
+- Entorno: `uv sync`
+- Tests: `uv run pytest` (uno solo: `uv run pytest tests/test_x.py::test_nombre`)
+- Lint / formato: `uv run ruff check . && uv run ruff format .`
+- Vista previa del sitio: `uv run quarto preview`
+- Compilar el sitio (actualiza `_freeze/`): `uv run quarto render`
+- Animación (borrador / final): `uv run manim -ql <archivo> <Escena>` / `-qh`
+- marimo: `uv run marimo edit notebooks/<archivo>.py`
+- Lean: `cd lean && lake build`
+
+## Reglas
+1. Nunca copiar texto extenso del libro al producto: escribir disección propia.
+2. Todo algoritmo nuevo en `src/tcomp/` va acompañado de tests contra una librería de referencia.
+3. Antes de commitear un capítulo con código, ejecutar `uv run quarto render` para actualizar `_freeze/`.
+4. Agregar dependencias solo con `uv add` y consultar antes de sumar dependencias pesadas.
+5. Cada nueva sección se agrega a `_quarto.yml` (sidebar).
+6. Commits pequeños con prefijo de área: `cap1:`, `tcomp:`, `anim:`, `lean:`, `infra:`.
+7. Lean es selectivo: proponer formalizaciones accesibles, no intentar formalizar el libro entero.
+8. La comprensión manda: cada pieza debe ayudar a entender algo mejor.
+
+## Estructura de cada sección del producto
+Motivación e intuición → definiciones y resultados (disección) → algoritmo e
+implementación → visualización → ejercicios resueltos → puente a finanzas →
+notas para formalización.
 
 ## Flujo con Cowork (rama `bocetos`)
 
@@ -34,4 +66,12 @@ la rama `bocetos` y escribe **solo** en la carpeta `bocetos/`. El protocolo comp
 `bocetos/README.md`: leelo antes de construir una sección. Resumen:
 - Traer los bocetos: `git fetch origin && git merge origin/bocetos` (estando en `main`).
 - Nunca editar archivos dentro de `bocetos/`.
+- Construir solo lo que esté marcado `listo para construir` en el `spec.md` correspondiente.
+- La `diseccion.md` es la fuente del `.qmd`: reformularla en el formato del sitio.
 - Contexto completo del proyecto (stack, arquitectura, convenciones): `docs/contexto-proyecto.md`.
+
+## Git en WSL
+La clave SSH tiene passphrase y la sesión de Claude Code no tiene ssh-agent, así que
+`git fetch/push` por SSH falla. Usar HTTPS con el token de `gh` sin tocar el remoto:
+`git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push https://github.com/estebanstaniscia/topologia-computacional.git main`
+(para fetch: `... fetch https://github.com/estebanstaniscia/topologia-computacional.git '+refs/heads/*:refs/remotes/origin/*'`).

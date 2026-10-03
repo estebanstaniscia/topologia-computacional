@@ -5,9 +5,29 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache/
+.ruff_cache/
 
 # Virtual environments
 .venv
 
+# Quarto (el sitio se genera; _freeze/ SÍ se versiona)
+_site/
 /.quarto/
 **/*.quarto_ipynb
+
+# Libro y material de consulta: derechos de autor / uso local, nunca se publica
+libro/
+textos_base/
+archivos_utiles/
+
+# Salida cruda de Manim (los videos finales se copian a capitulos/*/media/)
+/media/
+
+# Lean
+lean/.lake/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
