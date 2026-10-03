@@ -18,7 +18,7 @@ análisis topológico de datos (TDA).
 
 | Fase | Descripción | Estado |
 |---|---|---|
-| 0 | Infraestructura: uv, Quarto, Manim, marimo, GUDHI, pruebas de humo | Hecha (falta publicar en GitHub Pages) |
+| 0 | Infraestructura: uv, Quarto, Manim, marimo, GUDHI, pruebas de humo, publicación automática | Hecha |
 | 1 | Corte vertical: sección I.1 *Componentes conexas* tocando todas las capas | Próxima |
 
 ## El libro y su mapa
@@ -32,6 +32,8 @@ análisis topológico de datos (TDA).
 Cada sección del producto sigue la estructura: motivación e intuición → definiciones y
 resultados → algoritmo e implementación → visualización → ejercicios resueltos →
 puente a finanzas → notas para formalización.
+
+**Sitio publicado:** https://estebanstaniscia.github.io/topologia-computacional/
 
 ## Cómo se trabaja
 
@@ -63,16 +65,18 @@ conflictos. El protocolo completo está en [`bocetos/README.md`](bocetos/README.
 └── _freeze/                 # Resultados de ejecución congelados de Quarto (se versiona)
 ```
 
-Más adelante se sumarán `lean/` (formalizaciones con Lean 4 + Mathlib) y
-`.github/workflows/` (publicación automática en GitHub Pages).
+Más adelante se sumará `lean/` (formalizaciones con Lean 4 + Mathlib).
+
+Cada push a `main` dispara `.github/workflows/publicar.yml`, que compila el sitio con
+Quarto (usando `_freeze/`, sin volver a ejecutar Python) y lo publica en la rama `gh-pages`.
 
 ## Stack
 
 - **Documentos:** Quarto (sitio web y PDF vía Typst), marimo.
 - **Visualización:** Manim CE, Observable JS, Mermaid.
 - **Cálculo y TDA:** NumPy, SciPy, networkx, GUDHI, ripser, persim.
-- **Infraestructura:** uv (Python 3.12), Git y GitHub, Claude Code y Claude Cowork.
-- **Pendiente:** Lean 4 + Mathlib, GitHub Actions + Pages.
+- **Infraestructura:** uv (Python 3.12), Git y GitHub, GitHub Actions + Pages, Claude Code y Claude Cowork.
+- **Pendiente:** Lean 4 + Mathlib.
 
 ## Uso local
 
