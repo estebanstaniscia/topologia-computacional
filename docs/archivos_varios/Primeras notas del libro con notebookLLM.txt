@@ -1,0 +1,326 @@
+Computational Topology: Introduction, Surfaces, and Persistence
+
+El texto presenta una introducción a la **topología computacional**, abordando cómo la geometría, la topología y los **algoritmos** se combinan para estudiar espacios complejos y resolver problemas prácticos. Se examinan conceptos fundamentales como **gráficos**, componentes conexos, **superficies** bidimensionales, nudos y complejos simpliciales mediante enfoques tanto teóricos como computacionales. Asimismo, la obra detalla estructuras de datos eficientes y algoritmos para simplificación de **superficies**, clasificación de variedades y análisis de datos espaciales. Esta disciplina proporciona herramientas esenciales para conectar **abstracciones matemáticas** con aplicaciones del mundo real en campos como la biología y la computación.
+
+Pregunta:
+Antes de meternos en faena con el libro, podrias contarme de que va el prefacio del libro? Podrias mencionarme en caso que haya, las cosas importantes que menciona en el prefacio?
+
+Respuesta:
+El prefacio del libro, "Computational Topology: An Introduction" (Topología Computacional: Una Introducción), se centra en la **fusión de disciplinas** (geometría, topología y algoritmos) y en la **motivación y estructura pedagógica** de la obra.
+
+A continuación, se detalla el contenido principal y las cosas importantes que se mencionan en el prefacio:
+
+### Contenido Principal del Prefacio
+
+**1. La Combinación de Disciplinas y el Objetivo del Libro**
+
+El prefacio comienza señalando que los últimos diez años han demostrado que la **geometría, la topología y los algoritmos** forman una mezcla potente con muchas aplicaciones dentro y fuera del ámbito académico. El objetivo de la obra es **acercar estos desarrollos a una audiencia más amplia**.
+
+**2. Enfoque Pedagógico**
+
+El libro fue **escrito para ser enseñado** ("written to be taught") y se basa en notas desarrolladas durante cursos impartidos en la Universidad de Duke y en la Escuela Matemática de Berlín, principalmente para estudiantes de **informática y matemáticas**.
+
+Para abordar el desafío de la **diversidad de formación** de la audiencia, el enfoque incluye:
+*   Asumir que no hay conocimiento previo y apelar a la inteligencia del oyente.
+*   Motivar el material relacionándolo con situaciones de la vida diaria para **construir intuición**.
+*   Exponer ideas centrales con medios sencillos, minimizando los detalles técnicos innecesarios.
+
+**3. Relaciones Conceptuales Fundamentales**
+
+Se destaca la relación simbiótica entre los campos:
+*   La **geometría** proporciona una cara concreta a las estructuras topológicas.
+*   Los **algoritmos** ofrecen un medio para construir estas estructuras a un nivel de complejidad necesario para aplicaciones prácticas, haciendo hincapié en que deben ser rápidos.
+*   Existe una **afinidad simbiótica** entre los algoritmos y el álgebra utilizada para capturar la información topológica. De hecho, ambos campos rastrean sus nombres hasta el mismo matemático persa, **al-Khwarizmi** (siglo IX).
+
+### Aspectos Importantes Mencionados en el Prefacio
+
+El prefacio menciona conceptos cruciales que enmarcan la topología computacional:
+
+**1. Las Tensiones y la Cuestión de la Escala**
+Los autores encuentran útil contemplar el material en la tensión entre pares de opuestos:
+*   **Local vs. Global:** Las perspectivas globales se obtienen a menudo mediante una integración significativa de la información local.
+*   **Discreto vs. Continuo:** Esta dicotomía está impulsada por objetivos opuestos: la **computación mecánica** y la **comprensión humana**.
+*   **Abstracto vs. Concreto** y **Intrínseco vs. Extrínseco**.
+*   Un ejemplo clave de esta tensión es el paso de la **geometría a la topología**, donde se eliminan las cargas del tamaño para centrarse en el fenómeno de la **conectividad**.
+*   La **cuestión de la escala** acecha detrás de este pensamiento y es la **fuerza motriz** de gran parte del desarrollo descrito en el libro.
+
+**2. La Estructura del Libro y su Motivación Principal**
+El libro está dividido en tres partes y nueve capítulos:
+*   **Parte A: Topología Geométrica Computacional** (Capítulos I-III): Una **introducción suave al pensamiento topológico**. Gradualmente se desarrolla la sofisticación topológica en combinación con ideas geométricas y algorítmicas, discutiendo grafos, superficies y complejos.
+*   **Parte B: Topología Algebraica Computacional** (Capítulos IV-VI): Presenta material clásico de la topología que se considera útil y eficientemente computable, incluyendo homología y dualidad, y establece un puente hacia conceptos diferenciales con la teoría de Morse.
+*   **Parte C: Topología Persistente Computacional** (Capítulos VII-IX): Esta parte se describe como **novedosa y la razón por la que se escribió el libro**. Introduce el concepto principal de **persistencia** (Capítulo VII), su **estabilidad** (Capítulo VIII) y discute **aplicaciones** (Capítulo IX).
+
+En resumen, el prefacio establece la topología computacional como un campo vibrante y aplicado, posicionando el libro no solo como un texto sobre conceptos matemáticos, sino como una exploración de la escala, la conectividad y la fusión necesaria entre lo abstracto (topología) y lo concreto (algoritmos) para aplicaciones prácticas.
+
+Pregunta: 
+En la pagina 6 del libro se presenta una especie de algoritmo (llamado disjoint set systems) para decidir, entiendo yo, si un grafo es o no conexo. Se presentan las funciones find(i) y union(i, j). Podrías explicarme de manera conceptual pero detallada como es que funciona el algoritmo y como funciona el mecanizmo para mejorar el rendimiento del tiempo de ejecucion presentafo en la pagina 7 del libro (llamada improving the running time)?
+
+Respuesta:
+El algoritmo de **sistemas de conjuntos disjuntos** (*disjoint set systems*), también conocido como el problema de unión-encuentro (*union-find*), se utiliza para manejar colecciones de elementos particionados en un número de conjuntos disjuntos. En el contexto de los grafos, se emplea para **decidir si un grafo es o no conexo**.
+
+Aquí se presenta una explicación conceptual y detallada del funcionamiento del algoritmo y el mecanismo de mejora del rendimiento:
+
+### Funcionamiento Conceptual del Algoritmo Disjoint Set Systems
+
+El algoritmo comienza utilizando los números enteros de 1 a $n$ como nombres de los vértices. Cada **componente conexa** del grafo se almacena como un subconjunto de $\{1, 2, \ldots, n\}$.
+
+El proceso implica añadir las aristas del grafo una a la vez y mantener el sistema de conjuntos que representan las componentes. El grafo se considera conexo si, al finalizar el proceso, solo queda un conjunto, que es $\{1, 2, \ldots, n\}$.
+
+Para manipular y consultar este sistema, se definen dos operaciones principales:
+
+1.  **Find(i):** Esta operación devuelve el nombre del conjunto que contiene al elemento (vértice) $i$.
+2.  **Union(i, j):** Esta operación reemplaza los dos conjuntos que contienen a $i$ y $j$ por su unión, asumiendo que $i$ y $j$ pertenecían a conjuntos diferentes en el sistema.
+
+La operación `Find(i)` es necesaria para comprobar si los vértices $i$ y $j$ pertenecen efectivamente a conjuntos diferentes antes de realizar una unión. Cada operación exitosa de `Union` reduce el número de conjuntos en el sistema en uno. Dado que se comienza con $n$ conjuntos unitarios, se requieren $n-1$ operaciones de unión para alcanzar un solo conjunto.
+
+#### Implementación Estándar (Conceptual)
+
+La estructura de datos estándar para implementar un sistema de conjuntos disjuntos almacena cada conjunto como un **árbol** incrustado en un arreglo lineal, $V[1..n]$.
+
+*   Cada nodo en el árbol está equipado con un **puntero a su padre**, con excepción de la **raíz**, que no tiene padre. La identidad de la raíz no es crucial, siempre que los vértices estén conectados en un solo árbol.
+*   La **raíz del árbol** es reportada como el nombre del conjunto que representa.
+
+La implementación básica de las funciones es:
+
+*   **Find(i):** Se implementa recorriendo el árbol hacia arriba hasta alcanzar la raíz. Si $i$ no es la raíz, la función la encuentra recursivamente y finalmente la devuelve.
+*   **Union(i, j):** Tras asegurarse de que los conjuntos son diferentes (mediante `Find(i)` y `Find(j)`), se implementa simplemente **enlazando una raíz a la otra** (asignando una raíz como padre de la otra).
+
+### Mecanismo para Mejorar el Rendimiento (Improving the Running Time)
+
+La implementación estándar no es muy eficiente, especialmente si existen **caminos largos** en los árboles que deben ser recorridos repetidamente en las operaciones `Find`. Para prevenir esto, se utilizan dos heurísticas principales que, combinadas, constituyen la solución más eficiente conocida para este problema: **unión ponderada** (o enlace por tamaño) y **compresión de caminos** (*path compression*).
+
+#### 1. Unión Ponderada (Linking by Size)
+
+Para evitar caminos largos, la primera mejora consiste en una regla para la operación `Union`: **siempre se enlaza el árbol más pequeño al árbol más grande**.
+
+En la implementación de `Union(i, j)`, si las raíces $x$ y $y$ son diferentes, se compara el tamaño ($V[x].size$ y $V[y].size$) de los conjuntos que representan. Si el tamaño de $x$ es mayor que el de $y$, se intercambian, asegurando que el árbol más pequeño ($x$) sea enlazado al más grande ($y$).
+
+**Impacto en el rendimiento:** Con esta estrategia, un árbol de $k$ nodos no puede tener caminos de longitud mayor que $\log_2 k$ aristas. Esto se debe a que el tamaño del subárbol crece al menos por un factor de dos cada vez que se avanza hacia el padre.
+
+#### 2. Compresión de Caminos (Path Compression)
+
+Para mejorar aún más la eficiencia, se emplea la técnica de **comprimir caminos cada vez que se atraviesan**. Esta mejora se aplica dentro de la operación `Find(i)`.
+
+En la implementación mejorada de `Find(i)`:
+
+*   Si $i$ no es la raíz ($V[i].parent \ne i$), la función no solo encuentra la raíz recursivamente, sino que también **convierte la raíz encontrada en el padre directo de $i$** antes de reportarla.
+*   Si $i$ es la raíz, se reporta $i$ y la función termina.
+
+Esta acción aplana la estructura del árbol, acortando significativamente los caminos para futuras operaciones `Find`.
+
+#### Análisis del Tiempo de Ejecución
+
+Al analizar el tiempo requerido para ejecutar una secuencia de $m$ operaciones de `Union` y `Find` con $n$ vértices, el tiempo de ejecución nunca es superior a una constante multiplicada por $m\alpha(n)$, donde $\alpha(n)$ es la **inversa de la función de Ackermann**.
+
+Aunque teóricamente $\alpha(n)$ crece lentamente hasta el infinito, para propósitos prácticos (como los números de vértices que se encuentran en el Universo), el algoritmo se considera de **tiempo constante promedio por operación**. La representación de árbol ascendente (*up-tree*) mantenida a través de la unión ponderada y la compresión de caminos es la solución más eficiente para el problema de mantener un sistema de conjuntos disjuntos.
+
+Pregunta:
+ok bien mas o menos voy entendiendo pero aun así me quedan algunas dudas. Podrías ofrecerme en detalle un ejemplo de como funciona este algoritmo disjoint set system? es decir por lo que me explicas según llego a entender, este algoritmo por como me lo describiste recien permite construir grafos conexos a partir de varios grafos conexos pero disconexos entre sé o por asi decirlo nos permite conectar entre si componentes conexas de un grafo disconexo. Sin embargo no termino de entender como es que este algoritmo se utiliza para determinar si un grafo es conexo o no lo es? Puedes profundizar un poco mas en estos aspectos?
+
+Respuesta:
+Es comprensible la duda: el algoritmo no modifica el grafo para volverlo conexo, sino que **simula y rastrea la conectividad de un grafo dado** procesando sus aristas una a una. 
+
+### ¿Cómo determina el algoritmo si un grafo es conexo o no?
+
+1. **Estado Inicial:** Se parte de un grafo \\(G = (V, E)\\) con \\(n\\) vértices. Al principio, antes de procesar cualquier arista, el algoritmo asume que **cada vértice está aislado en su propio conjunto**. Es decir, hay \\(n\\) componentes conexas iniciales \\(\{1\}, \{2\}, \dots, \{n\}\\).
+2. **Procesamiento de Aristas:** Se toman las aristas reales del grafo, una por una:
+   * Para una arista \\((u, v)\\), se consulta `Find(u)` y `Find(v)` para ver a qué componente pertenece cada extremo.
+   * **Si `Find(u) != Find(v)`:** Significa que \\(u\\) y \\(v\\) pertenecen a componentes distintas que ahora se unen gracias a esta arista. Se ejecuta `Union(u, v)` y **el número total de componentes disminuye en 1**.
+   * **Si `Find(u) == Find(v)`:** Significa que \\(u\\) y \\(v\\) ya estaban conectados previamente por otro camino. Esta arista forma un ciclo y no cambia el número de componentes conexas.
+3. **Resultado Final:** Tras procesar todas las aristas del grafo:
+   * **Si queda exactamente 1 conjunto:** El grafo es **conexo** (todos los vértices están integrados en una misma componente).
+   * **Si quedan más de 1 conjunto:** El grafo es **disconexo**, y los conjuntos restantes representan exactamente las distintas componentes conexas del grafo.
+
+---
+
+### Ejemplo Detallado Paso a Paso
+
+Supongamos que tenemos un grafo con \\(n = 4\\) vértices \\(V = \{1, 2, 3, 4\}\\) y el conjunto de aristas \\(E = \{(1, 2), (2, 3), (1, 3), (3, 4)\}\\).
+
+#### **Inicialización:**
+* **Conjuntos (componentes):** \\(\{1\}, \{2\}, \{3\}, \{4\}\\) (Total: 4 componentes).
+* **Representación en arreglo `V[1..4]`** (donde cada nodo apunta a sí mismo como raíz):
+  * `V.parent = 1`, `V.parent = 2`, `V.parent = 3`, `V.parent = 4`.
+
+---
+
+#### **Paso 1: Procesar la arista \\((1, 2)\\)**
+1. Evaluamos los representantes:
+   * `Find(1)` \\(\rightarrow 1\\)
+   * `Find(2)` \\(\rightarrow 2\\)
+2. Como \\(1 \neq 2\\), pertenecen a componentes distintas.
+3. Ejecutamos `Union(1, 2)`: hacemos que el padre de \\(1\\) sea \\(2\\) (`V.parent = 2`).
+* **Estado actual:**
+  * Componentes: \\(\{1, 2\}, \{3\}, \{4\}\\) (Total: 3 componentes).
+
+---
+
+#### **Paso 2: Procesar la arista \\((2, 3)\\)**
+1. Evaluamos los representantes:
+   * `Find(2)` \\(\rightarrow 2\\)
+   * `Find(3)` \\(\rightarrow 3\\)
+2. Como \\(2 \neq 3\\), pertenecen a componentes distintas.
+3. Ejecutamos `Union(2, 3)`: hacemos que el padre de \\(2\\) sea \\(3\\) (`V.parent = 3`).
+* **Estado actual:**
+  * Componentes: \\(\{1, 2, 3\}, \{4\}\\) (Total: 2 componentes).
+  * Estructura de árbol: \\(1 \rightarrow 2 \rightarrow 3\\) (la raíz de la componente es \\(3\\)).
+
+---
+
+#### **Paso 3: Procesar la arista \\((1, 3)\\)**
+1. Evaluamos los representantes:
+   * `Find(1)` \\(\rightarrow\\) sube por \\(1 \rightarrow 2 \rightarrow 3\\) y retorna \\(3\\).
+   * `Find(3)` \\(\rightarrow\\) retorna \\(3\\).
+2. Como `Find(1) == Find(3)` (ambos dan \\(3\\)), el algoritmo detecta que **ya existe un camino entre \\(1\\) y \\(3\\)**.
+3. **No se hace `Union`**; esta arista es redundante para la conectividad (cierra un ciclo).
+* **Estado actual:**
+  * Componentes: \\(\{1, 2, 3\}, \{4\}\\) (Total: 2 componentes).
+
+---
+
+#### **Paso 4: Procesar la arista \\((3, 4)\\)**
+1. Evaluamos los representantes:
+   * `Find(3)` \\(\rightarrow 3\\)
+   * `Find(4)` \\(\rightarrow 4\\)
+2. Como \\(3 \neq 4\\), pertenecen a componentes distintas.
+3. Ejecutamos `Union(3, 4)`: hacemos `V.parent = 4`.
+* **Estado actual:**
+  * Componentes: \\(\{1, 2, 3, 4\}\\) (Total: 1 componente).
+
+---
+
+#### **Conclusión del Algoritmo:**
+* Al finalizar el recorrido de todas las aristas, el contador de componentes es **1**.
+* **Veredicto:** El grafo es **conexo**.
+
+*(Nota: Si el grafo no hubiera tenido la arista \\((3, 4)\\), el algoritmo habría terminado con **2 componentes** (\\(\{1, 2, 3\}\\) y \\(\{4\}\\)), concluyendo que el grafo es **disconexo** y mostrando cuáles son sus componentes conexas).*
+
+¿Te gustaría que revisemos algún otro aspecto de la Sección I.1 del libro, como los ejercicios o la diferencia con la búsqueda en profundidad (DFS)?
+
+Pregunta:
+bien perfecto ahora si lo voy entendiendo a la perfección. y ahora podrías ofrecerme un ejemplo robusto y bien completo en donde implementes el mecanismo de mejora de rendimiento (improving the running time) tal como me lo describsite anteriormente con la union ponderada y la comprension de caminos? De tal modo puedo terminar de comprenderlo a fondo
+
+Respuesta:
+Para comprender a fondo cómo funcionan la **unión ponderada** (*linking by size*) y la **compresión de caminos** (*path compression*), analicemos un ejemplo detallado paso a paso con un conjunto de 8 vértices.
+
+---
+
+### Reglas de Operación (según el libro)
+
+1. **Compresión de caminos en `Find(i)`:** Cuando buscamos el representante de \\(i\\), recorremos el camino hasta la raíz \\(r\\). Al regresar de la recursión, hacemos que cada nodo visitado apunte directamente a la raíz (\\(V[node].parent = r\\)), aplanando el árbol.
+2. **Unión ponderada en `Union(i, j)`:** Para unir dos componentes con raíces \\(x = \text{Find}(i)\\) y \\(y = \text{Find}(j)\\), comparamos sus tamaños (\\(V[x].size\\) y \\(V[y].size\\)). Si el árbol \\(x\\) es estrictamente mayor que el árbol \\(y\\), intercambiamos \\(x\\) y \\(y\\) (\\(x \leftrightarrow y\\)) para garantizar que siempre el árbol más pequeño se conecte debajo del árbol más grande (\\(V[x].parent = y\\)).
+
+---
+
+### Estado Inicial (\\(n = 8\\))
+
+Consideremos el conjunto de vértices \\(\{1, 2, 3, 4, 5, 6, 7, 8\}\\). Cada nodo comienza como su propia raíz y con un tamaño inicial de 1.
+
+| Nodo (\\(i\\)) | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`parent`** | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| **`size`** | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+
+---
+
+### Paso 1: Creación de parejas `Union(1, 2)` y `Union(3, 4)`
+
+1. **`Union(1, 2)`**:
+   * `Find(1)` \\(\rightarrow 1\\) (\\(size=1\\)), `Find(2)` \\(\rightarrow 2\\) (\\(size=1\\)).
+   * Mismo tamaño: enlazamos \\(1\\) debajo de \\(2\\) (`parent = 2`).
+   * Actualizamos \\(size = 2\\).
+2. **`Union(3, 4)`**:
+   * `Find(3)` \\(\rightarrow 3\\) (\\(size=1\\)), `Find(4)` \\(\rightarrow 4\\) (\\(size=1\\)).
+   * Mismo tamaño: enlazamos \\(3\\) debajo de \\(4\\) (`parent = 4`).
+   * Actualizamos \\(size = 2\\).
+
+---
+
+### Paso 2: Conexión de componentes `Union(1, 3)`
+
+1. Evaluamos los representantes:
+   * **`Find(1)`**: Como \\(parent = 2\\) y \\(parent = 2\\), retorna **raíz \\(2\\)** (\\(size = 2\\)).
+   * **`Find(3)`**: Como \\(parent = 4\\) y \\(parent = 4\\), retorna **raíz \\(4\\)** (\\(size = 2\\)).
+2. Comparamos tamaños de las raíces (\\(x = 2\\), \\(y = 4\\)):
+   * \\(size = 2\\) y \\(size = 2\\). Al ser iguales, se enlaza \\(x\\) debajo de \\(y\\) (`parent = 4`).
+   * Actualizamos \\(size = 2 + 2 = 4\\).
+
+**Estructura del Árbol (raíz 4):**
+```text
+      4 (size=4)
+     / \
+    2   3
+   /
+  1
+```
+*Notar que el nodo 1 está a profundidad 2 (\\(1 \rightarrow 2 \rightarrow 4\\)).*
+
+---
+
+### Paso 3: Componente secundaria `Union(5, 6)`
+
+* `Find(5)` \\(\rightarrow 5\\), `Find(6)` \\(\rightarrow 6\\).
+* Se enlaza \\(5\\) bajo \\(6\\) (`parent = 6`, \\(size = 2\\)).
+
+**Estado de los arreglos en este punto:**
+
+| Nodo (\\(i\\)) | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`parent`** | 2 | **4** | 4 | **4** | **6** | **6** | 7 | 8 |
+| **`size`** | 1 | 2 | 1 | **4** | 1 | **2** | 1 | 1 |
+
+---
+
+### Paso 4: Ejecución de `Union(1, 5)` (Demostración Clave)
+
+Aquí ocurren **ambas optimizaciones** en la misma llamada:
+
+#### A. Ejecución de `Find(1)` \\(\rightarrow\\) **Compresión de Caminos en Acción**
+1. Se evalúa \\(parent = 2 \neq 1\\). Se llama recursivamente a `Find(2)`.
+2. \\(parent = 4 \neq 2\\). Se llama recursivamente a `Find(4)`.
+3. \\(parent = 4\\) (raíz). Retorna \\(4\\).
+4. **Desenrollado recursivo (Compresión):**
+   * Al regresar a la llamada de nodo 2: \\(parent\\) se reasigna a \\(4\\).
+   * Al regresar a la llamada de nodo 1: **\\(parent\\) se actualiza directamente a \\(4\\)**.
+5. Retorna la raíz \\(x = 4\\) con \\(size = 4\\).
+
+#### B. Ejecución de `Find(5)`
+1. \\(parent = 6\\), \\(parent = 6\\). Retorna la raíz \\(y = 6\\) con \\(size = 2\\).
+
+#### C. Aplicación de `Union` \\(\rightarrow\\) **Unión Ponderada (Swap) en Acción**
+1. Tenemos \\(x = 4\\) (\\(size=4\\)) y \\(y = 6\\) (\\(size=2\\)).
+2. El algoritmo verifica la condición:
+   \\[\text{¿}V[x].size > V[y].size\text{? } \rightarrow (4 > 2) \quad \mathbf{\text{¡SÍ!}}\\]
+3. Dado que el árbol \\(x\\) es mayor que el árbol \\(y\\), **se intercambian \\(x\\) y \\(y\\)** (\\(x \leftrightarrow y\\)):
+   * Ahora \\(x = 6\\) y \\(y = 4\\).
+4. Se asigna la raíz del árbol pequeño como hija de la del árbol grande:
+   * `parent = 4` (se enlaza el nodo 6 debajo del 4).
+5. Se actualiza el tamaño de la nueva raíz:
+   * \\(size = 4 + 2 = 6\\).
+
+---
+
+### Estado Final tras `Union(1, 5)`
+
+Gracias a la **compresión de caminos**, el nodo 1 ahora apunta directamente a la raíz 4.
+Gracias a la **unión ponderada**, la componente más pequeña (raíz 6) se enganchó bajo la más grande (raíz 4), evitando que la profundidad del árbol aumentara innecesariamente.
+
+**Estructura del Árbol Resultante (raíz 4):**
+```text
+        4 (size=6)
+     /  |  \  \
+    1   2   3  6
+               |
+               5
+```
+
+| Nodo (\\(i\\)) | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`parent`** | **4** | 4 | 4 | **4** | 6 | **4** | 7 | 8 |
+| **`size`** | 1 | 2 | 1 | **6** | 1 | 2 | 1 | 1 |
+
+Si en un paso posterior ejecutáramos `Find(5)`, el algoritmo recorrería \\(5 \rightarrow 6 \rightarrow 4\\) y, mediante compresión de caminos, actualizaría inmediatamente `parent = 4`, haciendo que en futuras búsquedas la profundidad de todos los nodos sea de altura 1.
+
+---
+
+¿Te gustaría que apliquemos este algoritmo a un problema clásico de la materia, como la construcción del **Árbol de Expansión Mínima de Kruskal** o el cálculo de componentes en complejos simpliciales?

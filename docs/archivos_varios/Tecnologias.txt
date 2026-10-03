@@ -1,0 +1,181 @@
+Muy bien, Esteban, y gracias por el planteo, que está muy bien pensado. Tu observación histórica tiene una consecuencia práctica: cada medio nuevo no solo presentó mejor un tema viejo, sino que habilitó una forma distinta de *pensarlo*. La caverna en VR se *habita*, no se lee. Por eso conviene organizar el stack según **qué relación con el conocimiento habilita cada formato**, más que como una lista de herramientas. Te propongo seis familias de formatos de vanguardia para alguien que hace matemática y programación. Al final digo dónde está, a mi juicio, el verdadero alpha.
+
+## 1. Matemática verificada: el "libro" que se demuestra a sí mismo
+
+Este es probablemente el cambio de medio más profundo que está ocurriendo en matemática. **Lean 4** con **Mathlib** permite escribir definiciones y demostraciones que la máquina verifica. Ya no es un nicho: Terence Tao y otros lo usan en proyectos reales de investigación. Hay dos piezas clave para producir conocimiento con esto. La primera es **leanblueprint** (de Patrick Massot), que genera un documento LaTeX navegable con un grafo de dependencias entre lemas: verde lo demostrado, azul lo pendiente. La segunda es **Verso**, el sistema de documentación de Lean para escribir textos donde cada fórmula está vinculada a código verificado.
+
+Para tus modelos teóricos de finanzas o tus diseños de modelos matemáticos, un blueprint verificado es un producto cualitativamente distinto a un PDF. En criptografía el análogo es **EasyCrypt**, **CryptoVerif**, **Tamarin** o **ProVerif** para pruebas de seguridad, y **Cryptol/SAW** (de Galois) para verificar que una implementación coincide con la especificación.
+
+## 2. Documentos computacionales: texto, código y resultados en un solo objeto
+
+Es la evolución directa del paper. Lo más fuerte hoy:
+
+- **Typst**: un reemplazo moderno de LaTeX. Compila en milisegundos, tiene un lenguaje de scripting real y mensajes de error legibles. LaTeX sigue siendo obligatorio para publicar, pero para apuntes, informes y material propio Typst es otra experiencia.
+- **Quarto**: desde una sola fuente (Markdown + Python/R/Julia) genera paper en PDF, sitio web, libro, slides y dashboards. Es el pegamento ideal para alguien que ya usa Python, R y LaTeX.
+- **marimo**: notebooks *reactivos* de Python, almacenados como archivos `.py` puros (versionables en Git sin el caos de JSON de Jupyter). Se exportan como apps web que corren en el navegador vía WebAssembly (Pyodide), sin servidor.
+- **MyST / Jupyter Book**: para libros técnicos con referencias cruzadas serias.
+
+## 3. Explicaciones explorables: la matemática que se manipula
+
+Es la tradición de Bret Victor y de la revista *Distill*: el lector no lee que un parámetro cambia el sistema, lo mueve y lo ve.
+
+- **Manim** (la librería de 3Blue1Brown, en su versión comunitaria ManimCE) y **Motion Canvas** para animación matemática precisa en video.
+- **Penrose** (de Carnegie Mellon): escribís notación matemática y el sistema genera diagramas. Es muy interesante conceptualmente.
+- **D3**, **Observable Plot** y **Observable Framework** para visualización de datos interactiva y sitios de datos estáticos.
+- **Three.js**, **WebGPU** y **MathBox** para geometría 3D y visualización de campos, superficies y espacios de fases en el navegador.
+- **GeoGebra** y la API de **Desmos** para incrustar construcciones interactivas rápidas.
+
+Ya usás React y Mermaid. El salto natural es React combinado con D3/Three.js para construir tus propios "objetos explorables".
+
+## 4. Simulación de alto rendimiento: laboratorios virtuales
+
+Para tus proyectos de física y de finanzas cuantitativas:
+
+- **JAX**: NumPy con diferenciación automática, compilación JIT y GPU. Permite simulaciones *diferenciables*, es decir, calibrar un modelo derivando a través de la simulación entera.
+- **Julia** con el ecosistema **SciML** (DifferentialEquations.jl, ModelingToolkit): probablemente el mejor entorno que existe hoy para ecuaciones diferenciales, incluidas las estocásticas.
+- **NVIDIA Warp** y **Taichi**: kernels de simulación física en GPU escritos desde Python.
+- **Godot** o **Unreal Engine**, cuando la simulación quiere convertirse en experiencia inmersiva. Esto se conecta con tu ejemplo de los videojuegos, porque ahí está la frontera de "vivir" un sistema dinámico. **WebXR** permite llevarlo a realidad virtual desde el navegador.
+
+## 5. Apps y herramientas: el conocimiento como instrumento
+
+A veces el mejor formato para transmitir un modelo es una herramienta que el otro *usa*:
+
+- **Streamlit**, **Panel**, **Shiny for Python** o **Dash** para dashboards analíticos.
+- **QuantLib**, **vectorbt** o **NautilusTrader** como motores en finanzas.
+- **SageMath** en criptografía, que sigue siendo imbatible para álgebra y teoría de números, y **Circom**, **Noir** o **halo2** si te interesan las pruebas de conocimiento cero, uno de los campos más vivos de la criptografía aplicada.
+
+## 6. La capa de infraestructura y la capa de IA
+
+Esto es lo que convierte herramientas sueltas en un sistema:
+
+- **Reproducibilidad**: `uv` para Python (rapidísimo), **Nix** o **devcontainers** para entornos idénticos en cualquier máquina, **GitHub Actions** para compilar y publicar automáticamente cada vez que hacés push.
+- **IA agéntica**: Claude Code y herramientas similares que leen tu repositorio entero y ejecutan tareas. Lo más potente es el **MCP** (Model Context Protocol), que permite conectar un modelo a tus propias herramientas: tu vault de Obsidian, el servidor de Lean, tus datos de mercado. En Lean hay además un ecosistema creciente de asistentes de demostración basados en LLMs, como LeanDojo o LeanCopilot.
+
+## Dónde está el alpha real
+
+Mi tesis es que el diferencial no viene de acumular herramientas, sino de dos decisiones de arquitectura.
+
+**Primero, una sola fuente de verdad que se renderiza en múltiples formatos.** Un mismo modelo puede vivir como código en un repositorio. Desde ahí genera automáticamente el paper (Typst/LaTeX), la versión web interactiva (Quarto o marimo con visualizaciones), la animación explicativa (Manim), el dashboard (Streamlit) y, cuando corresponde, el núcleo verificado (Lean). Un cambio en el modelo se propaga a todo. Muy poca gente trabaja así, y es exactamente lo que tu historia de los medios sugiere: el mismo tema tratado en todos los formatos a la vez.
+
+**Segundo, elegir el formato según la naturaleza del conocimiento.** Una demostración pide verificación. Un sistema dinámico pide simulación manipulable. Una intuición geométrica pide animación. Una estrategia pide un instrumento con datos reales. El error común es meter todo en el mismo formato, por ejemplo todo en notebooks o todo en Notion.
+
+Un comentario sobre tus apps de gestión de conocimiento: tener Obsidian, AFFiNE, Logseq, Anytype y Notion a la vez probablemente te esté costando más de lo que aporta. Para alguien que programa, Obsidian (archivos Markdown planos dentro de un repositorio Git, conectable a IA vía MCP) suele ser la opción que mejor se integra con todo lo demás.
+
+Para bajar esto a tierra, te propongo tomar uno de tus proyectos concretos y diseñar su pipeline completo de punta a punta, como prototipo del sistema. ¿Con cuál te gustaría arrancar: un modelo de finanzas cuantitativas, una simulación física o algo de criptografía?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Excelente elección, Esteban. *Computational Topology* de Edelsbrunner y Harer es ideal como proyecto piloto por tres razones. Es un libro algorítmico: casi todo concepto termina en un algoritmo que se puede implementar. Tiene mucho contenido geométrico que pide visualización. Y su tercera parte, persistencia y estabilidad, es exactamente la base del análisis topológico de datos (TDA) que se usa en finanzas cuantitativas, por ejemplo para detectar cambios de régimen en series de precios. Estudiar y construir el sistema a la vez tiene mucho sentido.
+
+Antes de entrar en las instalaciones, una aclaración sobre cómo puedo trabajar con vos.
+
+## Sobre "construir el producto en la carpeta del proyecto"
+
+Desde este chat puedo **leer** el PDF del libro que adjuntaste, pero la carpeta del Proyecto es de solo lectura para mí: no puedo escribir ahí, ni en tu disco. Por eso te propongo un esquema híbrido en dos espacios.
+
+**Este chat** es el espacio para estudiar. Acá leemos el libro juntos, discutimos conceptos y demostraciones, y diseñamos qué piezas construir. Puedo generarte archivos descargables, como capítulos `.qmd`, código Python o escenas de Manim, pero tendrías que copiarlos a tu repositorio a mano.
+
+**Claude Code** es el espacio para construir. Funciona como extensión de VS Code o desde la terminal, y trabaja directamente dentro de tu repositorio local: crea y edita archivos, instala dependencias, corre tests, compila el sitio y hace commits. Eso es literalmente "Claude construyendo el producto en tu carpeta". La clave es un archivo `CLAUDE.md` en la raíz del repo que describe la arquitectura y las convenciones del proyecto. Así cada sesión arranca sabiendo cómo está organizado todo.
+
+El flujo natural sería: entendemos una sección acá, y después en Claude Code le pedís "implementá el producto de la sección 1.2 según lo que diseñamos".
+
+## La arquitectura: cómo se coordina todo
+
+La idea central es **un único repositorio Git** donde cada herramienta produce una pieza, y **Quarto** las compila en un sitio web de estudio centralizado. Ese sitio es la plataforma única que buscás.Quarto es el hub porque sabe integrar todas las piezas de forma nativa. Ejecuta código Python dentro de los capítulos y muestra los resultados (gráficos, diagramas de persistencia). Soporta **Observable JS** (D3 y Three.js interactivos) sin configurar nada extra. Incrusta los videos de Manim y las apps de marimo exportadas a HTML. Renderiza diagramas Mermaid y matemática con MathJax. Y compila la misma fuente a PDF vía Typst o LaTeX.
+
+Cada cambio que subís a GitHub dispara una GitHub Action que recompila todo y publica el sitio en GitHub Pages. Lo ves desde cualquier dispositivo y siempre está actualizado.
+
+## Estructura del repositorio
+
+```
+topologia-computacional/
+├── CLAUDE.md                  # Arquitectura y convenciones (para Claude Code)
+├── _quarto.yml                # Configuración del sitio
+├── index.qmd                  # Portada y mapa del libro
+├── capitulos/
+│   ├── 01-grafos/
+│   │   ├── index.qmd          # Teoría diseccionada + figuras interactivas
+│   │   ├── ejercicios.qmd
+│   │   └── media/             # Videos renderizados de Manim
+│   ├── 02-superficies/
+│   └── ...                    # Un directorio por capítulo (I–IX)
+├── src/tcomp/                 # Tu librería Python: implementaciones propias
+│   ├── complejos.py           #   (complejos simpliciales, union-find,
+│   ├── homologia.py           #    reducción de matrices, persistencia...)
+│   └── persistencia.py
+├── tests/                     # Tests que comparan tu código contra GUDHI
+├── notebooks/                 # Apps de exploración en marimo (.py)
+├── animaciones/               # Escenas de Manim (.py)
+├── lean/                      # Proyecto Lean (lake) con formalizaciones
+├── pyproject.toml             # Dependencias gestionadas con uv
+└── .github/workflows/publicar.yml
+```
+
+Una decisión importante: el PDF del libro **no** va al repositorio público. Lo agregás a `.gitignore` y lo tenés solo localmente, por derechos de autor. Tu producto contiene tu propia disección, tus implementaciones y tus visualizaciones, no el texto del libro.
+
+Otra decisión de diseño que vale oro: en `src/tcomp/` implementás **vos** los algoritmos del libro, y en `tests/` los validás contra librerías profesionales como GUDHI o Ripser. Implementar la reducción de matrices de persistencia con tus propias manos es la forma más profunda de entenderla. Contrastarla contra GUDHI te da la certeza de que es correcta. Y esa librería después la reutilizás directamente en tu proyecto de finanzas.
+
+## Qué instalar, capa por capa
+
+Un principio táctico: **no instales todo el primer día**. Instalá la base y la capa 2, armá el primer capítulo, y sumá capas a medida que el contenido las pida.
+
+| Capa | Herramienta | Cómo se instala | Para qué la usamos |
+|---|---|---|---|
+| Base | Git, VS Code, GitHub | Ya los tenés | Control de versiones y edición |
+| Base | **uv** | Instalador oficial (un comando) | Gestiona Python y todas las dependencias del proyecto, muy rápido |
+| Base | **Claude Code** | Docs oficiales de Anthropic | El constructor dentro del repo |
+| 1. Verificación | **elan** + Lean 4 | Instalador de elan; la extensión de VS Code lo ofrece automáticamente | Formalizar resultados selectos |
+| 2. Documentos | **Quarto CLI** | Instalador desde quarto.org | El hub central |
+| 2. Documentos | **Typst** | Viene incluido en Quarto | PDF moderno y rápido |
+| 2. Documentos | **TinyTeX** | `quarto install tinytex` | LaTeX mínimo (lo necesitan Manim y leanblueprint) |
+| 2. Documentos | **marimo** | `uv add marimo` | Notebooks reactivos de exploración |
+| 3. Visualización | **Manim CE** | `uv add manim` | Animaciones matemáticas |
+| 3. Visualización | D3, Three.js, Observable | Nada: vienen por CDN dentro de Quarto | Figuras interactivas en el sitio |
+| 4. Simulación | NumPy, SciPy, **JAX** | `uv add ...` | Cálculo numérico; JAX más adelante |
+| 5. Herramientas TDA | **GUDHI**, **ripser**, **persim**, **giotto-tda**, **networkx** | `uv add ...` | Referencia profesional y puente a finanzas |
+| 6. Infraestructura | GitHub Actions + Pages | Un archivo YAML en el repo | Publicación automática |
+
+En VS Code sumá estas extensiones: **Quarto**, **Lean 4**, **Tinymist** (Typst), **Python**, **marimo** y **Markdown Preview Mermaid Support**.
+
+Si usás Windows, te recomiendo fuertemente trabajar dentro de **WSL2** (un Linux integrado en Windows). Manim, Lean y la cadena de LaTeX funcionan bastante mejor ahí.
+
+## Una advertencia honesta sobre Lean en este libro
+
+Mathlib tiene buena cobertura de teoría de grafos y combinatoria. En cambio, la homología simplicial está parcialmente formalizada y la homología persistente casi no existe. Formalizar el libro entero sería un proyecto de investigación en sí mismo.
+
+Mi propuesta es usar Lean de forma **selectiva y estratégica**. Por ejemplo, formalizar la fórmula de Euler para grafos planares en el capítulo I, o propiedades combinatorias de complejos simpliciales. Así aprendés la herramienta con resultados del libro sin que se convierta en un cuello de botella. Más adelante, si te entusiasma, formalizar algún lema de persistencia podría ser incluso una contribución original.
+
+## Sobre Obsidian
+
+Sí, lo mencioné a propósito, y te encaja muy bien. Pero en un rol distinto al del producto final.
+
+Obsidian es tu **cuaderno de laboratorio**: notas crudas mientras leés, dudas, conexiones entre conceptos, ideas de cómo aplicar algo a finanzas. Es pensamiento en estado bruto, rápido y desordenado a propósito. El sitio Quarto es la **publicación**: conocimiento ya destilado, verificado y bien presentado.
+
+El flujo es *capturar en Obsidian → destilar → promover a Quarto*. Esa separación importa porque si escribís directamente "en limpio" te frenás, y si publicás tus borradores el producto pierde calidad. Como Obsidian guarda archivos Markdown planos, el paso de uno a otro es casi copiar y pegar.
+
+Te sugiero, además, consolidar tus gestores de conocimiento en Obsidian para este flujo. Mantener cinco a la vez fragmenta tu conocimiento.
+
+**Linear** completa el cuadro como centro de comando: un proyecto "Topología Computacional" con un issue por sección del libro y estados como *leído → entendido → implementado → publicado*. Tengo acceso a tu Linear desde acá, así que cuando quieras puedo crearte esa estructura directamente.
+
+## Plan de despliegue
+
+Te propongo tres fases.
+
+**Fase 0 (instalación base):** uv, Quarto, TinyTeX, Claude Code y las extensiones de VS Code. Crear el repo con la estructura de arriba y el `CLAUDE.md`, y publicar una página vacía en GitHub Pages. Esto prueba que el pipeline completo funciona antes de meter contenido.
+
+**Fase 1 (corte vertical):** tomar **una sola sección** del capítulo I y construirla tocando todas las capas: teoría diseccionada en Quarto, implementación en `src/tcomp/` con tests, una figura interactiva, una animación de Manim y un pequeño teorema en Lean. Eso valida la arquitectura entera a pequeña escala.
+
+**Fase 2 (régimen de crucero):** avanzar capítulo por capítulo con el sistema ya aceitado.
+
+Para armarte la guía de instalación exacta de la Fase 0, con los comandos precisos, necesito un dato: ¿qué sistema operativo usás (Windows, macOS o Linux)?

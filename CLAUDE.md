@@ -26,3 +26,12 @@ uv run marimo edit notebook.py   # edit a marimo notebook
 uv run manim -pql scene.py SceneName  # render a manim scene (low quality preview)
 uv add <pkg> / uv add --dev <pkg>     # add dependencies
 ```
+
+## Flujo con Cowork (rama `bocetos`)
+
+El estudio del libro se hace con Claude en la app de escritorio (Cowork), que trabaja en
+la rama `bocetos` y escribe **solo** en la carpeta `bocetos/`. El protocolo completo está en
+`bocetos/README.md`: leelo antes de construir una sección. Resumen:
+- Traer los bocetos: `git fetch origin && git merge origin/bocetos` (estando en `main`).
+- Nunca editar archivos dentro de `bocetos/`.
+- Contexto completo del proyecto (stack, arquitectura, convenciones): `docs/contexto-proyecto.md`.
