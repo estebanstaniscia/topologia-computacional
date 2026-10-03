@@ -29,10 +29,11 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
 - `docs/`: documentación interna (contexto del proyecto, notas previas). No se publica.
 - `_freeze/`: resultados congelados de Quarto. SÍ se commitea. `_site/` NO.
 
-## Material local (ignorado por Git)
-- `textos_base/`: PDF del libro. Solo lectura local. NUNCA se commitea ni se publica.
-  No leerlo completo salvo pedido expreso de Esteban (es grande); leer solo la sección pedida.
-- `archivos_utiles/`: material de consulta personal. Leer solo si Esteban lo pide.
+## Material de consulta
+- `textos_base/` (ignorado por Git): PDF del libro. Solo lectura local. NUNCA se commitea ni
+  se publica. No leerlo completo salvo pedido expreso de Esteban (es grande); leer solo la sección pedida.
+- `docs/archivos_varios/`: transcripciones de conversaciones previas y notas sueltas
+  (`Tecnologias.txt`, notas de NotebookLM). Son largas: leerlas solo si Esteban lo pide.
 
 ## Comandos
 - Entorno: `uv sync`

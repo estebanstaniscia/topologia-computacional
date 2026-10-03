@@ -19,7 +19,6 @@ _site/
 # Libro y material de consulta: derechos de autor / uso local, nunca se publica
 libro/
 textos_base/
-archivos_utiles/
 
 # Salida cruda de Manim (los videos finales se copian a capitulos/*/media/)
 /media/
