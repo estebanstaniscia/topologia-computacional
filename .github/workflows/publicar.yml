@@ -1,0 +1,39 @@
+name: Publicar sitio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      # Manim compila pycairo y manimpango contra estas librerías del sistema
+      - name: Instalar dependencias del sistema
+        run: sudo apt-get update && sudo apt-get install -y libcairo2-dev libpango1.0-dev
+
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Crear entorno Python
+        run: |
+          uv sync
+          echo "$PWD/.venv/bin" >> $GITHUB_PATH
+
+      - name: Instalar Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      # Con freeze: auto y _freeze/ versionado, no se vuelve a ejecutar Python
+      - name: Compilar y publicar
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
