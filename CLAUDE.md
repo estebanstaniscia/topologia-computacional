@@ -30,7 +30,7 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
   networkx). Las páginas muestran las etiquetas del libro (1..n) desplazando solo al dibujar.
 - `assets/`: estilo compartido del sitio. `assets/estilo.css` define la paleta (tokens de color,
   modo claro y oscuro) que usan TODAS las piezas; `assets/js/` tiene las piezas interactivas
-  como módulos ES (lógica pura separada del dibujo, testeada con `node --test tests/js/`).
+  como módulos ES (lógica pura separada del dibujo, testeada con `node --test 'tests/js/*.test.mjs'`).
 - `tests/`: validación de `tcomp` contra GUDHI, ripser y networkx.
 - `animaciones/`: escenas de Manim; los videos finales van a `capitulos/*/media/`.
 - `notebooks/`: exploraciones en marimo (archivos .py).
@@ -48,7 +48,7 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
 ## Comandos
 - Entorno: `uv sync`
 - Tests: `uv run pytest` (uno solo: `uv run pytest tests/test_x.py::test_nombre`)
-- Tests de la lógica de las piezas JS: `node --test tests/js/`
+- Tests de la lógica de las piezas JS: `node --test 'tests/js/*.test.mjs'`
 - Lint / formato: `uv run ruff check . && uv run ruff format .`
 - Vista previa del sitio: `uv run quarto preview`
 - Compilar el sitio (actualiza `_freeze/`): `uv run quarto render`

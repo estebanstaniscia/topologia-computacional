@@ -29,3 +29,7 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.16.10",
 ]
+
+[tool.ruff]
+# bocetos/ es de Cowork (solo lectura para Claude Code): no se formatea ni se lintea acá
+extend-exclude = ["bocetos"]
