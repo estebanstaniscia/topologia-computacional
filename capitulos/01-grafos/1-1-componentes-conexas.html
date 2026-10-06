@@ -1072,7 +1072,7 @@ window.Quarto = {
 <div id="fig-anidamiento" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-anidamiento-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div id="e2b5ebd6" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="2">
+<div id="ea2a3920" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="2">
 <div class="cell-output cell-output-display light-content">
 <div>
 <figure class="figure">
@@ -1464,17 +1464,17 @@ G \text{ conexo} \iff |G| \text{ conexo por caminos} \iff |G| \text{ conexo}.
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Ellipse</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>regiones <span class="op">=</span> [</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    ((<span class="fl">0.0</span>, <span class="fl">0.0</span>), <span class="fl">8.6</span>, <span class="fl">5.6</span>, <span class="st">"conexos"</span>, (<span class="dv">0</span>, <span class="fl">2.45</span>)),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.1</span>, <span class="op">-</span><span class="fl">0.25</span>), <span class="fl">5.6</span>, <span class="fl">4.2</span>, <span class="st">"conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.1</span>, <span class="fl">1.55</span>)),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.7</span>, <span class="op">-</span><span class="fl">0.5</span>), <span class="fl">3.4</span>, <span class="fl">2.6</span>, <span class="st">"conexos y localmente</span><span class="ch">\n</span><span class="st">conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.7</span>, <span class="fl">0.15</span>)),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    ((<span class="fl">0.4</span>, <span class="op">-</span><span class="fl">0.2</span>), <span class="fl">10.4</span>, <span class="fl">6.6</span>, <span class="st">"conexos"</span>, (<span class="fl">0.4</span>, <span class="fl">2.7</span>)),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.2</span>, <span class="op">-</span><span class="fl">0.3</span>), <span class="fl">6.4</span>, <span class="fl">4.8</span>, <span class="st">"conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.2</span>, <span class="fl">1.6</span>)),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.5</span>, <span class="op">-</span><span class="fl">0.6</span>), <span class="fl">4.6</span>, <span class="fl">3.0</span>, <span class="st">"conexos y localmente</span><span class="ch">\n</span><span class="st">conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.5</span>, <span class="fl">0.0</span>)),</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ejemplos <span class="op">=</span> [</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ℝ"</span>, (<span class="op">-</span><span class="fl">2.3</span>, <span class="op">-</span><span class="fl">0.8</span>)), (<span class="st">"|K₅|"</span>, (<span class="op">-</span><span class="fl">1.2</span>, <span class="op">-</span><span class="fl">0.95</span>)), (<span class="st">"Sierpiński"</span>, (<span class="op">-</span><span class="fl">1.75</span>, <span class="op">-</span><span class="fl">1.35</span>)),</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"el peine"</span>, (<span class="fl">2.85</span>, <span class="fl">0.6</span>)), (<span class="st">"curva seno"</span>, (<span class="fl">2.85</span>, <span class="op">-</span><span class="fl">0.5</span>)), (<span class="st">"Sorgenfrey"</span>, (<span class="fl">4.85</span>, <span class="op">-</span><span class="fl">2.75</span>)),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ℝ"</span>, (<span class="op">-</span><span class="fl">2.9</span>, <span class="op">-</span><span class="fl">1.1</span>)), (<span class="st">"|K₅|"</span>, (<span class="op">-</span><span class="fl">1.75</span>, <span class="op">-</span><span class="fl">1.1</span>)), (<span class="st">"Sierpiński"</span>, (<span class="op">-</span><span class="fl">0.45</span>, <span class="op">-</span><span class="fl">1.1</span>)),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"el peine"</span>, (<span class="fl">3.4</span>, <span class="fl">0.6</span>)), (<span class="st">"curva seno"</span>, (<span class="fl">3.4</span>, <span class="op">-</span><span class="fl">0.7</span>)), (<span class="st">"Sorgenfrey"</span>, (<span class="fl">5.9</span>, <span class="op">-</span><span class="fl">3.2</span>)),</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> modo <span class="kw">in</span> MODOS:</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tema(modo) <span class="im">as</span> p:</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">6.6</span>, <span class="fl">4.4</span>))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">7.2</span>, <span class="fl">4.6</span>))</span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        colores <span class="op">=</span> [p[<span class="st">"acento"</span>], p[<span class="st">"enlace"</span>], p[<span class="st">"seco"</span>]]</span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (centro, w, h, nombre, pos), color <span class="kw">in</span> <span class="bu">zip</span>(regiones, colores):</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            ax.add_patch(Ellipse(centro, w, h, fill<span class="op">=</span><span class="va">False</span>, lw<span class="op">=</span><span class="dv">2</span>, edgecolor<span class="op">=</span>color))</span>
@@ -1482,8 +1482,8 @@ G \text{ conexo} \iff |G| \text{ conexo por caminos} \iff |G| \text{ conexo}.
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> nombre, pos <span class="kw">in</span> ejemplos:</span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            ax.plot(<span class="op">*</span>pos, <span class="st">"o"</span>, ms<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span>p[<span class="st">"tinta"</span>])</span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            ax.text(pos[<span class="dv">0</span>], pos[<span class="dv">1</span>] <span class="op">-</span> <span class="fl">0.32</span>, nombre, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"top"</span>, fontsize<span class="op">=</span><span class="fl">9.5</span>)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        ax.set_xlim(<span class="op">-</span><span class="fl">4.6</span>, <span class="fl">6.0</span>)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        ax.set_ylim(<span class="op">-</span><span class="fl">3.3</span>, <span class="fl">3.0</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        ax.set_xlim(<span class="op">-</span><span class="fl">5.2</span>, <span class="fl">7.0</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        ax.set_ylim(<span class="op">-</span><span class="fl">3.9</span>, <span class="fl">3.4</span>)</span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        ax.set_aspect(<span class="st">"equal"</span>)</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        ax.axis(<span class="st">"off"</span>)</span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1491,18 +1491,18 @@ G \text{ conexo} \iff |G| \text{ conexo por caminos} \iff |G| \text{ conexo}.
 <div id="fig-jerarquia" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-jerarquia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div id="127000f6" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="3">
+<div id="723c7bdc" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="3">
 <div class="cell-output cell-output-display light-content">
 <div>
 <figure class="figure">
-<p><img src="1-1-componentes-conexas_files/figure-html/cell-4-output-1.png" alt="Diagrama de Euler: el conjunto de los conexos contiene al de los conexos por caminos, que contiene al de los conexos y localmente conexos por caminos. Los ejemplos ℝ, la realización de K5 y Sierpiński están en el más interior; el peine y la curva seno están en conexos pero no conexos por caminos; Sorgenfrey está afuera." width="510" height="313" class="figure-img"></p>
+<p><img src="1-1-componentes-conexas_files/figure-html/cell-4-output-1.png" alt="Diagrama de Euler: el conjunto de los conexos contiene al de los conexos por caminos, que contiene al de los conexos y localmente conexos por caminos. Los ejemplos ℝ, la realización de K5 y Sierpiński están en el más interior; el peine y la curva seno están en conexos pero no conexos por caminos; Sorgenfrey está afuera." width="555" height="340" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display dark-content">
 <div>
 <figure class="figure">
-<p><img src="1-1-componentes-conexas_files/figure-html/cell-4-output-2.png" alt="Diagrama de Euler: el conjunto de los conexos contiene al de los conexos por caminos, que contiene al de los conexos y localmente conexos por caminos. Los ejemplos ℝ, la realización de K5 y Sierpiński están en el más interior; el peine y la curva seno están en conexos pero no conexos por caminos; Sorgenfrey está afuera." width="510" height="313" class="figure-img"></p>
+<p><img src="1-1-componentes-conexas_files/figure-html/cell-4-output-2.png" alt="Diagrama de Euler: el conjunto de los conexos contiene al de los conexos por caminos, que contiene al de los conexos y localmente conexos por caminos. Los ejemplos ℝ, la realización de K5 y Sierpiński están en el más interior; el peine y la curva seno están en conexos pero no conexos por caminos; Sorgenfrey está afuera." width="555" height="340" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1548,7 +1548,7 @@ Figura&nbsp;2: La jerarquía de la conexidad, con un ejemplo en cada región. La
 \boxed{\; n - m = \beta_0 - \beta_1 \;}
 \]</span></p>
 <p>Cada arista rechazada cierra <strong>un ciclo nuevo, independiente de los anteriores</strong>: <span class="math inline">\(\beta_1\)</span> cuenta los «agujeros» del grafo. <span class="math inline">\(\beta_0\)</span> y <span class="math inline">\(\beta_1\)</span> son los <strong>números de Betti</strong> del grafo y la fórmula es su <strong>característica de Euler</strong>. Sin decirlo, union-find calcula la <strong>homología</strong> del grafo en dimensiones 0 y 1, que es el tema del capítulo IV. No hace falta creerlo: lo comprobamos acá mismo con <code>tcomp</code>, sobre grafos al azar y con las tres estrategias.</p>
-<div id="bc733136" class="cell" data-execution_count="4">
+<div id="22bcbb54" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Código</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> random.Random(<span class="dv">0</span>)</span>
@@ -2056,7 +2056,7 @@ Figura&nbsp;2: La jerarquía de la conexidad, con un ejemplo en cada región. La
 <div id="fig-persistencia" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-persistencia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div id="7a5c3ea8" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="9">
+<div id="5f3de923" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="9">
 <div class="cell-output cell-output-display light-content">
 <div>
 <figure class="figure">
@@ -2079,7 +2079,7 @@ Figura&nbsp;3: Persistencia en dimensión 0 con tcomp. Arriba, la nube a tres ra
 </figure>
 </div>
 <p>¿Es correcto? <code>tcomp</code> es una implementación propia, así que lo contrastamos con la librería de referencia, GUDHI, sobre la misma nube:</p>
-<div id="7f8301aa" class="cell" data-execution_count="10">
+<div id="1af81272" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Código</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gudhi</span>
@@ -2141,7 +2141,7 @@ Figura&nbsp;3: Persistencia en dimensión 0 con tcomp. Arriba, la nube a tres ra
 <div id="fig-finanzas" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-finanzas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div id="48a76b57" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="11">
+<div id="33dfa594" class="cell" data-renderings="[&quot;light&quot;,&quot;dark&quot;]" data-execution_count="11">
 <div class="cell-output cell-output-display light-content">
 <div>
 <figure class="figure">
@@ -2164,7 +2164,7 @@ Figura&nbsp;4: Dos sectores sintéticos. Izquierda: matriz de correlaciones. Der
 </figure>
 </div>
 <p>¿El código de barras es de verdad el dendrograma? Lo contrastamos con el enlace simple de SciPy:</p>
-<div id="dad002db" class="cell" data-execution_count="12">
+<div id="30d4ecee" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Código</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>alturas <span class="op">=</span> np.sort(linkage(D[np.triu_indices(<span class="dv">10</span>, <span class="dv">1</span>)], method<span class="op">=</span><span class="st">"single"</span>)[:, <span class="dv">2</span>])</span>
@@ -3496,17 +3496,17 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb24-817"><a href="#cb24-817" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Ellipse</span>
 <span id="cb24-818"><a href="#cb24-818" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-819"><a href="#cb24-819" aria-hidden="true" tabindex="-1"></a>regiones <span class="op">=</span> [</span>
-<span id="cb24-820"><a href="#cb24-820" aria-hidden="true" tabindex="-1"></a>    ((<span class="fl">0.0</span>, <span class="fl">0.0</span>), <span class="fl">8.6</span>, <span class="fl">5.6</span>, <span class="st">"conexos"</span>, (<span class="dv">0</span>, <span class="fl">2.45</span>)),</span>
-<span id="cb24-821"><a href="#cb24-821" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.1</span>, <span class="op">-</span><span class="fl">0.25</span>), <span class="fl">5.6</span>, <span class="fl">4.2</span>, <span class="st">"conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.1</span>, <span class="fl">1.55</span>)),</span>
-<span id="cb24-822"><a href="#cb24-822" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.7</span>, <span class="op">-</span><span class="fl">0.5</span>), <span class="fl">3.4</span>, <span class="fl">2.6</span>, <span class="st">"conexos y localmente</span><span class="ch">\n</span><span class="st">conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.7</span>, <span class="fl">0.15</span>)),</span>
+<span id="cb24-820"><a href="#cb24-820" aria-hidden="true" tabindex="-1"></a>    ((<span class="fl">0.4</span>, <span class="op">-</span><span class="fl">0.2</span>), <span class="fl">10.4</span>, <span class="fl">6.6</span>, <span class="st">"conexos"</span>, (<span class="fl">0.4</span>, <span class="fl">2.7</span>)),</span>
+<span id="cb24-821"><a href="#cb24-821" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.2</span>, <span class="op">-</span><span class="fl">0.3</span>), <span class="fl">6.4</span>, <span class="fl">4.8</span>, <span class="st">"conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.2</span>, <span class="fl">1.6</span>)),</span>
+<span id="cb24-822"><a href="#cb24-822" aria-hidden="true" tabindex="-1"></a>    ((<span class="op">-</span><span class="fl">1.5</span>, <span class="op">-</span><span class="fl">0.6</span>), <span class="fl">4.6</span>, <span class="fl">3.0</span>, <span class="st">"conexos y localmente</span><span class="ch">\n</span><span class="st">conexos por caminos"</span>, (<span class="op">-</span><span class="fl">1.5</span>, <span class="fl">0.0</span>)),</span>
 <span id="cb24-823"><a href="#cb24-823" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb24-824"><a href="#cb24-824" aria-hidden="true" tabindex="-1"></a>ejemplos <span class="op">=</span> [</span>
-<span id="cb24-825"><a href="#cb24-825" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ℝ"</span>, (<span class="op">-</span><span class="fl">2.3</span>, <span class="op">-</span><span class="fl">0.8</span>)), (<span class="st">"|K₅|"</span>, (<span class="op">-</span><span class="fl">1.2</span>, <span class="op">-</span><span class="fl">0.95</span>)), (<span class="st">"Sierpiński"</span>, (<span class="op">-</span><span class="fl">1.75</span>, <span class="op">-</span><span class="fl">1.35</span>)),</span>
-<span id="cb24-826"><a href="#cb24-826" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"el peine"</span>, (<span class="fl">2.85</span>, <span class="fl">0.6</span>)), (<span class="st">"curva seno"</span>, (<span class="fl">2.85</span>, <span class="op">-</span><span class="fl">0.5</span>)), (<span class="st">"Sorgenfrey"</span>, (<span class="fl">4.85</span>, <span class="op">-</span><span class="fl">2.75</span>)),</span>
+<span id="cb24-825"><a href="#cb24-825" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ℝ"</span>, (<span class="op">-</span><span class="fl">2.9</span>, <span class="op">-</span><span class="fl">1.1</span>)), (<span class="st">"|K₅|"</span>, (<span class="op">-</span><span class="fl">1.75</span>, <span class="op">-</span><span class="fl">1.1</span>)), (<span class="st">"Sierpiński"</span>, (<span class="op">-</span><span class="fl">0.45</span>, <span class="op">-</span><span class="fl">1.1</span>)),</span>
+<span id="cb24-826"><a href="#cb24-826" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"el peine"</span>, (<span class="fl">3.4</span>, <span class="fl">0.6</span>)), (<span class="st">"curva seno"</span>, (<span class="fl">3.4</span>, <span class="op">-</span><span class="fl">0.7</span>)), (<span class="st">"Sorgenfrey"</span>, (<span class="fl">5.9</span>, <span class="op">-</span><span class="fl">3.2</span>)),</span>
 <span id="cb24-827"><a href="#cb24-827" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb24-828"><a href="#cb24-828" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> modo <span class="kw">in</span> MODOS:</span>
 <span id="cb24-829"><a href="#cb24-829" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tema(modo) <span class="im">as</span> p:</span>
-<span id="cb24-830"><a href="#cb24-830" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">6.6</span>, <span class="fl">4.4</span>))</span>
+<span id="cb24-830"><a href="#cb24-830" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">7.2</span>, <span class="fl">4.6</span>))</span>
 <span id="cb24-831"><a href="#cb24-831" aria-hidden="true" tabindex="-1"></a>        colores <span class="op">=</span> [p[<span class="st">"acento"</span>], p[<span class="st">"enlace"</span>], p[<span class="st">"seco"</span>]]</span>
 <span id="cb24-832"><a href="#cb24-832" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (centro, w, h, nombre, pos), color <span class="kw">in</span> <span class="bu">zip</span>(regiones, colores):</span>
 <span id="cb24-833"><a href="#cb24-833" aria-hidden="true" tabindex="-1"></a>            ax.add_patch(Ellipse(centro, w, h, fill<span class="op">=</span><span class="va">False</span>, lw<span class="op">=</span><span class="dv">2</span>, edgecolor<span class="op">=</span>color))</span>
@@ -3514,8 +3514,8 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb24-835"><a href="#cb24-835" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> nombre, pos <span class="kw">in</span> ejemplos:</span>
 <span id="cb24-836"><a href="#cb24-836" aria-hidden="true" tabindex="-1"></a>            ax.plot(<span class="op">*</span>pos, <span class="st">"o"</span>, ms<span class="op">=</span><span class="dv">4</span>, color<span class="op">=</span>p[<span class="st">"tinta"</span>])</span>
 <span id="cb24-837"><a href="#cb24-837" aria-hidden="true" tabindex="-1"></a>            ax.text(pos[<span class="dv">0</span>], pos[<span class="dv">1</span>] <span class="op">-</span> <span class="fl">0.32</span>, nombre, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"top"</span>, fontsize<span class="op">=</span><span class="fl">9.5</span>)</span>
-<span id="cb24-838"><a href="#cb24-838" aria-hidden="true" tabindex="-1"></a>        ax.set_xlim(<span class="op">-</span><span class="fl">4.6</span>, <span class="fl">6.0</span>)</span>
-<span id="cb24-839"><a href="#cb24-839" aria-hidden="true" tabindex="-1"></a>        ax.set_ylim(<span class="op">-</span><span class="fl">3.3</span>, <span class="fl">3.0</span>)</span>
+<span id="cb24-838"><a href="#cb24-838" aria-hidden="true" tabindex="-1"></a>        ax.set_xlim(<span class="op">-</span><span class="fl">5.2</span>, <span class="fl">7.0</span>)</span>
+<span id="cb24-839"><a href="#cb24-839" aria-hidden="true" tabindex="-1"></a>        ax.set_ylim(<span class="op">-</span><span class="fl">3.9</span>, <span class="fl">3.4</span>)</span>
 <span id="cb24-840"><a href="#cb24-840" aria-hidden="true" tabindex="-1"></a>        ax.set_aspect(<span class="st">"equal"</span>)</span>
 <span id="cb24-841"><a href="#cb24-841" aria-hidden="true" tabindex="-1"></a>        ax.axis(<span class="st">"off"</span>)</span>
 <span id="cb24-842"><a href="#cb24-842" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
