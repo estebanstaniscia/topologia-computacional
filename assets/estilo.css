@@ -173,3 +173,6 @@ body.quarto-dark {
 /* ------------------------------------------------------------ texto del sitio */
 
 .tc-leitmotiv td, .tc-leitmotiv th { vertical-align: top; }
+
+/* salidas de texto de las celdas de código: legibles en los dos modos */
+.cell-output pre, .cell-output pre code { color: var(--tc-tinta); }

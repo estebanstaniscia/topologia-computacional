@@ -1,14 +1,18 @@
 project:
   type: website
   output-dir: _site
-  render:            
+  render:            # solo se compila lo listado (evita publicar docs/, bocetos/, README, CLAUDE.md)
     - index.qmd
     - capitulos/**/*.qmd
+  resources:
+    - assets/js/
 
 lang: es
 
 website:
   title: "Topología Computacional"
+  site-url: https://estebanstaniscia.github.io/topologia-computacional/
+  repo-url: https://github.com/estebanstaniscia/topologia-computacional
   sidebar:
     style: docked
     search: true
@@ -16,15 +20,26 @@ website:
       - index.qmd
       - section: "Parte A · Topología geométrica computacional"
         contents:
-          - capitulos/01-grafos/index.qmd
+          - section: "I. Grafos"
+            href: capitulos/01-grafos/index.qmd
+            contents:
+              - capitulos/01-grafos/1-1-componentes-conexas.qmd
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmo
+      dark: [cosmo, assets/tema-oscuro.scss]
+    respect-user-color-scheme: true
+    css: assets/estilo.css
     toc: true
+    toc-depth: 3
     html-math-method: mathjax
     code-fold: true
     code-tools: true
+    number-sections: false
+    crossref:
+      chapters: false
 
 execute:
-  freeze: auto       
+  freeze: auto       # guarda resultados en _freeze/ y solo recalcula lo que cambió
