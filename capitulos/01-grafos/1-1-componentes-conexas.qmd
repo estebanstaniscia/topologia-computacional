@@ -803,17 +803,17 @@ espacio se acumula.
 from matplotlib.patches import Ellipse
 
 regiones = [
-    ((0.0, 0.0), 8.6, 5.6, "conexos", (0, 2.45)),
-    ((-1.1, -0.25), 5.6, 4.2, "conexos por caminos", (-1.1, 1.55)),
-    ((-1.7, -0.5), 3.4, 2.6, "conexos y localmente\nconexos por caminos", (-1.7, 0.15)),
+    ((0.4, -0.2), 10.4, 6.6, "conexos", (0.4, 2.7)),
+    ((-1.2, -0.3), 6.4, 4.8, "conexos por caminos", (-1.2, 1.6)),
+    ((-1.5, -0.6), 4.6, 3.0, "conexos y localmente\nconexos por caminos", (-1.5, 0.0)),
 ]
 ejemplos = [
-    ("ℝ", (-2.3, -0.8)), ("|K₅|", (-1.2, -0.95)), ("Sierpiński", (-1.75, -1.35)),
-    ("el peine", (2.85, 0.6)), ("curva seno", (2.85, -0.5)), ("Sorgenfrey", (4.85, -2.75)),
+    ("ℝ", (-2.9, -1.1)), ("|K₅|", (-1.75, -1.1)), ("Sierpiński", (-0.45, -1.1)),
+    ("el peine", (3.4, 0.6)), ("curva seno", (3.4, -0.7)), ("Sorgenfrey", (5.9, -3.2)),
 ]
 for modo in MODOS:
     with tema(modo) as p:
-        fig, ax = plt.subplots(figsize=(6.6, 4.4))
+        fig, ax = plt.subplots(figsize=(7.2, 4.6))
         colores = [p["acento"], p["enlace"], p["seco"]]
         for (centro, w, h, nombre, pos), color in zip(regiones, colores):
             ax.add_patch(Ellipse(centro, w, h, fill=False, lw=2, edgecolor=color))
@@ -821,8 +821,8 @@ for modo in MODOS:
         for nombre, pos in ejemplos:
             ax.plot(*pos, "o", ms=4, color=p["tinta"])
             ax.text(pos[0], pos[1] - 0.32, nombre, ha="center", va="top", fontsize=9.5)
-        ax.set_xlim(-4.6, 6.0)
-        ax.set_ylim(-3.3, 3.0)
+        ax.set_xlim(-5.2, 7.0)
+        ax.set_ylim(-3.9, 3.4)
         ax.set_aspect("equal")
         ax.axis("off")
         plt.show()
