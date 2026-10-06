@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio de union-find</title>
+<!--
+  PROTOTIPO (boceto) de la pieza 3.4 de spec.md. HTML + JS puro, sin dependencias.
+  Semántica idéntica a prototipos/union_find.py (convenciones del libro):
+  Union(i,j): x=Find(i), y=Find(j); con unión por tamaño, si size[x] > size[y] se
+  intercambian; x cuelga de y. Raíces apuntan a sí mismas.
+-->
+<style>
+  :root {
+    --bg: #fbfaf7; --panel: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #d9d6cf;
+    --accent: #2f6fdf; --accent-soft: #dce7fb; --reject: #c4452f; --ok: #2e8b57;
+    --path: #e39b16; --compress: #8e44ad;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #141416; --panel: #1d1d21; --ink: #ececef; --muted: #9a9aa2; --line: #34343b;
+      --accent: #7aa5ff; --accent-soft: #24324d; --reject: #ff7a63; --ok: #5fd08f;
+      --path: #ffbe4d; --compress: #c98bff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 20px 16px 8px; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--muted); }
+  main { max-width: 1200px; margin: 0 auto; padding: 8px 16px 32px; display: grid; gap: 12px;
+    grid-template-columns: 1fr 1fr; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+    margin: 0 0 8px; font-weight: 600; }
+  .controls { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  select, button { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 6px 10px; }
+  button { cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .stats { display: flex; gap: 16px; margin-left: auto; flex-wrap: wrap; }
+  .stat b { font-size: 18px; display: block; line-height: 1.1; }
+  .stat span { font-size: 12px; color: var(--muted); }
+  .narr { grid-column: 1 / -1; min-height: 64px; }
+  .narr .step { color: var(--muted); font-size: 13px; }
+  .narr .text { font-size: 16px; }
+  svg { width: 100%; height: auto; display: block; }
+  .full { grid-column: 1 / -1; }
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  th, td { border: 1px solid var(--line); padding: 4px 6px; text-align: center; }
+  th { color: var(--muted); font-weight: 600; }
+  td.changed { background: var(--accent-soft); font-weight: 700; }
+  td.root { color: var(--accent); font-weight: 700; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .sw { display: inline-block; width: 18px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 4px; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .95em; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } .stats { margin-left: 0; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Laboratorio de union-find</h1>
+  <p>Sección I.1 · El grafo, el bosque de up-trees y el arreglo <code>parent</code>, sincronizados paso a paso.</p>
+</header>
+<main>
+  <div class="card controls">
+    <label>Escenario
+      <select id="preset"></select>
+    </label>
+    <label>Estrategia
+      <select id="strategy">
+        <option value="ingenua">Básica</option>
+        <option value="tamano">Unión por tamaño</option>
+        <option value="completa" selected>Tamaño + compresión</option>
+      </select>
+    </label>
+    <button id="reset" title="Volver al inicio">⟲</button>
+    <button id="back" title="Paso anterior">◀</button>
+    <button id="fwd" class="primary" title="Paso siguiente">▶ Paso</button>
+    <button id="play">Reproducir</button>
+    <div class="stats">
+      <div class="stat"><b id="sB0">–</b><span>β₀ componentes</span></div>
+      <div class="stat"><b id="sB1">–</b><span>β₁ rechazadas</span></div>
+      <div class="stat"><b id="sHops">–</b><span>saltos de Find</span></div>
+      <div class="stat"><b id="sH">–</b><span>altura del bosque</span></div>
+    </div>
+  </div>
+  <div class="card narr"><div class="step" id="stepLabel"></div><div class="text" id="narr"></div></div>
+  <div class="card">
+    <h2>Grafo</h2>
+    <svg id="graph" viewBox="0 0 400 300" role="img" aria-label="Grafo con aristas aceptadas, rechazadas y pendientes"></svg>
+    <div class="legend">
+      <span><i class="sw" style="border-color:var(--accent)"></i>aceptada (une componentes)</span>
+      <span><i class="sw" style="border-color:var(--reject);border-top-style:dashed"></i>rechazada (cierra ciclo)</span>
+      <span><i class="sw" style="border-color:var(--line);border-top-style:dotted"></i>pendiente</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Bosque de up-trees</h2>
+    <svg id="forest" viewBox="0 0 400 300" role="img" aria-label="Bosque de árboles con punteros al padre"></svg>
+    <div class="legend">
+      <span><i class="sw" style="border-color:var(--path)"></i>camino recorrido por Find</span>
+      <span><i class="sw" style="border-color:var(--compress)"></i>puntero comprimido</span>
+      <span><i class="sw" style="border-color:var(--ok)"></i>enlace nuevo de Union</span>
+    </div>
+  </div>
+  <div class="card full">
+    <h2>Arreglo V[1..n]</h2>
+    <div id="array"></div>
+  </div>
+</main>
+<script>
+// ---------------------------------------------------------------- escenarios
+const PRESETS = {
+  ej1: { name: "Ejemplo 1 (4 vértices, notas NotebookLM)", n: 4,
+    ops: [["U",1,2],["U",2,3],["U",1,3],["U",3,4]] },
+  ej2: { name: "Ejemplo 2 (8 vértices, notas NotebookLM)", n: 8,
+    ops: [["U",1,2],["U",3,4],["U",1,3],["U",5,6],["U",1,5],["F",5]] },
+  peor: { name: "Peor caso de la básica (n = 8)", n: 8,
+    ops: [2,3,4,5,6,7,8].map(k => ["U",1,k]).concat([["F",1],["F",1]]) },
+  binom: { name: "Árbol binomial (n = 8) + Find de la hoja", n: 8,
+    ops: [["U",1,2],["U",3,4],["U",5,6],["U",7,8],["U",1,3],["U",5,7],["U",1,5],["F",1],["F",1]] },
+  rand: { name: "Grafo aleatorio (n = 10)", n: 10, ops: null },
+};
+
+function randomOps(n, seed) {
+  let s = seed; const rnd = () => (s = (s * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const ops = [];
+  for (let k = 0; k < 14; k++) {
+    let a = 1 + Math.floor(rnd() * n), b = 1 + Math.floor(rnd() * n);
+    if (a === b) b = (b % n) + 1;
+    ops.push(["U", a, b]);
+  }
+  return ops;
+}
+
+// ---------------------------------------------------------------- simulación
+// Precalculamos todos los estados: avanzar y retroceder es solo mover un índice.
+function simulate(n, ops, strategy) {
+  const parent = Array.from({length: n + 1}, (_, i) => i);
+  const size = Array(n + 1).fill(1);
+  let b0 = n, b1 = 0, hops = 0;
+  const snap = (extra) => ({ parent: parent.slice(), size: size.slice(), b0, b1, hops, ...extra });
+  const states = [snap({ text: `Estado inicial: ${n} conjuntos unitarios. Cada raíz se apunta a sí misma.`, op: null })];
+
+  function find(i) {
+    const path = [i];
+    while (parent[path[path.length - 1]] !== path[path.length - 1]) path.push(parent[path[path.length - 1]]);
+    const root = path[path.length - 1];
+    hops += path.length - 1;
+    const compressed = [];
+    if (strategy === "completa") for (const v of path.slice(0, -1)) if (parent[v] !== root) { parent[v] = root; compressed.push(v); }
+    return { root, path, compressed };
+  }
+  const desc = (f, who) => {
+    let t = f.path.length > 1 ? `Find(${who}) sube ${f.path.join(" → ")} y devuelve la raíz ${f.root}`
+                              : `Find(${who}) = ${f.root} (ya es raíz)`;
+    if (f.compressed.length) t += `; a la vuelta comprime ${f.compressed.map(v => v + "→" + f.root).join(", ")}`;
+    return t + ".";
+  };
+
+  ops.forEach((op, idx) => {
+    if (op[0] === "F") {
+      const f = find(op[1]);
+      states.push(snap({ op, idx, paths: [f.path], compressed: f.compressed, text: desc(f, op[1]) }));
+      return;
+    }
+    const [, i, j] = op;
+    const fi = find(i), fj = find(j);
+    let x = fi.root, y = fj.root, text = `Arista (${i},${j}). ${desc(fi, i)} ${desc(fj, j)} `;
+    let link = null, swap = false;
+    if (x === y) {
+      b1++; text += `Mismas raíces: ${i} y ${j} ya estaban conectados. Arista rechazada: cierra un ciclo (β₁ = ${b1}).`;
+    } else {
+      const sx = size[x], sy = size[y];
+      if (strategy !== "ingenua" && sx > sy) { [x, y] = [y, x]; swap = true; }
+      parent[x] = y; size[y] += size[x]; b0--; link = [x, y];
+      text += swap ? `size[${y}] = ${sx} > size[${x}] = ${sy}: se intercambian x ↔ y, así el árbol chico (${x}) cuelga del grande (${y}). `
+                   : (strategy === "ingenua" ? "" : `size[${x}] = ${sx} ≤ size[${y}] = ${sy}: no hay intercambio. `);
+      text += `Union: parent[${x}] = ${y}. Quedan ${b0} conjuntos.`;
+    }
+    states.push(snap({ op, idx, paths: [fi.path, fj.path], compressed: fi.compressed.concat(fj.compressed),
+      link, rejected: x === y, text }));
+  });
+  return states;
+}
+
+// ---------------------------------------------------------------- dibujo
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function drawGraph(n, ops, states, k) {
+  const svg = document.getElementById("graph"); svg.innerHTML = "";
+  const W = 400, H = 300, R = 115, cx = W / 2, cy = H / 2;
+  const pos = i => [cx + R * Math.cos(2 * Math.PI * (i - 1) / n - Math.PI / 2), cy + R * Math.sin(2 * Math.PI * (i - 1) / n - Math.PI / 2)];
+  const st = states[k];
+  // estado de cada arista hasta el paso k
+  const edgeState = new Map();
+  for (let s = 1; s <= k; s++) { const S = states[s]; if (S.op && S.op[0] === "U") edgeState.set(S.idx, S.rejected ? "rej" : "acc"); }
+  ops.forEach((op, idx) => {
+    if (op[0] !== "U") return;
+    const [a, b] = [pos(op[1]), pos(op[2])], est = edgeState.get(idx), cur = st.idx === idx;
+    el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1],
+      stroke: est === "acc" ? css("--accent") : est === "rej" ? css("--reject") : css("--line"),
+      "stroke-width": cur ? 5 : est ? 3 : 1.5,
+      "stroke-dasharray": est === "rej" ? "7 5" : est ? "" : "2 4", "stroke-linecap": "round" }, svg);
+  });
+  // color de componente = raíz
+  const rootOf = i => { let r = i; while (st.parent[r] !== r) r = st.parent[r]; return r; };
+  for (let i = 1; i <= n; i++) {
+    const [x, y] = pos(i), r = rootOf(i);
+    const hue = (r * 137.5) % 360;
+    el("circle", { cx: x, cy: y, r: 15, fill: css("--panel") }, svg);
+    el("circle", { cx: x, cy: y, r: 15, fill: `hsl(${hue} 65% 55% / .25)`, stroke: `hsl(${hue} 65% 45%)`, "stroke-width": 2 }, svg);
+    const t = el("text", { x, y: y + 5, "text-anchor": "middle", "font-size": 14, "font-weight": 700, fill: css("--ink") }, svg);
+    t.textContent = i;
+  }
+}
+
+function drawForest(n, st) {
+  const svg = document.getElementById("forest"); svg.innerHTML = "";
+  const kids = Array.from({length: n + 1}, () => []);
+  const roots = [];
+  for (let i = 1; i <= n; i++) (st.parent[i] === i ? roots : kids[st.parent[i]]).push(i);
+  // layout ordenado: x por hojas, y por profundidad
+  const P = {}; let leaf = 0, maxD = 0;
+  const lay = (v, d) => { maxD = Math.max(maxD, d);
+    if (!kids[v].length) { P[v] = [leaf++, d]; return; }
+    kids[v].forEach(c => lay(c, d + 1));
+    const xs = kids[v].map(c => P[c][0]); P[v] = [(Math.min(...xs) + Math.max(...xs)) / 2, d]; };
+  roots.forEach(r => { lay(r, 0); leaf += 0.6; });
+  const W = 400, padX = 24, padY = 34, dy = maxD ? Math.max(52, Math.min(70, (300 - 2 * padY) / maxD)) : 0;
+  svg.setAttribute("viewBox", `0 0 ${W} ${Math.max(300, 2 * padY + maxD * dy)}`);
+  const span = Math.max(leaf - 0.6 - 1, 0);  // ancho lógico del bosque
+  const scale = span > 0 ? Math.min(60, (W - 2 * padX) / span) : 0;
+  const off = (W - span * scale) / 2;
+  const xy = v => [off + P[v][0] * scale, padY + P[v][1] * dy];
+  const onPath = new Set(); (st.paths || []).forEach(p => p.forEach((v, i) => { if (i < p.length - 1) onPath.add(v); }));
+  const comp = new Set(st.compressed || []);
+  el("defs", {}, svg).innerHTML = `<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${css("--muted")}"/></marker>`;
+  for (let v = 1; v <= n; v++) {
+    if (st.parent[v] === v) continue;
+    const [x1, y1] = xy(v), [x2, y2] = xy(st.parent[v]);
+    const isLink = st.link && st.link[0] === v;
+    const color = isLink ? css("--ok") : comp.has(v) ? css("--compress") : onPath.has(v) ? css("--path") : css("--muted");
+    const len = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / len, uy = (y2 - y1) / len;
+    el("line", { x1: x1 + ux * 14, y1: y1 + uy * 14, x2: x2 - ux * 16, y2: y2 - uy * 16, stroke: color,
+      "stroke-width": (isLink || comp.has(v) || onPath.has(v)) ? 3.5 : 1.8, "marker-end": "url(#arr)" }, svg);
+  }
+  for (let v = 1; v <= n; v++) {
+    const [x, y] = xy(v), isRoot = st.parent[v] === v;
+    el("circle", { cx: x, cy: y, r: 13, fill: isRoot ? css("--accent-soft") : css("--panel"),
+      stroke: isRoot ? css("--accent") : css("--line"), "stroke-width": isRoot ? 2.5 : 1.5 }, svg);
+    const t = el("text", { x, y: y + 5, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: css("--ink") }, svg);
+    t.textContent = v;
+    if (isRoot) { const s = el("text", { x, y: y - 18, "text-anchor": "middle", "font-size": 11, fill: css("--accent") }, svg); s.textContent = "size " + st.size[v]; }
+  }
+}
+
+function drawArray(n, st, prev) {
+  const head = Array.from({length: n}, (_, i) => `<th>${i + 1}</th>`).join("");
+  const row = (name, arr, isSize) => `<tr><th>${name}</th>` + Array.from({length: n}, (_, k) => {
+    const i = k + 1, root = st.parent[i] === i;
+    if (isSize && !root) return `<td></td>`;
+    const ch = prev && arr[i] !== (isSize ? prev.size : prev.parent)[i];
+    return `<td class="${ch ? "changed" : ""} ${root && !isSize ? "root" : ""}">${arr[i]}</td>`; }).join("") + "</tr>";
+  document.getElementById("array").innerHTML =
+    `<table><tr><th>i</th>${head}</tr>${row("parent", st.parent)}${row("size (raíces)", st.size, true)}</table>`;
+}
+
+// ---------------------------------------------------------------- control
+const $ = id => document.getElementById(id);
+let cur = { n: 0, ops: [], states: [], k: 0 }, timer = null;
+for (const key in PRESETS) { const o = document.createElement("option"); o.value = key; o.textContent = PRESETS[key].name; $("preset").appendChild(o); }
+
+function height(st, n) { let h = 0; for (let i = 1; i <= n; i++) { let d = 0, r = i; while (st.parent[r] !== r) { r = st.parent[r]; d++; } h = Math.max(h, d); } return h; }
+
+function load() {
+  const p = PRESETS[$("preset").value];
+  const ops = p.ops || randomOps(p.n, 42);
+  cur = { n: p.n, ops, states: simulate(p.n, ops, $("strategy").value), k: 0 };
+  render();
+}
+function render() {
+  const { n, ops, states, k } = cur, st = states[k];
+  $("stepLabel").textContent = `Paso ${k} de ${states.length - 1}` + (st.op ? ` · ${st.op[0] === "U" ? `Union(${st.op[1]}, ${st.op[2]})` : `Find(${st.op[1]})`}` : "");
+  $("narr").textContent = st.text;
+  $("sB0").textContent = st.b0; $("sB1").textContent = st.b1; $("sHops").textContent = st.hops; $("sH").textContent = height(st, n);
+  drawGraph(n, ops, states, k); drawForest(n, st); drawArray(n, st, k ? states[k - 1] : null);
+  $("back").disabled = k === 0; $("fwd").disabled = k === states.length - 1;
+}
+const step = d => { cur.k = Math.max(0, Math.min(cur.states.length - 1, cur.k + d)); render(); };
+$("fwd").onclick = () => step(1); $("back").onclick = () => step(-1);
+$("reset").onclick = () => { cur.k = 0; render(); };
+$("preset").onchange = load; $("strategy").onchange = () => { const k = cur.k; load(); cur.k = Math.min(k, cur.states.length - 1); render(); };
+$("play").onclick = () => {
+  if (timer) { clearInterval(timer); timer = null; $("play").textContent = "Reproducir"; return; }
+  if (cur.k === cur.states.length - 1) cur.k = 0;
+  $("play").textContent = "Pausa";
+  timer = setInterval(() => { if (cur.k >= cur.states.length - 1) { $("play").click(); return; } step(1); }, 1600);
+};
+document.addEventListener("keydown", e => { if (e.key === "ArrowRight") step(1); if (e.key === "ArrowLeft") step(-1); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+load();
+</script>
+</body>
+</html>

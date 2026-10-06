@@ -39,6 +39,9 @@ fusiones (merges) entre ramas nunca generan conflictos.
 ```
 bocetos/
 ├── README.md                       # este archivo (protocolo)
+├── _proyecto/                      # documentos rectores del proyecto, escritos por Cowork
+│   ├── FILOSOFIA.md                #   manifiesto pedagógico: manda sobre todo lo demás
+│   └── ESTADO.md                   #   dónde está cada cosa, cómo retomar, decisiones
 └── capNN-tema/
     └── N-M-nombre-seccion/
         ├── diseccion.md            # la sección desarmada: intuición, definiciones,
@@ -60,6 +63,9 @@ Cada spec es un contrato entre el diseño y la construcción:
    este estado en su resumen de commit, no editando el archivo).
 
 ## Instrucciones para Claude Code
+
+- **Antes de construir cualquier sección, leé `bocetos/_proyecto/FILOSOFIA.md`.** Es el
+  criterio de calidad de todo el producto.
 
 - Para traer los bocetos: `git fetch origin && git merge origin/bocetos` (estando en `main`).
 - Construí solo lo que esté marcado `listo para construir` en `spec.md`.
