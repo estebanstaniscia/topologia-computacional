@@ -1,0 +1,175 @@
+/*
+ * Estilo compartido del sitio: la paleta (tokens) y la carcasa de las piezas
+ * interactivas. TODAS las piezas leen sus colores de estos tokens, así el sitio es
+ * coherente y el modo oscuro funciona en un solo lugar.
+ *
+ * La paleta deriva de una paleta categórica validada (separación para daltonismo
+ * y contraste). Cada vista usa a lo sumo tres colores semánticos a la vez, y cada
+ * par que convive en una vista fue validado en los dos modos:
+ *   - grafo:   --tc-aceptada / --tc-rechazo (además punteado)
+ *   - bosque:  --tc-camino / --tc-compresion / --tc-enlace
+ *   - ola:     --tc-mojado / --tc-seco / --tc-enlace
+ * Ningún color va solo: siempre lo acompaña una leyenda, un trazo distinto o texto.
+ */
+
+:root {
+  --tc-superficie: #fcfcfb;
+  --tc-panel: #ffffff;
+  --tc-tinta: #1d1d1f;
+  --tc-tenue: #5f5e5a;
+  --tc-linea: #d9d6cf;
+  --tc-linea-suave: #ebe9e4;
+
+  --tc-acento: #2a78d6;
+  --tc-acento-suave: #dce7fb;
+  --tc-aceptada: #2a78d6;
+  --tc-rechazo: #e34948;
+  --tc-camino: #eda100;
+  --tc-compresion: #4a3aa7;
+  --tc-enlace: #1baf7a;
+  --tc-mojado: #2a78d6;
+  --tc-mojado-suave: #cde2fb;
+  --tc-seco: #eb6834;
+  --tc-seco-suave: #fbe1d6;
+
+  /* categórica en orden fijo (nunca se cicla): identidad de componentes */
+  --tc-c1: #2a78d6;
+  --tc-c2: #eb6834;
+  --tc-c3: #1baf7a;
+  --tc-c4: #eda100;
+  --tc-c5: #e87ba4;
+  --tc-c6: #008300;
+  --tc-c7: #4a3aa7;
+}
+
+body.quarto-dark {
+  --tc-superficie: #151517;
+  --tc-panel: #1c1c1f;
+  --tc-tinta: #ecebe7;
+  --tc-tenue: #a9a8a1;
+  --tc-linea: #3a3a40;
+  --tc-linea-suave: #2a2a2f;
+
+  --tc-acento: #3987e5;
+  --tc-acento-suave: #1f3350;
+  --tc-aceptada: #3987e5;
+  --tc-rechazo: #e66767;
+  --tc-camino: #c98500;
+  --tc-compresion: #9085e9;
+  --tc-enlace: #199e70;
+  --tc-mojado: #3987e5;
+  --tc-mojado-suave: #1f3350;
+  --tc-seco: #d95926;
+  --tc-seco-suave: #46271b;
+
+  --tc-c1: #3987e5;
+  --tc-c2: #d95926;
+  --tc-c3: #199e70;
+  --tc-c4: #c98500;
+  --tc-c5: #d55181;
+  --tc-c6: #008300;
+  --tc-c7: #9085e9;
+}
+
+/* ------------------------------------------------------------ carcasa de piezas */
+
+.tc-pieza {
+  --tc-radio: 12px;
+  margin: 1.5rem 0;
+  padding: 14px;
+  border: 1px solid var(--tc-linea);
+  border-radius: var(--tc-radio);
+  background: var(--tc-superficie);
+  color: var(--tc-tinta);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.tc-pieza * { box-sizing: border-box; }
+.tc-pieza .tc-titulo {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.tc-pieza .tc-titulo small { font-weight: 400; color: var(--tc-tenue); font-size: 0.85rem; }
+
+.tc-grilla { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+.tc-grilla > .tc-ancho { grid-column: 1 / -1; }
+@media (max-width: 760px) { .tc-grilla { grid-template-columns: 1fr; } }
+
+.tc-panel {
+  background: var(--tc-panel);
+  border: 1px solid var(--tc-linea);
+  border-radius: 10px;
+  padding: 10px;
+  min-width: 0;
+}
+.tc-panel h4 {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tc-tenue);
+}
+
+.tc-controles { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.tc-controles label { display: inline-flex; align-items: center; gap: 6px; color: var(--tc-tenue); font-size: 0.88rem; }
+.tc-pieza select,
+.tc-pieza button {
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--tc-tinta);
+  background: var(--tc-panel);
+  border: 1px solid var(--tc-linea);
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+.tc-pieza button { cursor: pointer; }
+.tc-pieza button:hover:not(:disabled) { border-color: var(--tc-acento); }
+.tc-pieza button:disabled { opacity: 0.45; cursor: default; }
+.tc-pieza button.tc-primario { background: var(--tc-acento); border-color: var(--tc-acento); color: #fff; }
+.tc-pieza button[aria-pressed="true"] { background: var(--tc-acento-suave); border-color: var(--tc-acento); }
+.tc-pieza input[type="range"] { accent-color: var(--tc-acento); }
+
+.tc-marcadores { display: flex; flex-wrap: wrap; gap: 14px; margin-left: auto; }
+.tc-marcador b { display: block; font-size: 1.15rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tc-marcador span { font-size: 0.75rem; color: var(--tc-tenue); }
+
+.tc-narracion { min-height: 3.2em; }
+.tc-narracion .tc-paso { font-size: 0.8rem; color: var(--tc-tenue); }
+.tc-narracion .tc-texto { font-size: 1rem; }
+
+.tc-leyenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 6px; font-size: 0.78rem; color: var(--tc-tenue); }
+.tc-muestra { display: inline-block; width: 20px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 5px; }
+.tc-muestra.punteada { border-top-style: dashed; }
+.tc-muestra.punteos { border-top-style: dotted; }
+.tc-mancha { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+
+.tc-pieza svg { display: block; width: 100%; height: auto; touch-action: none; user-select: none; }
+.tc-pieza svg text { font-family: inherit; }
+
+.tc-tabla { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.tc-tabla th, .tc-tabla td { border: 1px solid var(--tc-linea); padding: 3px 6px; text-align: center; }
+.tc-tabla th { color: var(--tc-tenue); font-weight: 600; }
+.tc-tabla td.tc-cambio { background: var(--tc-acento-suave); font-weight: 700; }
+.tc-tabla td.tc-raiz { color: var(--tc-acento); font-weight: 700; }
+
+.tc-veredicto {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border-left: 4px solid var(--tc-linea);
+  background: var(--tc-panel);
+}
+.tc-veredicto.si { border-left-color: var(--tc-enlace); }
+.tc-veredicto.no { border-left-color: var(--tc-rechazo); }
+.tc-veredicto b { margin-right: 4px; }
+
+.tc-pista { font-size: 0.82rem; color: var(--tc-tenue); margin-top: 6px; }
+.tc-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ------------------------------------------------------------ texto del sitio */
+
+.tc-leitmotiv td, .tc-leitmotiv th { vertical-align: top; }
