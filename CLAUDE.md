@@ -9,6 +9,11 @@ alimenta un proyecto de finanzas cuantitativas (análisis topológico de datos).
 
 Contexto completo: @docs/contexto-proyecto.md
 
+**Criterio rector de calidad:** `bocetos/_proyecto/FILOSOFIA.md` (el manifiesto pedagógico).
+Leelo SIEMPRE antes de construir cualquier pieza del producto; si una decisión de diseño
+choca con ese documento, gana el documento. Estado del proyecto, ubicaciones y registro de
+decisiones: `bocetos/_proyecto/ESTADO.md`.
+
 ## Usuario
 Esteban: estudiante de Matemática (UNLP) que trabaja en finanzas cuantitativas.
 Nivel avanzado en matemática y Python. Quiere explicaciones profundas y el porqué
@@ -21,6 +26,11 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
 - `capitulos/`: un directorio por capítulo; un `.qmd` por sección. Quarto es el hub
   (`_quarto.yml` solo renderiza `index.qmd` y `capitulos/**/*.qmd`).
 - `src/tcomp/`: implementaciones PROPIAS de los algoritmos del libro (paquete `uv`, src layout).
+  Convención de toda la librería: elementos/vértices **0..n-1** (compatible con numpy, GUDHI y
+  networkx). Las páginas muestran las etiquetas del libro (1..n) desplazando solo al dibujar.
+- `assets/`: estilo compartido del sitio. `assets/estilo.css` define la paleta (tokens de color,
+  modo claro y oscuro) que usan TODAS las piezas; `assets/js/` tiene las piezas interactivas
+  como módulos ES (lógica pura separada del dibujo, testeada con `node --test tests/js/`).
 - `tests/`: validación de `tcomp` contra GUDHI, ripser y networkx.
 - `animaciones/`: escenas de Manim; los videos finales van a `capitulos/*/media/`.
 - `notebooks/`: exploraciones en marimo (archivos .py).
@@ -38,6 +48,7 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
 ## Comandos
 - Entorno: `uv sync`
 - Tests: `uv run pytest` (uno solo: `uv run pytest tests/test_x.py::test_nombre`)
+- Tests de la lógica de las piezas JS: `node --test tests/js/`
 - Lint / formato: `uv run ruff check . && uv run ruff format .`
 - Vista previa del sitio: `uv run quarto preview`
 - Compilar el sitio (actualiza `_freeze/`): `uv run quarto render`
