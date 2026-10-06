@@ -49,5 +49,425 @@
     "crumbs": [
       "Topología Computacional"
     ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html",
+    "title": "I.1 Componentes conexas",
+    "section": "",
+    "text": "Código\nimport { laboratorio } from \"../../assets/js/union_find_lab.js\"\nimport { olaTijera } from \"../../assets/js/ola_tijera.js\"\nimport { continuidad } from \"../../assets/js/continuidad.js\"\nimport { peine } from \"../../assets/js/peine.js\"",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#el-grafo-como-objeto-doble",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#el-grafo-como-objeto-doble",
+    "title": "I.1 Componentes conexas",
+    "section": "1.1 El grafo como objeto doble",
+    "text": "1.1 El grafo como objeto doble\nEl capítulo abre con una observación que es en sí misma un programa. En topología, un grafo es un objeto geométrico de dimensión 1: los vértices son puntos y las aristas, curvas. En matemática discreta es un objeto combinatorio: un conjunto y una relación. Las dos visiones son compatibles; la combinatoria es la receta y la geométrica es el plato.\nLa conexidad es una propiedad intrínseca: no depende de cómo dibujemos el grafo, en el papel o en el aire. Las secciones I.2 a I.4 tratan en cambio preguntas extrínsecas (cómo se ubica un grafo en el plano o en el espacio). El libro avisa que el matemático prefiere lo intrínseco, porque suele llevar a resultados más fundamentales.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#grafos-simples",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#grafos-simples",
+    "title": "I.1 Componentes conexas",
+    "section": "1.2 Grafos simples",
+    "text": "1.2 Grafos simples\n\n\n\n\n\n\n\nDefinición 1 (Grafo simple) Un grafo abstracto es un par \\(G = (V, E)\\) con \\(V\\) un conjunto de vértices y \\(E\\) un conjunto de aristas, cada una un par de vértices. Es simple si \\(E \\subseteq \\binom{V}{2}\\), el conjunto de pares no ordenados de elementos distintos.\n\n\n\n\nEl porqué del diseño. La condición \\(E \\subseteq \\binom{V}{2}\\) hace dos cosas a la vez, y las dos salen gratis de la notación:\n\nlos elementos de \\(\\binom{V}{2}\\) son subconjuntos de dos elementos distintos, así que no hay lazos (una arista \\(\\{v, v\\}\\) tendría un solo elemento);\n\\(E\\) es un conjunto, no una lista ni un multiconjunto, así que no hay aristas múltiples entre el mismo par de vértices.\n\nEn un grafo simple la única información es «¿son adyacentes \\(u\\) y \\(v\\)? sí o no». Para un programador, eso es exactamente una matriz de adyacencia simétrica de ceros y unos con diagonal nula.\nConsecuencias. Con \\(n = \\operatorname{card} V\\) vértices y \\(m = \\operatorname{card} E\\) aristas, \\(m \\le \\binom{n}{2} = \\tfrac{n(n-1)}{2}\\). Todo grafo simple es un subgrafo del grafo completo \\(K_n\\), y elegir un grafo sobre \\(n\\) vértices etiquetados es elegir un subconjunto de las aristas de \\(K_n\\): hay exactamente \\(2^{\\binom{n}{2}}\\) grafos simples (para \\(n = 5\\), \\(2^{10} = 1024\\)).\nEjemplos. El completo \\(K_5\\) (sus 10 aristas son los lados y las diagonales de un pentágono, con 5 cruces si se lo dibuja así: la figura I.1 del libro); el camino \\(P_4\\); el ciclo \\(C_5\\); el grafo de Petersen; y el caso extremo, \\(n\\) vértices sin ninguna arista: el grafo más desconexo posible, con \\(n\\) componentes.\nLo que no es simple.\n\nLos puentes de Königsberg (Euler, 1736): cuatro regiones de tierra y siete puentes, con dos puentes entre algunas regiones. Es un multigrafo. Es el primer problema de la teoría de grafos y también uno de los primeros de topología: la respuesta no depende de distancias ni de formas, solo de cómo están conectadas las cosas.\nUn vértice con un lazo.\nLos grafos dirigidos, cuyas aristas son pares ordenados, son otra especie.\n\n\n\n\n\n\n\nTipPara esta sección, lo simple no cuesta nada\n\n\n\nLa conexidad no ve ni los lazos ni la multiplicidad de las aristas: si se reemplaza cada grupo de aristas paralelas por una sola y se borran los lazos, las componentes no cambian. Restringirse a grafos simples no le quita nada a la pregunta.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#caminos-y-longitud",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#caminos-y-longitud",
+    "title": "I.1 Componentes conexas",
+    "section": "1.3 Caminos y longitud",
+    "text": "1.3 Caminos y longitud\n\n\n\n\n\n\n\nDefinición 2 (Camino) Un camino entre \\(u\\) y \\(v\\) es una sucesión de vértices \\(u = u_0, u_1, \\dots, u_k = v\\) con una arista entre \\(u_i\\) y \\(u_{i+1}\\) para cada \\(0 \\le i \\le k-1\\). Su longitud es \\(k\\), la cantidad de aristas. Se permiten repeticiones (el camino puede cruzarse o volver sobre sus pasos); el camino es simple si sus vértices son todos distintos.\n\n\n\n\n\n\n\n\n\n\n\nLema 1 (Borrado de bucles ★) Si hay un camino de \\(u\\) a \\(v\\), hay un camino simple de \\(u\\) a \\(v\\) de longitud menor o igual.\n\n\n\n\n\n\n\n\n\n\nNotaDemostración ★\n\n\n\n\n\n\nDemostración. Si el camino repite un vértice, \\(u_i = u_j\\) con \\(i &lt; j\\), borramos el tramo \\(u_{i+1}, \\dots, u_j\\). Lo que queda sigue siendo un camino de \\(u\\) a \\(v\\) y es estrictamente más corto. Como la longitud no puede bajar para siempre, el proceso termina en un camino sin repeticiones.\n\n\n\n\nLa imagen es cortar los rulos: cada vez que el recorrido vuelve a pisar un lugar por el que ya pasó, el rulo intermedio sobra. (La misma operación aplicada a un paseo al azar produce el loop-erased random walk, un objeto central de la probabilidad moderna.)\nDos consecuencias que vuelven más adelante:\n\nLa distancia \\(d(u, v)\\), la longitud mínima de un camino de \\(u\\) a \\(v\\), convierte cada componente de un grafo en un espacio métrico. Es el primer puente entre el grafo combinatorio y el mundo continuo de los bloques 2 y 3.\nUn camino de longitud \\(k\\) es lo mismo que una función \\(\\{0, 1, \\dots, k\\} \\to V\\) que manda enteros consecutivos a vértices adyacentes: una manera de recorrer el grafo usando como molde el grafo camino \\(P_k\\). Guardemos esta imagen para la sección 3.3, donde el molde será el intervalo \\([0, 1]\\).",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#conexidad-y-componentes",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#conexidad-y-componentes",
+    "title": "I.1 Componentes conexas",
+    "section": "1.4 Conexidad y componentes",
+    "text": "1.4 Conexidad y componentes\n\n\n\n\n\n\n\nDefinición 3 (Grafo conexo, componente) Un grafo simple es conexo si hay un camino entre todo par de vértices. Una componente (conexa) es un subgrafo conexo maximal: no se puede agrandar sin perder la conexidad.\n\n\n\n\nLa mirada estructural ★. La relación «\\(u \\sim v\\) si hay un camino de \\(u\\) a \\(v\\)» es una relación de equivalencia: es reflexiva (el camino de longitud 0), simétrica (se recorre el camino al revés) y transitiva (se concatenan dos caminos). Las componentes son exactamente sus clases de equivalencia, así que particionan \\(V\\): todo vértice está en exactamente una.\nEsta observación es la que hace posible union-find: decidir la conexidad es mantener una partición de los vértices, y union-find es precisamente una estructura de datos para particiones.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#árboles-y-árboles-generadores",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#árboles-y-árboles-generadores",
+    "title": "I.1 Componentes conexas",
+    "section": "1.5 Árboles y árboles generadores",
+    "text": "1.5 Árboles y árboles generadores\n\n\n\n\n\n\n\nDefinición 4 (Árbol, árbol generador) Un árbol es un grafo con un único camino simple entre cada par de vértices. Un árbol generador de \\(G = (V, E)\\) es un árbol \\((V, T)\\) con \\(T \\subseteq E\\): tiene todos los vértices de \\(G\\) y una cantidad mínima de aristas para mantenerlos conectados.\n\n\n\n\nEl árbol como punto de equilibrio. Para un grafo con \\(n\\) vértices, son equivalentes:\n\nes un árbol (camino simple único entre cada par);\nes conexo y no tiene ciclos;\nes conexo y tiene \\(n - 1\\) aristas;\nno tiene ciclos y tiene \\(n - 1\\) aristas;\nes minimalmente conexo: sacar cualquier arista lo desconecta;\nes maximalmente acíclico: agregar cualquier arista crea un ciclo.\n\nLas condiciones 5 y 6 cuentan la historia completa: un árbol está exactamente en el borde entre «tener demasiado pocas aristas para ser conexo» y «tener demasiadas para no tener ciclos». El libro destaca la 5; la 3 la prueba más adelante con union-find (sección 4.2).\nDos experimentos que conviene hacer con las manos (en la pieza de la sección 1.6, con la tijera):\n\nAgregar una arista \\(e \\notin T\\) a un árbol crea exactamente un ciclo: el ciclo fundamental de \\(e\\).\nQuitar una arista \\(e \\in T\\) parte el árbol en exactamente dos componentes: la arista era un puente, y las dos partes forman una separación. Es el corte fundamental de \\(e\\).\n\nCiclos fundamentales y cortes fundamentales son objetos duales, y esa dualidad reaparece, muy amplificada, en el capítulo V. Y un número para calibrar: \\(K_5\\) tiene \\(5^{5-2} = 125\\) árboles generadores (fórmula de Cayley, \\(n^{n-2}\\) para \\(K_n\\)); la figura I.1 del libro muestra uno.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-ola",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-ola",
+    "title": "I.1 Componentes conexas",
+    "section": "1.6 Separaciones y la Proposición 1",
+    "text": "1.6 Separaciones y la Proposición 1\n\n\n\n\n\n\n\nDefinición 5 (Separación de un grafo) Una separación de un grafo es una partición no trivial de los vértices, \\(V = U \\sqcup W\\) con \\(U, W \\neq \\emptyset\\), tal que ninguna arista une un vértice de \\(U\\) con uno de \\(W\\).\n\n\n\n\n\n\n\n\n\n\n\nProposición 1 (Conexo ⟺ sin separación ★) Un grafo simple tiene un camino entre todo par de vértices si y solo si no tiene ninguna separación.\n\n\n\n\n\n\n\n\n\n\nNotaDemostración ★\n\n\n\n\n\n\nDemostración. (⇒) Supongamos que existe una separación \\(V = U \\sqcup W\\). Elegimos \\(u \\in U\\), \\(w \\in W\\) y un camino \\(u = u_0, \\dots, u_k = w\\). El camino empieza en \\(U\\) y termina en \\(W\\), así que hay un primer índice en el que cruza: \\(u_i \\in U\\) y \\(u_{i+1} \\in W\\). Pero entre ellos hay una arista, y eso contradice que la partición sea una separación.\n(⇐) Fijamos un vértice \\(u\\) y llamamos \\(U\\) al conjunto de vértices alcanzables desde \\(u\\), y \\(W = V \\setminus U\\). No hay aristas entre \\(U\\) y \\(W\\): si \\(x \\in U\\) e \\(y \\in W\\) fueran adyacentes, \\(y\\) sería alcanzable (se llega a \\(x\\) y se da un paso más). Si \\(W\\) no fuera vacío, \\((U, W)\\) sería una separación. Como no hay separaciones, \\(W = \\emptyset\\): todo vértice es alcanzable desde \\(u\\), y por simetría y transitividad hay camino entre todo par.\n\n\n\n\nLa vuelta, con ojos de programador. «El conjunto de vértices alcanzables desde \\(u\\)» es un algoritmo: la búsqueda en anchura. Imaginemos una ola que parte de \\(u\\) y se expande arista por arista. Cuando la ola se detiene, pasa una de dos cosas:\n\ncubrió todo, y las aristas por las que avanzó forman un árbol generador: un testigo de que el grafo es conexo;\nno cubrió todo, y lo mojado y lo seco forman una separación: un testigo de que no lo es.\n\nLa demostración y el algoritmo son el mismo objeto. Probalo: elegí un grafo (o dibujá uno), elegí el origen y lanzá la ola. Después, sobre un grafo conexo, usá la tijera.\n\n\nCódigo\nolaTijera({ escenario: \"islas\", lanzar: true })\n\n\n\n\n\n\n\nCertificados ★. La proposición tiene una lectura todavía más fina: cualquiera sea la respuesta, existe un testigo corto y fácil de verificar.\n\n\n\n\n\n\n\n\n\nRespuesta\nTestigo\nTamaño\nCómo se verifica\n\n\n\n\n«Es conexo»\nUn árbol generador\n\\(n - 1\\) aristas\nSon aristas de \\(E\\), son \\(n - 1\\) y conectan todo\n\n\n«No es conexo»\nUna separación \\((U, W)\\)\n\\(n\\) etiquetas\nNinguna arista de \\(E\\) cruza de \\(U\\) a \\(W\\)\n\n\n\nQuien recibe el veredicto no necesita confiar en el algoritmo: le alcanza con chequear el testigo. En el mundo continuo, en cambio, el peine será un espacio sin ningún corte y sin un camino hacia uno de sus puntos: ninguno de los dos testigos existe.\n\n\n\n\n\n\nTipPregunta: ¿dónde se usa que G es finito en la prueba de (⇐)?\n\n\n\n\n\nEn ningún lado. La prueba funciona igual para grafos infinitos, porque los caminos siempre son finitos. Lo que sí usa la finitud es el algoritmo: en un grafo infinito la ola puede no terminar nunca.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#la-proposición-2-el-escultor-y-el-albañil",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#la-proposición-2-el-escultor-y-el-albañil",
+    "title": "I.1 Componentes conexas",
+    "section": "1.7 La Proposición 2: el escultor y el albañil",
+    "text": "1.7 La Proposición 2: el escultor y el albañil\n\n\n\n\n\n\n\nProposición 2 (Conexo ⟺ tiene árbol generador ★) Un grafo es conexo si y solo si tiene un árbol generador.\n\n\n\n\n\n\n\n\n\n\nNotaDemostración ★\n\n\n\n\n\n\nDemostración. (⇐) Si \\((V, T)\\) es un árbol generador, sus caminos usan aristas de \\(T \\subseteq E\\), así que también son caminos de \\(G\\).\n(⇒) Mientras el grafo tenga un ciclo, sacamos una arista del ciclo. El grafo sigue siendo conexo: un camino que usaba esa arista puede dar la vuelta por el resto del ciclo. Como hay finitas aristas, el proceso termina, en un grafo conexo y sin ciclos: un árbol.\n\n\n\n\nDos estrategias opuestas llegan al mismo objeto:\n\nEl escultor (la prueba): parte del bloque entero, el grafo, y saca material (aristas de ciclos) hasta que no sobra nada.\nEl albañil (el algoritmo): parte de los vértices sueltos y pone ladrillos (aristas) de a uno, descartando cada ladrillo que cerraría un ciclo.\n\nEl albañil es exactamente union-find procesando las aristas (bloque 4), y si los ladrillos llegan ordenados por peso es el algoritmo de Kruskal. Las aristas que el albañil descarta son exactamente las que el escultor podría haber sacado. En resumen:\n\\[\n\\text{hay caminos entre todo par}\n\\iff\n\\text{no hay separación}\n\\iff\n\\text{hay un árbol generador.}\n\\]",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#por-qué-abandonar-las-distancias",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#por-qué-abandonar-las-distancias",
+    "title": "I.1 Componentes conexas",
+    "section": "2.1 Por qué abandonar las distancias",
+    "text": "2.1 Por qué abandonar las distancias\nPara hablar de conexidad no hacen falta distancias: alcanza con saber qué puntos están cerca de cuáles, sin decir cuán cerca. Eso es una topología. Es el gesto que el prefacio del libro describe como pasar de la geometría a la topología: nos sacamos de encima el tamaño y nos quedamos con la conectividad.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#la-definición-y-su-porqué",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#la-definición-y-su-porqué",
+    "title": "I.1 Componentes conexas",
+    "section": "2.2 La definición y su porqué",
+    "text": "2.2 La definición y su porqué\n\n\n\n\n\n\n\nDefinición 6 (Topología) Una topología en un conjunto \\(X\\) es una colección \\(\\mathcal{U}\\) de subconjuntos de \\(X\\), llamados abiertos, tal que:\n\n\\(X\\) y \\(\\emptyset\\) son abiertos;\nsi \\(U_1\\) y \\(U_2\\) son abiertos, \\(U_1 \\cap U_2\\) es abierto (y, por inducción, toda intersección finita de abiertos);\nla unión de cualquier familia de abiertos (finita, infinita, incluso no numerable) es abierta.\n\nEl par \\((X, \\mathcal{U})\\) es un espacio topológico.\n\n\n\n\nLa pregunta que hay que hacerse es: ¿por qué intersecciones finitas pero uniones arbitrarias? La asimetría parece caprichosa hasta que se la lee con la siguiente clave.\n\n\n\n\n\n\nTipLa clave ★: un abierto es una propiedad que se confirma con una observación finita\n\n\n\nPensemos un punto de \\(\\mathbb{R}\\) como algo que solo conocemos por mediciones de precisión finita, como un número real en una computadora o una magnitud en un laboratorio.\n\n«\\(x\\) está a menos de \\(\\tfrac1k\\) de \\(0\\)» se puede confirmar: si es cierto, alguna medición suficientemente precisa lo muestra. Por eso \\((-\\tfrac1k, \\tfrac1k)\\) es abierto.\n«\\(x = 0\\) exactamente» nunca se confirma con una medición finita: siempre queda margen de error. Por eso \\(\\{0\\}\\) no es abierto.\n\n\n\nCon esta clave, los axiomas son las leyes de la lógica de las observaciones:\n\n\n\n\n\n\n\nAxioma\nLectura como observación\n\n\n\n\n\\(X\\) y \\(\\emptyset\\) abiertos\n«Siempre» y «nunca» se confirman sin medir nada\n\n\nIntersección finita\nY de dos pruebas: se corren las dos y ambas terminan en tiempo finito\n\n\nUnión arbitraria\nO de muchas pruebas: alcanza con que una confirme (se corren en paralelo)\n\n\nIntersección infinita: no\nY de infinitas pruebas: habría que esperar para siempre\n\n\n\nEl ejemplo del libro es exactamente esto: \\(\\bigcap_{k \\ge 1} (-\\tfrac1k, \\tfrac1k) = \\{0\\}\\) no es abierto, porque confirmar todas las precisiones a la vez es confirmar «\\(x = 0\\)», y eso requiere precisión infinita.\nPara un programador: abierto = predicado semidecidible, un test que termina diciendo «sí» cuando la respuesta es sí, aunque pueda no terminar nunca cuando es no. Esta lectura es un área seria de la matemática: Topology via Logic (S. Vickers, 1989) y la semántica de lenguajes de programación de D. Scott y M. Smyth.\nUna segunda imagen, más geométrica: un conjunto es abierto si cada uno de sus puntos tiene margen de maniobra: se puede mover un poco en cualquier dirección sin salirse.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#ejemplos-de-lo-extremo-a-lo-extraño",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#ejemplos-de-lo-extremo-a-lo-extraño",
+    "title": "I.1 Componentes conexas",
+    "section": "2.3 Ejemplos, de lo extremo a lo extraño",
+    "text": "2.3 Ejemplos, de lo extremo a lo extraño\n\nTopología discreta: todos los subconjuntos son abiertos. Todo es observable y cada punto está aislado.\nTopología trivial (indiscreta): solo \\(\\emptyset\\) y \\(X\\). Nada es observable; ningún par de puntos se distingue.\nLa recta real usual: generada por los intervalos abiertos (sección 2.4).\nEspacios finitos. Sobre \\(\\{a, b\\}\\) hay exactamente cuatro topologías: la trivial, la discreta y dos copias del espacio de Sierpiński, cuyos abiertos son \\(\\emptyset, \\{b\\}, \\{a, b\\}\\). Sobre 3 puntos hay 29 topologías (9 a menos de homeomorfismo). Una topología finita es lo mismo que un preorden, el orden de especialización (\\(x \\le y\\) si todo abierto que contiene a \\(x\\) contiene a \\(y\\)), así que los espacios finitos se dibujan como grafos dirigidos. Es un puente inesperado entre topología y combinatoria.\n\nEl espacio de Sierpiński es la estrella de esta sección. Con la clave de las observaciones es el espacio de los valores de verdad observables: \\(b\\) es «confirmado» y \\(a\\) es «todavía no confirmado». Se puede observar que algo pasó, pero no que no pasó. Lo vamos a usar en la sección 3.2 para reinterpretar el ejemplo de continuidad del libro.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-bases",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-bases",
+    "title": "I.1 Componentes conexas",
+    "section": "2.4 Bases",
+    "text": "2.4 Bases\n\n\n\n\n\n\n\nDefinición 7 (Base de una topología) Una base en \\(X\\) es una colección \\(\\mathcal{B}\\) de subconjuntos tal que (a) todo punto está en algún elemento de \\(\\mathcal{B}\\), y (b) si \\(x \\in B_1 \\cap B_2\\), existe \\(B_3 \\in \\mathcal{B}\\) con \\(x \\in B_3 \\subseteq B_1 \\cap B_2\\). La topología generada está formada por los \\(U\\) tales que todo \\(x \\in U\\) tiene un \\(B \\in \\mathcal{B}\\) con \\(x \\in B \\subseteq U\\); equivalentemente, por las uniones de elementos de la base.\n\n\n\n\nEl porqué del diseño. La base son los abiertos básicos: las observaciones elementales a partir de las cuales se arman todas las demás. La condición (b) garantiza que el Y de dos observaciones elementales se pueda expresar con observaciones elementales.\nLa imagen que vale oro ★: discos, cuadrados y rombos dan la misma topología en \\(\\mathbb{R}^2\\). Alrededor de cualquier punto, dentro de cada disco cabe un cuadrado centrado en el punto, dentro de ese cuadrado cabe un disco, y así indefinidamente. Ese anidamiento alternado implica que las dos bases generan los mismos abiertos.\n\nCódigo\nfrom matplotlib.patches import Circle, Polygon, Rectangle\n\nfor modo in MODOS:\n    with tema(modo) as p:\n        fig, ax = plt.subplots(figsize=(4.2, 4.2))\n        r = 1.0\n        formas = []\n        for paso in range(9):\n            tipo = paso % 3\n            if tipo == 0:   # disco de radio r; adentro, el cuadrado inscripto (semilado r/√2)\n                formas.append(Circle((0, 0), r))\n                r = r / math.sqrt(2)\n            elif tipo == 1:  # cuadrado de semilado r; adentro, el rombo inscripto (semidiagonal r)\n                formas.append(Rectangle((-r, -r), 2 * r, 2 * r))\n            else:            # rombo de semidiagonal r; adentro, el disco inscripto (radio r/√2)\n                formas.append(Polygon([(r, 0), (0, r), (-r, 0), (0, -r)]))\n                r = r / math.sqrt(2)\n        colores = [p[\"acento\"], p[\"seco\"], p[\"enlace\"]]\n        for k, f in enumerate(formas):\n            f.set_fill(False)\n            f.set_edgecolor(colores[k % 3])\n            f.set_linewidth(2)\n            ax.add_patch(f)\n        ax.plot(0, 0, \"o\", color=p[\"tinta\"], ms=4)\n        ax.set_xlim(-1.08, 1.08)\n        ax.set_ylim(-1.08, 1.08)\n        ax.set_aspect(\"equal\")\n        ax.axis(\"off\")\n        plt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigura 1: Anidamiento alternado alrededor de un punto: disco ⊃ cuadrado ⊃ rombo ⊃ disco ⊃ … Cada forma contiene a la siguiente, así que las tres bases generan la misma topología.\n\n\n\nMoraleja: la topología no ve formas, solo cercanía. Un disco y un cuadrado son la misma noción de «alrededor».\nEl contraejemplo que vale más oro todavía ★: la recta de Sorgenfrey. Si en \\(\\mathbb{R}\\) usamos como base los intervalos semiabiertos \\([a, b)\\) en lugar de los abiertos \\((a, b)\\), obtenemos otra topología sobre el mismo conjunto. En ella \\([0, 1)\\) es abierto, y su complemento \\((-\\infty, 0) \\cup [1, \\infty)\\) también (es unión de semiabiertos). Así que \\([0, 1)\\) es a la vez abierto y cerrado, y la recta de Sorgenfrey no es conexa (sección 3.5). El mismo conjunto \\(\\mathbb{R}\\) es conexo o no según la topología: la conexidad es una propiedad del espacio topológico, no del conjunto.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#subespacios",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#subespacios",
+    "title": "I.1 Componentes conexas",
+    "section": "2.5 Subespacios",
+    "text": "2.5 Subespacios\n\n\n\n\n\n\n\nDefinición 8 (Topología de subespacio) Si \\(Y \\subseteq X\\) y \\(\\mathcal{U}\\) es una topología en \\(X\\), la topología de subespacio en \\(Y\\) está formada por los conjuntos \\(Y \\cap U\\) con \\(U \\in \\mathcal{U}\\).\n\n\n\n\nEl ejemplo del libro. En \\([0, 1] \\subseteq \\mathbb{R}\\), el conjunto \\((\\tfrac12, 1]\\) es abierto, porque es \\([0, 1] \\cap (\\tfrac12, 2)\\). En \\(\\mathbb{R}\\) no lo es: el \\(1\\) no tiene margen hacia la derecha.\nLa imagen: el borde del mundo. Para un habitante de \\([0, 1]\\) no existe nada más allá del \\(1\\). El \\(1\\) tiene margen de maniobra en todas las direcciones que existen en su mundo, que es solo hacia la izquierda. Ser abierto no es una propiedad de un conjunto, sino de un conjunto dentro de un universo. Esto importa muchísimo en el resto del libro, donde grafos y complejos viven como subespacios de \\(\\mathbb{R}^2\\) o \\(\\mathbb{R}^d\\).",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#continuidad",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#continuidad",
+    "title": "I.1 Componentes conexas",
+    "section": "3.1 Continuidad",
+    "text": "3.1 Continuidad\n\n\n\n\n\n\n\nDefinición 9 (Función continua) Una función \\(f : X \\to Y\\) entre espacios topológicos es continua si la preimagen de todo abierto es abierta: si \\(U\\) es abierto en \\(Y\\), entonces \\(f^{-1}(U)\\) es abierto en \\(X\\).\n\n\n\n\n¿Por qué preimágenes y no imágenes? Porque la continuidad expresa «si la entrada se mueve poco, la salida se mueve poco», y eso se lee de atrás hacia adelante: fijada una tolerancia para la salida (un abierto \\(U\\) alrededor de \\(f(x)\\)), tiene que haber una tolerancia para la entrada (un abierto alrededor de \\(x\\) dentro de \\(f^{-1}(U)\\)) que la garantice. La versión con imágenes falla de entrada: una función constante es lo más continuo que hay y manda todo abierto a un punto, que no es abierto.\nRecuperando el ε-δ. Para \\(f : \\mathbb{R} \\to \\mathbb{R}\\), la ventana \\((f(x) - \\varepsilon, f(x) + \\varepsilon)\\) es un abierto de la salida y el intervalo \\((x - \\delta, x + \\delta)\\) es un abierto básico de la entrada dentro de su preimagen: la definición es equivalente a la del análisis.\nCon la clave de las observaciones ★: \\(f\\) es continua si toda propiedad observable de la salida es una propiedad observable de la entrada. Dicho computacionalmente: la salida se puede aproximar tanto como se quiera midiendo la entrada con suficiente precisión. Por eso vale el principio (Brouwer, Turing) de que toda función computable sobre los reales es continua.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-giro",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-giro",
+    "title": "I.1 Componentes conexas",
+    "section": "3.2 El ejemplo del libro, y su giro inesperado",
+    "text": "3.2 El ejemplo del libro, y su giro inesperado\nEl ejemplo. \\(f : \\mathbb{R} \\to \\mathbb{R}\\) manda \\((-\\infty, 0]\\) a \\(0\\) y \\((0, \\infty)\\) a \\(1\\). No es continua: para \\(0 &lt; \\varepsilon &lt; 1\\), el abierto \\((-\\varepsilon, \\varepsilon)\\) tiene preimagen \\((-\\infty, 0]\\), que no es abierta.\nLa imagen. Fijada la ventana de tolerancia \\(\\varepsilon\\) alrededor de \\(f(0) = 0\\), por más chica que sea la ventana de entrada alrededor de \\(0\\) siempre contiene puntos positivos, que saltan a \\(1\\), fuera de la ventana. No existe ningún δ que funcione. En el primer panel, achicá δ todas las veces que quieras; después mové \\(x_0\\) fuera del 0 y mirá cómo aparece un δ que funciona: la falla es local.\nEl giro ★. En el segundo panel, la misma fórmula va a \\(Y = \\{0, 1\\}\\) y probamos sus cuatro topologías:\n\n\n\n\n\n\n\n\n\nTopología en \\(\\{0,1\\}\\)\nAbiertos\n¿Es continua \\(f\\)?\nPor qué\n\n\n\n\nDiscreta\n\\(\\emptyset, \\{0\\}, \\{1\\}, \\{0,1\\}\\)\nNo\n\\(f^{-1}(\\{0\\}) = (-\\infty, 0]\\) no es abierto\n\n\nSierpiński con \\(\\{1\\}\\) abierto\n\\(\\emptyset, \\{1\\}, \\{0,1\\}\\)\nSí\n\\(f^{-1}(\\{1\\}) = (0, \\infty)\\) es abierto\n\n\nSierpiński con \\(\\{0\\}\\) abierto\n\\(\\emptyset, \\{0\\}, \\{0,1\\}\\)\nNo\n\\(f^{-1}(\\{0\\}) = (-\\infty, 0]\\) no es abierto\n\n\nTrivial\n\\(\\emptyset, \\{0,1\\}\\)\nSí\nToda función hacia un espacio trivial es continua\n\n\n\n\n\nCódigo\ncontinuidad()\n\n\n\n\n\n\n\n¡La misma función salta y es continua! La continuidad no es una propiedad de la fórmula, sino de la relación entre dos topologías.\nLa lectura computacional lo explica todo: \\(f\\) es el test «\\(x &gt; 0\\)», que es semidecidible. Si \\(x &gt; 0\\), alguna aproximación finita lo confirma; si \\(x = 0\\), ninguna aproximación finita descarta que sea positivo. En Sierpiński con \\(\\{1\\}\\) abierto, «1» es confirmado y «0» es todavía no: el salto está permitido solo en la dirección en que se puede observar. (En la pieza, cambiá \\(f\\) por \\(g = 1 - f\\), el test «\\(x \\le 0\\)», y mirá cómo la continuidad se mueve a la otra copia de Sierpiński.) En general, una función continua \\(X \\to\\) Sierpiński es exactamente lo mismo que un abierto de \\(X\\): su preimagen de «confirmado».",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-caminos-continuos",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-caminos-continuos",
+    "title": "I.1 Componentes conexas",
+    "section": "3.3 Caminos continuos",
+    "text": "3.3 Caminos continuos\n\n\n\n\n\n\n\nDefinición 10 (Camino en un espacio) Un camino en \\(X\\) es una función continua \\(\\gamma : [0, 1] \\to X\\); conecta \\(\\gamma(0)\\) con \\(\\gamma(1)\\). Se permiten autointersecciones (\\(\\gamma(s) = \\gamma(t)\\) con \\(s \\neq t\\)); si no hay, \\(\\gamma\\) es inyectiva y el camino es simple.\n\n\n\n\n¿Es el análogo de los caminos discretos? Sí, y la analogía es precisa ★:\n\n\n\n\nCamino discreto\nCamino continuo\n\n\n\n\nMolde\nEl grafo camino \\(P_k = \\{0, 1, \\dots, k\\}\\)\nEl intervalo \\([0, 1]\\)\n\n\nQué se exige\nEnteros consecutivos van a vértices adyacentes\nPuntos cercanos van a puntos cercanos\n\n\nSimple\nVértices distintos\nFunción inyectiva\n\n\nBorrar repeticiones\nCortar rulos (Lema 1): trivial\nTodo camino entre puntos distintos contiene uno simple (en espacios de Hausdorff): un teorema profundo\n\n\n\nEn ambos casos un camino es una copia deformada de un segmento estándar, dibujada dentro del espacio. El intervalo \\([0, 1]\\) es la versión continua del grafo camino.\nEl puente concreto: la realización geométrica. Si dibujamos el grafo \\(G\\) como un espacio \\(|G|\\) (cada arista, un segmento), un camino discreto \\(u_0, \\dots, u_k\\) se vuelve continuo: en el tiempo \\(t \\in [\\tfrac{i}{k}, \\tfrac{i+1}{k}]\\) se recorre la arista \\(u_i u_{i+1}\\) a velocidad constante. Y recíprocamente, un camino continuo en \\(|G|\\) entre dos vértices pasa por una sucesión de vértices que, borrando rulos, es un camino discreto. Por eso\n\\[\nG \\text{ conexo} \\iff |G| \\text{ conexo por caminos} \\iff |G| \\text{ conexo}.\n\\]\nPara grafos, los tres mundos coinciden.\nCaminos raros, para calibrar la intuición.\n\nLa curva de Peano es un camino \\([0, 1] \\to [0, 1]^2\\) sobreyectivo: pasa por todos los puntos del cuadrado. Un camino puede ser mucho más salvaje que «una curva».\nUn camino que salta ★. En Sierpiński \\(\\{a, b\\}\\) (con \\(\\{b\\}\\) abierto), la función \\(\\gamma(t) = a\\) para \\(t \\le \\tfrac12\\) y \\(\\gamma(t) = b\\) para \\(t &gt; \\tfrac12\\) es continua, porque \\(\\gamma^{-1}(\\{b\\}) = (\\tfrac12, 1]\\) es abierto en \\([0, 1]\\). Un camino hecho de un único salto. Es el mismo fenómeno del giro de la sección 3.2.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#conexo-por-caminos",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#conexo-por-caminos",
+    "title": "I.1 Componentes conexas",
+    "section": "3.4 Conexo por caminos",
+    "text": "3.4 Conexo por caminos\n\n\n\n\n\n\n\nDefinición 11 (Conexo por caminos) Un espacio es conexo por caminos si todo par de puntos se conecta por un camino.\n\n\n\n\nEs la versión continua de la definición constructiva: se puede llegar.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-separaciones",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-separaciones",
+    "title": "I.1 Componentes conexas",
+    "section": "3.5 Separaciones y conexidad",
+    "text": "3.5 Separaciones y conexidad\n\n\n\n\n\n\n\nDefinición 12 (Espacio conexo) Una separación de \\(X\\) es una partición \\(X = U \\sqcup W\\) en dos abiertos no vacíos. \\(X\\) es conexo si no tiene separaciones.\n\n\n\n\nEs la versión continua de la definición por obstrucción: no se puede cortar. Formas equivalentes ★: \\(X\\) es conexo si y solo si los únicos subconjuntos a la vez abiertos y cerrados (clopen) son \\(\\emptyset\\) y \\(X\\), si y solo si toda función continua \\(X \\to \\{0, 1\\}\\) (con la topología discreta) es constante.\nCon la clave de las observaciones: un clopen es una propiedad que se puede confirmar y también refutar en tiempo finito, es decir, decidible. Un espacio es conexo si no admite ninguna propiedad decidible no trivial. Por eso, por ejemplo, no existe ningún test computable total que separe a los reales en dos clases no vacías.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#conexo-por-caminos-implica-conexo",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#conexo-por-caminos-implica-conexo",
+    "title": "I.1 Componentes conexas",
+    "section": "3.6 Conexo por caminos implica conexo",
+    "text": "3.6 Conexo por caminos implica conexo\n\n\n\n\n\n\n\nLema 2 (El intervalo es conexo ★) \\([0, 1]\\) es conexo.\n\n\n\n\n\n\n\n\n\n\nNotaDemostración ★\n\n\n\n\n\n\nDemostración. Supongamos \\([0, 1] = A \\sqcup B\\) con \\(A, B\\) abiertos en \\([0, 1]\\), no vacíos, y \\(0 \\in A\\). Sea \\(s = \\sup\\{t : [0, t] \\subseteq A\\}\\). Si \\(s \\in A\\): como \\(A\\) es abierto, hay margen a la derecha de \\(s\\) dentro de \\(A\\) (salvo que \\(s = 1\\), y entonces \\([0, 1] \\subseteq A\\) y \\(B = \\emptyset\\)), lo que contradice la definición de \\(s\\). Si \\(s \\in B\\): como \\(B\\) es abierto, hay margen a la izquierda de \\(s\\) dentro de \\(B\\), pero esos puntos están en \\(A\\) por definición de \\(s\\). Contradicción en los dos casos.\n\n\n\n\n\n\n\n\n\n\n\nTeorema 1 (Conexo por caminos ⟹ conexo ★) Si \\(X\\) es conexo por caminos, es conexo.\n\n\n\n\n\n\n\n\n\n\nNotaDemostración ★\n\n\n\n\n\n\nDemostración. Si \\(X = U \\sqcup W\\) fuera una separación, tomamos \\(u \\in U\\), \\(w \\in W\\) y un camino \\(\\gamma\\) de \\(u\\) a \\(w\\). Entonces \\(\\gamma^{-1}(U)\\) y \\(\\gamma^{-1}(W)\\) son abiertos (por continuidad), disjuntos, no vacíos (\\(0\\) está en el primero y \\(1\\) en el segundo) y cubren \\([0, 1]\\): una separación de \\([0, 1]\\), que contradice el Lema 2.\n\n\n\n\nLas dos pruebas, lado a lado.\n\n\n\nGrafos (Proposición 1, ⇒)\nEspacios (Teorema 1)\n\n\n\n\nEl camino empieza en \\(U\\) y termina en \\(W\\)\nEl camino empieza en \\(U\\) y termina en \\(W\\)\n\n\nHay un primer índice en que cruza: \\(u_i \\in U\\), \\(u_{i+1} \\in W\\)\nHay un supremo donde «cruza»\n\n\nLa arista \\(u_i u_{i+1}\\) cruza el corte: absurdo\n\\([0, 1]\\) quedaría separado: absurdo\n\n\n\nEs el mismo argumento. En lo discreto el «primer cruce» es un índice; en lo continuo, un supremo, y la conexidad de \\([0, 1]\\) hace el papel de «no hay huecos entre enteros consecutivos».",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-peine",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-peine",
+    "title": "I.1 Componentes conexas",
+    "section": "3.7 La vuelta es falsa: el peine",
+    "text": "3.7 La vuelta es falsa: el peine\nLa construcción. En \\(\\mathbb{R}^2\\) tomamos la barra \\([0, 1] \\times \\{0\\}\\), los dientes \\(\\{\\tfrac1k\\} \\times [0, 1]\\) para todo entero \\(k \\ge 1\\), y el diente \\(\\{0\\} \\times [0, 1]\\); y borramos el interior de este último, \\(\\{0\\} \\times (0, 1)\\). Queda el peine con un diente borrado \\(C\\), con la topología de subespacio. Del diente borrado sobrevive solo la punta \\(p = (0, 1)\\) (y su base, que está en la barra).\n\n\n\n\n\n\n\nProposición 3 (El peine) \\(C\\) es conexo pero no es conexo por caminos.\n\n\n\n\n\n\n\n\n\n\nNotaDemostración de que C es conexo ★\n\n\n\n\n\n\nDemostración. Sea \\(S = C \\setminus \\{p\\}\\), la barra con todos los dientes. \\(S\\) es conexo por caminos (de cualquier punto se baja por su diente a la barra y se sube por otro) y, por el Teorema 1, conexo. Además \\(p\\) está en la clausura de \\(S\\): todo disco alrededor de \\(p\\) toca las puntas de los dientes \\(\\{\\tfrac1k\\} \\times [0, 1]\\) con \\(k\\) grande. Y vale el lema general: si \\(S\\) es conexo y \\(S \\subseteq T \\subseteq \\overline{S}\\), entonces \\(T\\) es conexo, porque una separación de \\(T\\) cortaría a \\(S\\), que es denso en \\(T\\). Es lo que el libro resume como «la unión de un conjunto conexo por caminos y un punto límite».\n\n\n\n\n\n\n\n\n\n\nNotaDemostración de que C no es conexo por caminos ★\n\n\n\n\n\n\nDemostración. Sea \\(\\gamma : [0, 1] \\to C\\) un camino con \\(\\gamma(0) = p\\); veamos que es constante. El conjunto \\(T = \\gamma^{-1}(p)\\) es cerrado y no vacío; mostremos que también es abierto. Si \\(\\gamma(t_0) = p\\), por continuidad hay un intervalo \\(J \\ni t_0\\) con \\(\\gamma(J)\\) dentro del disco de radio \\(\\tfrac12\\) alrededor de \\(p\\). Ese disco corta a \\(C\\) en el punto \\(p\\) más trozos verticales de los dientes \\(\\{\\tfrac1k\\} \\times [0, 1]\\) (uno por cada \\(k\\) suficientemente grande), y cada trozo es abierto y cerrado dentro de esa intersección. Como \\(\\gamma(J)\\) es conexo (imagen continua de un intervalo) y contiene a \\(p\\), no puede tocar ningún trozo: si tocara uno, por ser clopen, \\(\\gamma(J)\\) quedaría entero dentro de él y no contendría a \\(p\\). Entonces \\(\\gamma(J) = \\{p\\}\\) y \\(T\\) es abierto. Como \\([0, 1]\\) es conexo, \\(T = [0, 1]\\): el camino nunca se mueve de \\(p\\).\n\n\n\n\nLa imagen: la torre visible e inalcanzable. Desde la barra, \\(p\\) se ve: cualquier vecindad suya, por chica que sea, contiene puntos del resto del peine. Pero no hay ningún camino que llegue. Cada intento de acercarse obliga a subir por un diente \\(\\tfrac1k\\) y, para pasar al siguiente, a bajar hasta la barra. Llegar a \\(p\\) exigiría infinitas subidas y bajadas de altura \\(\\tfrac12\\) en tiempo finito, y la continuidad lo prohíbe.\nEn la pieza: achicá el disco (siempre toca infinitos dientes), hacé zoom hacia \\(p\\) (los dientes no se separan: se amontonan, porque cerca de \\(0\\) dos dientes consecutivos distan \\(\\tfrac1k - \\tfrac1{k+1} \\approx x^2\\)), aceptá el desafío de dibujar un camino hasta \\(p\\), y mirá el peine a través de la lente \\(x \\mapsto 1/x\\), que lo convierte en una regla con un diente en cada entero y manda \\(p\\) al infinito.\n\n\nCódigo\npeine({ disco: 0.2 })\n\n\n\n\n\n\n\nY el leitmotiv se cumple: \\(C\\) no tiene ningún corte (no hay testigo de desconexión) y no hay ningún camino hacia \\(p\\) (no hay testigo de conexión por caminos). En el mundo discreto eso es imposible (Proposición 1). Un hermano famoso, con el mismo fenómeno, es la curva seno del topólogo: \\(\\{(x, \\sin \\tfrac1x) : 0 &lt; x \\le 1\\}\\) junto con el segmento \\(\\{0\\} \\times [-1, 1]\\).",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#la-jerarquía-y-por-qué-en-este-libro-casi-nunca-importa",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#la-jerarquía-y-por-qué-en-este-libro-casi-nunca-importa",
+    "title": "I.1 Componentes conexas",
+    "section": "3.8 La jerarquía, y por qué en este libro casi nunca importa",
+    "text": "3.8 La jerarquía, y por qué en este libro casi nunca importa\n\\[\n\\text{conexo por caminos} \\;\\subsetneq\\; \\text{conexo}.\n\\]\nEl libro dice que «para la mayoría de los espacios que encontraremos, son lo mismo». La razón precisa ★:\n\n\n\n\n\n\n\nTeorema 2 (Conexo y localmente conexo por caminos) Si \\(X\\) es conexo y localmente conexo por caminos (todo punto tiene vecindades arbitrariamente chicas conexas por caminos), entonces \\(X\\) es conexo por caminos.\n\n\n\n\nLos grafos, los complejos simpliciales, las variedades, los abiertos de \\(\\mathbb{R}^n\\) y los espacios finitos son localmente conexos por caminos, así que en ellos las dos nociones coinciden. El peine falla en un único punto: \\(p\\) no tiene vecindades chicas conexas por caminos. La grieta entre las dos definiciones es una patología local, concentrada en un punto donde el espacio se acumula.\n\nCódigo\nfrom matplotlib.patches import Ellipse\n\nregiones = [\n    ((0.0, 0.0), 8.6, 5.6, \"conexos\", (0, 2.45)),\n    ((-1.1, -0.25), 5.6, 4.2, \"conexos por caminos\", (-1.1, 1.55)),\n    ((-1.7, -0.5), 3.4, 2.6, \"conexos y localmente\\nconexos por caminos\", (-1.7, 0.15)),\n]\nejemplos = [\n    (\"ℝ\", (-2.3, -0.8)), (\"|K₅|\", (-1.2, -0.95)), (\"Sierpiński\", (-1.75, -1.35)),\n    (\"el peine\", (2.85, 0.6)), (\"curva seno\", (2.85, -0.5)), (\"Sorgenfrey\", (4.85, -2.75)),\n]\nfor modo in MODOS:\n    with tema(modo) as p:\n        fig, ax = plt.subplots(figsize=(6.6, 4.4))\n        colores = [p[\"acento\"], p[\"enlace\"], p[\"seco\"]]\n        for (centro, w, h, nombre, pos), color in zip(regiones, colores):\n            ax.add_patch(Ellipse(centro, w, h, fill=False, lw=2, edgecolor=color))\n            ax.text(*pos, nombre, ha=\"center\", va=\"center\", fontsize=9.5, color=p[\"tenue\"])\n        for nombre, pos in ejemplos:\n            ax.plot(*pos, \"o\", ms=4, color=p[\"tinta\"])\n            ax.text(pos[0], pos[1] - 0.32, nombre, ha=\"center\", va=\"top\", fontsize=9.5)\n        ax.set_xlim(-4.6, 6.0)\n        ax.set_ylim(-3.3, 3.0)\n        ax.set_aspect(\"equal\")\n        ax.axis(\"off\")\n        plt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigura 2: La jerarquía de la conexidad, con un ejemplo en cada región. La recta de Sorgenfrey queda afuera de todo.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#el-problema",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#el-problema",
+    "title": "I.1 Componentes conexas",
+    "section": "4.1 El problema",
+    "text": "4.1 El problema\nVolvemos a los grafos con una pregunta algorítmica: decidir si un grafo es conexo. La idea del libro es procesar las aristas de a una y mantener en todo momento la partición de los vértices en componentes del grafo construido hasta ahí (la relación de equivalencia de la sección 1.4, construida incrementalmente).\n\nAl principio no hay aristas: \\(n\\) componentes, \\(\\{1\\}, \\{2\\}, \\dots, \\{n\\}\\).\nCada arista \\((u, v)\\) o bien fusiona dos componentes, o bien une dos vértices que ya estaban conectados.\nAl final, el grafo es conexo si y solo si queda un único conjunto, \\([n] = \\{1, \\dots, n\\}\\).\n\n\n\n\n\n\n\nAdvertenciaUn malentendido frecuente\n\n\n\nEl algoritmo no modifica el grafo ni lo «vuelve conexo»: solo lleva la cuenta de la conectividad del grafo dado, arista por arista.\n\n\nEl tipo abstracto de datos tiene dos operaciones. Find(i) devuelve el nombre del conjunto que contiene a \\(i\\) (un representante); Union(i, j), si \\(i\\) y \\(j\\) están en conjuntos distintos, los reemplaza por su unión. Find sirve para saber si dos vértices ya están juntos: Find(u) == Find(v).",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-betti",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#sec-betti",
+    "title": "I.1 Componentes conexas",
+    "section": "4.2 Contar es demostrar: árboles, ciclos y números de Betti",
+    "text": "4.2 Contar es demostrar: árboles, ciclos y números de Betti\nEl argumento del libro. Cada Union exitosa reduce en uno la cantidad de conjuntos. Se empieza con \\(n\\) y se termina con \\(1\\) si el grafo es conexo: hacen falta exactamente \\(n - 1\\) uniones exitosas, y las aristas que las provocaron forman un árbol generador (el albañil de la sección 1.7). Corolario: todo árbol con \\(n\\) vértices tiene \\(n - 1\\) aristas.\nLa extensión que anticipa el capítulo IV ★. Llevemos dos contadores: \\(\\beta_0\\), la cantidad de conjuntos al final (las componentes), y \\(\\beta_1\\), la cantidad de aristas rechazadas (las que unían vértices ya conectados). Cada arista o fusiona, y hay exactamente \\(n - \\beta_0\\) fusiones, o se rechaza. Entonces \\(m = (n - \\beta_0) + \\beta_1\\), es decir:\n\\[\n\\boxed{\\; n - m = \\beta_0 - \\beta_1 \\;}\n\\]\nCada arista rechazada cierra un ciclo nuevo, independiente de los anteriores: \\(\\beta_1\\) cuenta los «agujeros» del grafo. \\(\\beta_0\\) y \\(\\beta_1\\) son los números de Betti del grafo y la fórmula es su característica de Euler. Sin decirlo, union-find calcula la homología del grafo en dimensiones 0 y 1, que es el tema del capítulo IV. No hace falta creerlo: lo comprobamos acá mismo con tcomp, sobre grafos al azar y con las tres estrategias.\n\n\nCódigo\nrng = random.Random(0)\ncomprobados = 0\nfor _ in range(1000):\n    n = rng.randint(1, 40)\n    posibles = [(u, v) for u in range(n) for v in range(u + 1, n)]\n    aristas = rng.sample(posibles, rng.randint(0, len(posibles)))\n    for estrategia in ESTRATEGIAS:\n        uf = UnionFind(n, estrategia)\n        for u, v in aristas:\n            uf.union(u, v)\n        assert n - len(aristas) == uf.componentes - uf.rechazadas  # n - m = β₀ - β₁\n        comprobados += 1\nprint(f\"n - m = β₀ - β₁ se cumplió en {comprobados} corridas (1000 grafos × 3 estrategias).\")\n\n\nn - m = β₀ - β₁ se cumplió en 3000 corridas (1000 grafos × 3 estrategias).",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#la-representación-un-bosque-dentro-de-un-arreglo",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#la-representación-un-bosque-dentro-de-un-arreglo",
+    "title": "I.1 Componentes conexas",
+    "section": "4.3 La representación: un bosque dentro de un arreglo",
+    "text": "4.3 La representación: un bosque dentro de un arreglo\nCada conjunto se guarda como un árbol con punteros hacia arriba (up-tree): cada nodo apunta a su padre, y la raíz es el nombre del conjunto. Todos los árboles viven en un arreglo lineal \\(V[1..n]\\), donde \\(V[i].\\text{parent}\\) es el padre de \\(i\\). La idea clave de la figura I.2 del libro es que el arreglo es el almacenamiento y el bosque es el significado: los nodos pueden estar en cualquier orden en el arreglo, lo que importa son los punteros. Por convención (p. 8), la raíz se apunta a sí misma, \\(V[r].\\text{parent} = r\\), así no hace falta un valor especial null.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#la-versión-básica",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#la-versión-básica",
+    "title": "I.1 Componentes conexas",
+    "section": "4.4 La versión básica",
+    "text": "4.4 La versión básica\ndef find(i):\n    if parent[i] != i:\n        return find(parent[i])   # subir hasta la raíz\n    return i\n\ndef union(i, j):\n    x, y = find(i), find(j)\n    if x != y:\n        parent[x] = y            # la raíz x pasa a colgar de la raíz y\n\n\n\n\n\n\nTipLa analogía de la empresa\n\n\n\nCada conjunto es una empresa y la raíz es su director general. Find(i) es «preguntarle a tu jefe, que le pregunta a su jefe, … hasta llegar al director». Union es una fusión: el director de una empresa pasa a reportarle al de la otra.\n\n\nEjemplo 1. \\(n = 4\\), \\(E = \\{(1,2), (2,3), (1,3), (3,4)\\}\\), versión básica. La tabla no está copiada: la produce tcomp paso a paso.\n\nCódigo\nuf = UnionFind(4, \"ingenua\")\nfilas = [\"| Paso | Arista | Acción | `parent[1..4]` | Componentes |\", \"|---|---|---|---|---|\",\n         f\"| 0 | | | `{libro(uf.parent)}` | {{1}} {{2}} {{3}} {{4}} |\"]\nfor paso, (u, v) in enumerate([(1, 2), (2, 3), (1, 3), (3, 4)], start=1):\n    x, y = uf.raiz(u - 1) + 1, uf.raiz(v - 1) + 1\n    aceptada = uf.union(u - 1, v - 1)\n    accion = f\"`parent[{x}] = {y}`\" if aceptada else \"**rechazo**: cierra un ciclo\"\n    comps = \" \".join(\"{\" + \",\".join(str(i + 1) for i in sorted(c)) + \"}\" for c in uf.conjuntos())\n    filas.append(f\"| {paso} | ({u},{v}) | {accion} | `{libro(uf.parent)}` | {comps} |\")\nprint(\"\\n\".join(filas))\nprint(f\"\\nAl final: β₀ = {uf.componentes} (conexo), β₁ = {uf.rechazadas} (el triángulo 1-2-3), \"\n      f\"altura del bosque = {uf.altura()}.\")\n\n\n\n\n\n\n\n\n\n\n\nPaso\nArista\nAcción\nparent[1..4]\nComponentes\n\n\n\n\n0\n\n\n[1, 2, 3, 4]\n{1} {2} {3} {4}\n\n\n1\n(1,2)\nparent[1] = 2\n[2, 2, 3, 4]\n{1,2} {3} {4}\n\n\n2\n(2,3)\nparent[2] = 3\n[2, 3, 3, 4]\n{1,2,3} {4}\n\n\n3\n(1,3)\nrechazo: cierra un ciclo\n[2, 3, 3, 4]\n{1,2,3} {4}\n\n\n4\n(3,4)\nparent[3] = 4\n[2, 3, 4, 4]\n{1,2,3,4}\n\n\n\nAl final: β₀ = 1 (conexo), β₁ = 1 (el triángulo 1-2-3), altura del bosque = 3.\nMirá el árbol final: es la cadena \\(1 \\to 2 \\to 3 \\to 4\\), de altura \\(3 = n - 1\\). Ese es el problema de la versión básica. Recorrelo en el laboratorio: las tres vistas (el grafo, el bosque y el arreglo) son el mismo estado, y podés cambiar de estrategia en cualquier paso.\n\n\nCódigo\nlaboratorio({ escenario: \"ej1\", estrategia: \"ingenua\" })",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#el-peor-caso-de-la-versión-básica",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#el-peor-caso-de-la-versión-básica",
+    "title": "I.1 Componentes conexas",
+    "section": "4.5 El peor caso de la versión básica",
+    "text": "4.5 El peor caso de la versión básica\nCon la secuencia Union(1,2), Union(1,3), …, Union(1,n), cada unión cuelga la raíz vieja debajo del vértice nuevo y el árbol degenera en una cadena de longitud \\(n - 1\\). Cada Find desde el fondo cuesta \\(n - 1\\) pasos y el costo total se vuelve cuadrático. Saltos de puntero al unir todo y hacer después \\(n\\) veces Find(1), medidos por tcomp:\n\nCódigo\ndef peor_caso(n, estrategia):\n    uf = UnionFind(n, estrategia)\n    for k in range(1, n):\n        uf.union(0, k)\n    for _ in range(n):\n        uf.find(0)\n    return uf.saltos\n\nprint(\"| $n$ | \" + \" | \".join(NOMBRES[e] for e in ESTRATEGIAS) + \" |\")\nprint(\"|---|---|---|---|\")\nfor n in (10, 100, 1000):\n    print(f\"| {n:,} | \" + \" | \".join(f\"{peor_caso(n, e):,}\" for e in ESTRATEGIAS) + \" |\")\n\n\n\n\n\\(n\\)\nbásica\npor tamaño\ntamaño + compresión\n\n\n\n\n10\n126\n18\n18\n\n\n100\n14,751\n198\n198\n\n\n1,000\n1,497,501\n1,998\n1,998\n\n\n\n(En el laboratorio, el escenario «Peor caso de la básica» muestra la cadena creciendo.)",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#unión-por-tamaño",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#unión-por-tamaño",
+    "title": "I.1 Componentes conexas",
+    "section": "5.1 Unión por tamaño",
+    "text": "5.1 Unión por tamaño\nLa regla: siempre se cuelga el árbol más chico debajo del más grande. Cada raíz guarda el tamaño de su árbol.\ndef union(i, j):\n    x, y = find(i), find(j)\n    if x != y:\n        if size[x] &gt; size[y]:\n            x, y = y, x          # x es siempre el árbol más chico\n        parent[x] = y\n        size[y] += size[x]\nCon tamaños iguales, el libro cuelga \\(x\\) de \\(y\\); tcomp respeta esa convención al pie de la letra.\n\n\n\n\n\n\n\nTeorema 3 (Altura logarítmica) Con unión por tamaño, un árbol de \\(k\\) nodos tiene altura a lo sumo \\(\\log_2 k\\).\n\n\n\n\n\n\n\n\n\n\nNotaDemostración (desarrollada) ★\n\n\n\n\n\n\nDemostración. La profundidad de un nodo \\(v\\) aumenta solo cuando la raíz de su árbol se cuelga debajo de otra raíz, y eso solo ocurre si su árbol era el más chico (o del mismo tamaño). En ese momento el árbol de \\(v\\) se fusiona con otro al menos tan grande, así que el tamaño del árbol de \\(v\\) por lo menos se duplica. Empezando en tamaño 1 y sin poder superar \\(k\\), eso puede pasar a lo sumo \\(\\log_2 k\\) veces.\n\n\n\n\nLa imagen: cada vez que bajás un escalón, tu mundo por lo menos se duplica. Bajar es caro porque solo se baja al fusionarse con algo más grande. En la empresa: en una fusión, el director de la empresa más chica le reporta al de la más grande, así que la cadena de mando de cualquier empleado crece un nivel solo cuando su empresa al menos se duplica. El árbol binomial, que se obtiene fusionando siempre árboles de igual tamaño, alcanza la cota exactamente: es el peor caso de la unión por tamaño (escenario «Árbol binomial» del laboratorio).",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#compresión-de-caminos",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#compresión-de-caminos",
+    "title": "I.1 Componentes conexas",
+    "section": "5.2 Compresión de caminos",
+    "text": "5.2 Compresión de caminos\nLa regla: cada vez que un Find recorre un camino hasta la raíz, todos los nodos del camino pasan a apuntar directamente a la raíz.\ndef find(i):\n    if parent[i] != i:\n        parent[i] = find(parent[i])   # encontrar la raíz y colgarse de ella\n    return parent[i]\nEn el pseudocódigo del libro, return V[i].parent = Find(V[i].parent) hace las dos cosas en una línea, porque la asignación devuelve el valor asignado. Es la recursión la que permite comprimir a la vuelta: primero se baja hasta la raíz y, al regresar de cada llamada, se re-apunta cada nodo. (En tcomp la compresión es iterativa, en dos pasadas, para no chocar con el límite de recursión de Python en cadenas largas; el resultado es idéntico.)\nEn la empresa: después de escalar una consulta hasta el director, todos los que participaron de la cadena reciben línea directa con él. La burocracia se aplana sola, justo donde se usa.\nEfecto medido: árbol binomial de altura \\(\\log_2 n\\) y \\(n\\) consultas Find sobre la hoja más profunda.\n\nCódigo\ndef binomial(k, estrategia):\n    n = 2**k\n    uf = UnionFind(n, estrategia)\n    paso = 1\n    while paso &lt; n:\n        for i in range(0, n, 2 * paso):\n            uf.union(i, i + paso)\n        paso *= 2\n    hoja = max(range(n), key=uf.profundidad)\n    uf.saltos = 0\n    for _ in range(n):\n        uf.find(hoja)\n    return uf.saltos\n\nprint(\"| $n$ | \" + \" | \".join(NOMBRES[e] for e in ESTRATEGIAS) + \" |\")\nprint(\"|---|---|---|---|\")\nfor k in (4, 7, 10):\n    print(f\"| {2**k:,} | \" + \" | \".join(f\"{binomial(k, e):,}\" for e in ESTRATEGIAS) + \" |\")\n\n\n\n\n\\(n\\)\nbásica\npor tamaño\ntamaño + compresión\n\n\n\n\n16\n64\n64\n18\n\n\n128\n896\n896\n133\n\n\n1,024\n10,240\n10,240\n1,032\n\n\n\nLa unión por tamaño acota cada consulta en \\(\\log_2 n\\) saltos; la compresión hace que, después de la primera, las demás cuesten un solo salto.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#ejemplo-2-las-dos-mejoras-en-la-misma-llamada",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#ejemplo-2-las-dos-mejoras-en-la-misma-llamada",
+    "title": "I.1 Componentes conexas",
+    "section": "5.3 Ejemplo 2: las dos mejoras en la misma llamada",
+    "text": "5.3 Ejemplo 2: las dos mejoras en la misma llamada\n\\(n = 8\\), unión por tamaño y compresión de caminos. Después de Union(1,2), Union(3,4), Union(1,3) y Union(5,6) el arreglo queda como en la primera fila de la tabla. Entonces llega Union(1,5):\n\nFind(1) recorre \\(1 \\to 2 \\to 4\\) y, a la vuelta, comprime: parent[1] = 4;\nFind(5) recorre \\(5 \\to 6\\): raíz 6, tamaño 2;\nlos tamaños son \\(4 &gt; 2\\): intercambio (\\(x \\leftrightarrow y\\)), así que el árbol de 6, el chico, cuelga del de 4: parent[6] = 4 y size[4] = 6.\n\n\nCódigo\nuf = UnionFind(8, \"completa\", trazar=True)\nfor u, v in [(1, 2), (3, 4), (1, 3), (5, 6)]:\n    uf.union(u - 1, v - 1)\nantes = libro(uf.parent)\nuf.union(0, 4)\ndespues = libro(uf.parent)\nenlace = uf.traza[-1]\nprint(\"| $i$ | \" + \" | \".join(str(i) for i in range(1, 9)) + \" |\")\nprint(\"|---|\" + \"---|\" * 8)\nprint(\"| `parent` antes de `Union(1,5)` | \" + \" | \".join(map(str, antes)) + \" |\")\nprint(\"| `parent` después | \" + \" | \".join(\n    f\"**{d}**\" if d != a else str(d) for a, d in zip(antes, despues)) + \" |\")\nprint(f\"\\nTraza de `tcomp`: {'hubo' if enlace.intercambio else 'no hubo'} intercambio; \"\n      f\"enlace (hijo, padre) = {tuple(libro(enlace.enlace))}; size[4] = {uf.size[3]}.\")\n\n\n\n\n\\(i\\)\n1\n2\n3\n4\n5\n6\n7\n8\n\n\n\n\nparent antes de Union(1,5)\n2\n4\n4\n4\n6\n6\n7\n8\n\n\nparent después\n4\n4\n4\n4\n6\n4\n7\n8\n\n\n\nTraza de tcomp: hubo intercambio; enlace (hijo, padre) = (6, 4); size[4] = 6.\nUn Find(5) posterior recorre \\(5 \\to 6 \\to 4\\) y comprime parent[5] = 4: todos quedan a profundidad 1. Recorrelo en el laboratorio, que abre justo en Union(1,5); retrocedé un paso y volvé a avanzar mirando el bosque.\n\n\nCódigo\nlaboratorio({ escenario: \"ej2\", estrategia: \"completa\", paso: 5 })",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#el-costo-final-la-inversa-de-ackermann",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#el-costo-final-la-inversa-de-ackermann",
+    "title": "I.1 Componentes conexas",
+    "section": "5.4 El costo final: la inversa de Ackermann",
+    "text": "5.4 El costo final: la inversa de Ackermann\nCon las dos mejoras, una secuencia de \\(m\\) operaciones sobre \\(n\\) elementos cuesta a lo sumo una constante por \\(m\\,\\alpha(n)\\), donde \\(\\alpha\\) es la inversa de la función de Ackermann (Tarjan, 1975, que también probó que la cota no se puede mejorar en general). El libro no demuestra el resultado.\n¿Cuán lento crece \\(\\alpha\\)? Con la definición de Cormen, Leiserson, Rivest y Stein (\\(A_0(j) = j + 1\\) y \\(A_k(j) = A_{k-1}^{(j+1)}(j)\\), es decir, \\(A_{k-1}\\) aplicada \\(j + 1\\) veces a partir de \\(j\\)), \\(\\alpha(n)\\) es el menor \\(k\\) con \\(A_k(1) \\ge n\\):\n\n\n\n\n\n\n\n\n\\(k\\)\n\\(A_k(1)\\)\n\\(\\alpha(n) = k\\) para\n\n\n\n\n0\n2\n\\(n \\le 2\\)\n\n\n1\n3\n\\(n = 3\\)\n\n\n2\n7\n\\(4 \\le n \\le 7\\)\n\n\n3\n2047\n\\(8 \\le n \\le 2047\\)\n\n\n4\n\\(\\gg 10^{600}\\) (más que partículas en el universo observable, \\(\\approx 10^{80}\\))\ntodo \\(n\\) que se pueda escribir\n\n\n\nEn la práctica \\(\\alpha(n) \\le 4\\): «tiempo constante por operación» es cierto en la práctica, pero no en la teoría, porque \\(\\alpha(n) \\to \\infty\\).",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#resumen-comparativo",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#resumen-comparativo",
+    "title": "I.1 Componentes conexas",
+    "section": "5.5 Resumen comparativo",
+    "text": "5.5 Resumen comparativo\n\n\n\n\n\n\n\n\nEstrategia\nAltura máxima\nCosto de \\(m\\) operaciones\n\n\n\n\nBásica\n\\(n - 1\\)\n\\(\\Theta(m\\,n)\\) en el peor caso\n\n\nUnión por tamaño\n\\(\\log_2 n\\)\n\\(O(m \\log n)\\)\n\n\nTamaño + compresión\n\\(\\log_2 n\\), y se aplana con el uso\n\\(O(m\\,\\alpha(n))\\)",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#ejercicio-1-del-capítulo-p.-24",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#ejercicio-1-del-capítulo-p.-24",
+    "title": "I.1 Componentes conexas",
+    "section": "6.1 Ejercicio 1 del capítulo (p. 24)",
+    "text": "6.1 Ejercicio 1 del capítulo (p. 24)\nUnion-find decide la conexidad en tiempo proporcional a \\((n + m)\\,\\alpha(n)\\).\n(i) Un algoritmo en tiempo \\(n + m\\). Es la ola de la sección 1.6: búsqueda en anchura desde un vértice, con listas de adyacencia. Cada vértice entra a la cola una vez y cada arista se mira dos veces (una por extremo): tiempo \\(O(n + m)\\). Si la ola cubre los \\(n\\) vértices, el grafo es conexo y las aristas usadas son un árbol generador; si no, lo alcanzado y lo no alcanzado son una separación. (tcomp.conexidad.certificado.)\n(ii) Calcular las componentes en tiempo \\(n + m\\). Se recorren los vértices en orden; cada vez que uno no tiene etiqueta, se lanza desde él una ola nueva con una etiqueta nueva. Cada vértice y cada arista se procesan una sola vez en total. (tcomp.conexidad.componentes.)\nEntonces, ¿para qué union-find? Porque la ola necesita todo el grafo de antemano. Union-find funciona en línea: las aristas llegan de a una, en cualquier orden, y en todo momento se puede preguntar si dos vértices están conectados. Es exactamente la situación de Kruskal y de la persistencia, donde las aristas llegan ordenadas por un parámetro.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#hacia-adelante-persistencia-en-dimensión-0-capítulo-vii",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#hacia-adelante-persistencia-en-dimensión-0-capítulo-vii",
+    "title": "I.1 Componentes conexas",
+    "section": "6.2 Hacia adelante: persistencia en dimensión 0 (capítulo VII)",
+    "text": "6.2 Hacia adelante: persistencia en dimensión 0 (capítulo VII)\nTomemos una nube de puntos y un radio \\(\\varepsilon\\) que crece desde 0, y conectemos dos puntos cuando su distancia es a lo sumo \\(\\varepsilon\\). Procesar las aristas ordenadas por longitud con union-find es lo mismo que ver crecer \\(\\varepsilon\\):\n\ncada Union exitosa es la muerte de una componente en el tiempo \\(\\varepsilon\\) = longitud de la arista;\nlas aristas aceptadas forman el árbol generador mínimo (Kruskal);\nel registro de nacimientos (todos en 0) y muertes es el código de barras de la homología persistente en dimensión 0.\n\nMirá el proceso entero: las bolas de radio \\(\\varepsilon/2\\) crecen, cada arista que aparece y une dos componentes es una Union exitosa (la componente absorbida toma el color de la que queda como raíz, igual que en el laboratorio), y en paralelo cada barra se detiene en el instante en que su componente muere. Los datos salen de tcomp: las fusiones son las de Kruskal y quién cuelga de quién lo decide tcomp.union_find.\n\n\nCódigo\nrng = np.random.default_rng(3)\ncentros = np.array([[0.0, 0.0], [4.2, 0.6], [1.9, 3.6]])\nX = np.vstack([c + rng.normal(scale=0.38, size=(14, 2)) for c in centros])\narbol = arbol_generador_minimo(X)\nbarras = persistencia_0(X)\n# radios elegidos a partir del propio código de barras: antes de casi toda fusión,\n# entre las fusiones internas y las fusiones entre grupos (β₀ = 3), y al final (β₀ = 1)\nmuertes = sorted(m for _, m in barras if math.isfinite(m))\nradios = (round(0.5 * muertes[len(muertes) // 3], 2),\n          round((muertes[-3] + muertes[-2]) / 2, 2),\n          round(muertes[-1] * 1.05, 2))\n\nfor modo in MODOS:\n    with tema(modo) as p:\n        fig = plt.figure(figsize=(8.2, 5.4), layout=\"constrained\")\n        arriba = fig.subfigures(2, 1, height_ratios=[1.25, 1])\n        ejes = arriba[0].subplots(1, 3)\n        for ax, eps in zip(ejes, radios):\n            nube_con_arbol(ax, X, arbol, p, eps=eps)\n            uf = UnionFind(len(X))\n            for i, j, peso in arbol:\n                if peso &lt;= eps:\n                    uf.union(i, j)\n            ax.set_title(f\"ε = {eps}:  β₀ = {uf.componentes}\")\n        ax = arriba[1].subplots()\n        codigo_de_barras(ax, barras, p, tope=radios[-1] * 1.15)\n        for eps in radios:\n            ax.axvline(eps, color=p[\"seco\"], lw=1.3, ls=\"--\")\n        plt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigura 3: Persistencia en dimensión 0 con tcomp. Arriba, la nube a tres radios: solo se dibujan las aristas del árbol generador mínimo de longitud ≤ ε, que tienen las mismas componentes que el grafo de vecindad. Abajo, el código de barras: cada barra que muere es una Union exitosa; la línea punteada marca cada ε.\n\n\n\n¿Es correcto? tcomp es una implementación propia, así que lo contrastamos con la librería de referencia, GUDHI, sobre la misma nube:\n\n\nCódigo\nimport gudhi\n\npares = gudhi.RipsComplex(points=X).create_simplex_tree(max_dimension=1).persistence(min_persistence=-1)\nmuertes_gudhi = sorted(m for dim, (_, m) in pares if dim == 0 and math.isfinite(m))\nmuertes_tcomp = sorted(m for _, m in barras if math.isfinite(m))\nassert np.allclose(muertes_tcomp, muertes_gudhi)\ndif = max(abs(a - b) for a, b in zip(muertes_tcomp, muertes_gudhi))\nprint(f\"{len(muertes_tcomp)} muertes finitas: tcomp y GUDHI coinciden \"\n      + (\"exactamente.\" if dif == 0 else f\"(máx. diferencia {dif:.1e}).\"))\n\n\n41 muertes finitas: tcomp y GUDHI coinciden exactamente.\n\n\nCuando las componentes nacen en momentos distintos (filtraciones de funciones, capítulo VII), la fusión sigue la regla del mayor: al fusionarse dos componentes, muere la más joven. Es una variante de la unión por tamaño, pero por edad.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#puente-a-finanzas",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#puente-a-finanzas",
+    "title": "I.1 Componentes conexas",
+    "section": "6.3 Puente a finanzas",
+    "text": "6.3 Puente a finanzas\nCon los retornos de \\(N\\) activos, la distancia de correlación \\(d_{ij} = \\sqrt{2(1 - \\rho_{ij})}\\) (Mantegna, 1999) convierte el mercado en una nube de puntos: activos muy correlacionados quedan cerca. Union-find sobre las aristas ordenadas por \\(d\\) da, de una sola vez:\n\nel árbol generador mínimo del mercado, la «columna vertebral» de las correlaciones;\nel clustering jerárquico de enlace simple (single linkage), cuyo dendrograma es el código de barras de dimensión 0;\ny, con ventanas deslizantes en el tiempo, la cantidad de componentes a un umbral fijo como indicador de régimen: en crisis las correlaciones suben y el mercado «se conecta» antes.\n\nUn ejemplo con datos sintéticos: dos sectores de cinco activos cada uno, con un factor de mercado común y un factor propio por sector (los datos reales quedan para el proyecto de finanzas).\n\nCódigo\nfrom scipy.cluster.hierarchy import linkage\n\nrng = np.random.default_rng(7)\ndias, por_sector = 750, 5\nmercado = rng.normal(size=dias)\nsectores = [rng.normal(size=dias) for _ in range(2)]\nretornos = np.column_stack([\n    0.5 * mercado + 0.8 * sectores[s] + 0.55 * rng.normal(size=dias)\n    for s in range(2) for _ in range(por_sector)\n])\nrho = np.corrcoef(retornos, rowvar=False)\nD = np.sqrt(2 * (1 - rho))\nnp.fill_diagonal(D, 0.0)\nbarras_mercado = persistencia_0(distancias=D)\n\nfor modo in MODOS:\n    with tema(modo) as p:\n        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8.4, 3.4), layout=\"constrained\",\n                                       gridspec_kw={\"width_ratios\": [1, 1.4]})\n        im = ax1.imshow(rho, vmin=0, vmax=1, cmap=\"Blues\" if modo == \"claro\" else \"Blues_r\")\n        ax1.set_xticks(range(10), [f\"A{i}\" if i &lt; 5 else f\"B{i - 5}\" for i in range(10)], fontsize=8)\n        ax1.set_yticks(range(10), [f\"A{i}\" if i &lt; 5 else f\"B{i - 5}\" for i in range(10)], fontsize=8)\n        ax1.set_title(\"Correlaciones ρ\")\n        fig.colorbar(im, ax=ax1, shrink=0.8)\n        codigo_de_barras(ax2, barras_mercado, p, tope=1.5)\n        ax2.set_xlabel(\"distancia de Mantegna  d = √(2(1 − ρ))\")\n        ax2.set_title(\"Código de barras = dendrograma de enlace simple\")\n        plt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigura 4: Dos sectores sintéticos. Izquierda: matriz de correlaciones. Derecha: código de barras de la distancia de Mantegna. Las fusiones dentro de cada sector ocurren temprano; la barra larga que muere tarde es la fusión de los dos sectores.\n\n\n\n¿El código de barras es de verdad el dendrograma? Lo contrastamos con el enlace simple de SciPy:\n\n\nCódigo\nalturas = np.sort(linkage(D[np.triu_indices(10, 1)], method=\"single\")[:, 2])\nassert np.allclose(alturas, sorted(m for _, m in barras_mercado if math.isfinite(m)))\nfusiones = kruskal(distancias=D)\nprint(\"Las alturas del dendrograma de enlace simple de SciPy coinciden con las muertes de tcomp.\")\nprint(f\"Última fusión (los dos sectores se conectan): d = {fusiones[-1][0]:.3f}, \"\n      f\"es decir ρ = {1 - fusiones[-1][0] ** 2 / 2:.2f}.\")\n\n\nLas alturas del dendrograma de enlace simple de SciPy coinciden con las muertes de tcomp.\nÚltima fusión (los dos sectores se conectan): d = 1.242, es decir ρ = 0.23.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
+  },
+  {
+    "objectID": "capitulos/01-grafos/1-1-componentes-conexas.html#notas-para-formalización-lean",
+    "href": "capitulos/01-grafos/1-1-componentes-conexas.html#notas-para-formalización-lean",
+    "title": "I.1 Componentes conexas",
+    "section": "6.4 Notas para formalización (Lean)",
+    "text": "6.4 Notas para formalización (Lean)\n\nLema de los apretones de manos (la suma de los grados es \\(2m\\)): primer contacto con Lean; está en Mathlib como SimpleGraph.sum_degrees_eq_twice_card_edges.\nUn árbol con \\(n\\) vértices tiene \\(n - 1\\) aristas: también está en Mathlib, en torno a SimpleGraph.IsTree.card_edgeFinset (verificar el nombre en la versión instalada).\nProposición 1 (conexo ⟺ sin separación): buen candidato a formalización propia, porque su prueba es corta y constructiva y probablemente no esté en Mathlib con esta forma.",
+    "crumbs": [
+      "Parte A · Topología geométrica computacional",
+      "I. Grafos",
+      "I.1 Componentes conexas"
+    ]
   }
 ]

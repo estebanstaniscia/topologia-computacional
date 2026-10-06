@@ -2,10 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://estebanstaniscia.github.io/topologia-computacional/capitulos/01-grafos/index.html</loc>
-    <lastmod>2026-10-03T23:41:12.008Z</lastmod>
+    <lastmod>2026-10-06T02:23:40.439Z</lastmod>
   </url>
   <url>
     <loc>https://estebanstaniscia.github.io/topologia-computacional/index.html</loc>
-    <lastmod>2026-10-03T23:41:12.008Z</lastmod>
+    <lastmod>2026-10-06T02:23:40.443Z</lastmod>
+  </url>
+  <url>
+    <loc>https://estebanstaniscia.github.io/topologia-computacional/capitulos/01-grafos/1-1-componentes-conexas.html</loc>
+    <lastmod>2026-10-06T02:23:40.438Z</lastmod>
   </url>
 </urlset>
