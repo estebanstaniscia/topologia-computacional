@@ -40,6 +40,8 @@
   --tc-c5: #e87ba4;
   --tc-c6: #008300;
   --tc-c7: #4a3aa7;
+  --tc-c8: #8d5524;
+  --tc-c9: #0b8fa8;
 }
 
 body.quarto-dark {
@@ -69,6 +71,8 @@ body.quarto-dark {
   --tc-c5: #d55181;
   --tc-c6: #008300;
   --tc-c7: #9085e9;
+  --tc-c8: #c08550;
+  --tc-c9: #2bb3cc;
 }
 
 /* ------------------------------------------------------------ carcasa de piezas */
@@ -179,6 +183,7 @@ body.quarto-dark {
 
 /* ======================================================= paradigma v2: carcasa de gadgets */
 
+.tc-gadget [hidden] { display: none !important; }
 .tc-gadget {
   margin: 1.5rem 0;
   border: 1px solid var(--tc-linea);
@@ -271,12 +276,13 @@ body.quarto-dark {
 
 /* ficha «Libro · p. X · nombre» */
 .tc-ficha {
-  display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--tc-tenue);
-  border: 1px solid var(--tc-linea); background: var(--tc-panel); border-radius: 999px; padding: 2px 10px 2px 8px;
+  display: inline-block; max-width: 100%; font-size: 0.8rem; color: var(--tc-tenue);
+  border: 1px solid var(--tc-linea); background: var(--tc-panel); border-radius: 14px; padding: 2px 10px 2px 8px;
 }
 .tc-ficha b { color: var(--tc-tinta); font-weight: 600; }
 .tc-ficha::before {
-  content: ""; width: 14px; height: 14px; background: currentColor; flex-shrink: 0;
+  content: ""; display: inline-block; vertical-align: -2px; margin-right: 6px;
+  width: 14px; height: 14px; background: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z'/%3E%3Cpath d='M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z'/%3E%3Cpath d='M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
@@ -294,3 +300,22 @@ body.quarto-dark {
 
 /* idea de cada estación: el texto visible por defecto */
 .tc-idea { font-size: 1.08rem; margin: 0.4rem 0 0.2rem; }
+
+/* scrollytelling (scrolly.js): gadget fijo a la izquierda, tarjetas a la derecha */
+.tc-scrolly { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; margin: 1rem 0; }
+.tc-scrolly-gadget { position: sticky; top: 4.5rem; }
+.tc-scrolly-pasos { padding: 30vh 0; display: grid; gap: 45vh; }
+.tc-paso {
+  border: 1px solid var(--tc-linea); border-left: 4px solid var(--tc-linea); border-radius: var(--tc-radio);
+  background: var(--tc-panel); padding: 0.8rem 1rem; cursor: pointer; opacity: 0.55;
+  transition: opacity 0.25s, border-color 0.25s;
+}
+.tc-paso.activo { opacity: 1; border-left-color: var(--tc-acento); }
+.tc-paso:focus-visible { outline: 2px solid var(--tc-acento); outline-offset: 2px; }
+.tc-paso p:last-child { margin-bottom: 0; }
+@media (max-width: 991px) {
+  .tc-scrolly { grid-template-columns: minmax(0, 1fr); }
+  .tc-scrolly-gadget { position: static; }
+  .tc-scrolly-pasos { padding: 0; gap: 0.6rem; }
+  .tc-paso { opacity: 1; }
+}

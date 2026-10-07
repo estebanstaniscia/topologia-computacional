@@ -9,6 +9,7 @@
 
 import { svg, html, texto, lector, alCambiarTema, puntoSVG } from "./comun.js";
 import { montarGadget } from "./gadget/carcasa.js";
+import { GLIFOS, glifosDe } from "./tipografia.js";
 
 // ------------------------------------------------------------------ lógica pura
 
@@ -110,6 +111,78 @@ export function comparar(e1, e2) {
   return { igualFirma, igualLocal, f1, f2 };
 }
 
+/**
+ * Forma reducida: se borran los vértices de grado 2 (no cambian la topología) y queda un
+ * multigrafo cuyos vértices son los puntos especiales (grado ≠ 2) y cuyas aristas son los
+ * arcos entre ellos (puede haber lazos y aristas repetidas). Las componentes sin puntos
+ * especiales son círculos sueltos. Devuelve {n, arcos: [[u, v]], circulos}.
+ */
+export function formaReducida(esp) {
+  const g = grados(esp);
+  const ady = esp.puntos.map(() => []);
+  esp.aristas.forEach(([a, b], k) => { ady[a].push([b, k]); ady[b].push([a, k]); });
+  const especiales = g.map((d, v) => (d !== 2 ? v : -1)).filter((v) => v >= 0);
+  const indice = new Map(especiales.map((v, i) => [v, i]));
+  const usada = new Uint8Array(esp.aristas.length), arcos = [];
+  for (const s of especiales) {
+    for (const [w, k] of ady[s]) {
+      if (usada[k]) continue;
+      usada[k] = 1;
+      let actual = w;
+      while (!indice.has(actual)) {
+        const sig = ady[actual].find(([, k2]) => !usada[k2]);
+        usada[sig[1]] = 1;
+        actual = sig[0];
+      }
+      arcos.push([indice.get(s), indice.get(actual)]);
+    }
+  }
+  // lo que queda son ciclos de vértices de grado 2: un círculo por componente
+  let circulos = 0;
+  esp.aristas.forEach(([a], k) => {
+    if (usada[k]) return;
+    circulos++;
+    const pila = [a];
+    while (pila.length) {
+      const v = pila.pop();
+      for (const [w, k2] of ady[v]) if (!usada[k2]) { usada[k2] = 1; pila.push(w); }
+    }
+  });
+  return { n: especiales.length, arcos, circulos };
+}
+
+function* permutaciones(n) {
+  const p = Array.from({ length: n }, (_, i) => i), c = new Array(n).fill(0);
+  yield p;
+  let i = 0;
+  while (i < n) {
+    if (c[i] < i) {
+      const j = i % 2 ? c[i] : 0;
+      [p[j], p[i]] = [p[i], p[j]];
+      yield p;
+      c[i]++; i = 0;
+    } else { c[i] = 0; i++; }
+  }
+}
+
+/**
+ * Clase de homeomorfismo de un grafo geométrico: una forma canónica de su forma reducida
+ * (el mínimo, sobre todas las permutaciones de los puntos especiales, de la lista ordenada
+ * de arcos). Dos grafos son homeomorfos si y solo si sus formas reducidas son isomorfas,
+ * así que este invariante es completo, a diferencia de la firma. Fuerza bruta: alcanza
+ * para letras (a lo sumo 6 puntos especiales).
+ */
+export function claseHomeo(esp) {
+  const { n, arcos, circulos } = formaReducida(esp);
+  if (n > 9) throw new Error("demasiados puntos especiales para la fuerza bruta");
+  let mejor = null;
+  for (const p of permutaciones(n)) {
+    const k = arcos.map(([u, v]) => (p[u] <= p[v] ? `${p[u]}-${p[v]}` : `${p[v]}-${p[u]}`)).sort().join(",");
+    if (mejor === null || k < mejor) mejor = k;
+  }
+  return `${n}|${circulos}|${mejor}`;
+}
+
 // ------------------------------------------------------------------ la galería
 
 const circulo = (cx, cy, r, n = 36, desde = 0) =>
@@ -132,7 +205,7 @@ const W = 340, H = 300;
 
 function panel(tk, inicial, alCortar) {
   let claveEsp = inicial, esp = construirEspacio(ESPACIOS[inicial].polilineas), corte = null, previo = null;
-  const sel = html("select", { "aria-label": "Espacio" }, ...Object.entries(ESPACIOS).map(([k, e]) => html("option", { value: k, selected: k === inicial }, e.nombre)));
+  const sel = html("select", { "aria-label": "Espacio", style: "max-width:100%" }, ...Object.entries(ESPACIOS).map(([k, e]) => html("option", { value: k, selected: k === inicial }, e.nombre)));
   const lienzo = svg("svg", { viewBox: `${-W / 2} ${-H / 2} ${W} ${H}`, role: "img", "aria-label": "Espacio dibujado; pasá el mouse para previsualizar un corte y hacé clic para cortar", style: "cursor:crosshair" });
   const raiz = html("div", { class: "tc-g-tarjeta", style: "padding:8px" }, sel, lienzo);
 
@@ -194,8 +267,81 @@ function panel(tk, inicial, alCortar) {
   };
 }
 
+// ------------------------------------------------------------------ modo tipográfico
+
+/** Nombres de las clases, a partir de un representante de cada una. */
+const NOMBRES_CLASE = [
+  ["I", "arco"], ["O", "círculo"], ["T", "trípode (como la Y)"], ["P", "círculo con una cola"],
+  ["A", "círculo con dos colas en puntos distintos"], ["Q", "círculo con dos colas en el mismo punto"],
+  ["B", "ocho (dos lazos en un punto)"], ["H", "H (dos trípodes unidos)"], ["X", "cruz (cuatro ramas)"],
+];
+const claseDeGlifo = new Map();
+const claseDe = (ch) => {
+  if (!claseDeGlifo.has(ch)) claseDeGlifo.set(ch, claseHomeo(construirEspacio(GLIFOS[ch])));
+  return claseDeGlifo.get(ch);
+};
+const nombreClase = new Map(NOMBRES_CLASE.map(([ch, nombre]) => [claseDe(ch), nombre]));
+
+/** Agrupa los caracteres de una palabra por clase de homeomorfismo (en orden de aparición). */
+export function agruparPorClase(palabra) {
+  const grupos = new Map();
+  for (const ch of glifosDe(palabra)) {
+    const k = claseDe(ch);
+    if (!grupos.has(k)) grupos.set(k, { clave: k, nombre: nombreClase.get(k) ?? "otra clase", letras: [] });
+    if (!grupos.get(k).letras.includes(ch)) grupos.get(k).letras.push(ch);
+  }
+  return [...grupos.values()];
+}
+
+function modoTipografico(tk, alCambiar) {
+  const entrada = html("input", { type: "text", value: "TOPOLOGIA", maxlength: 36, "aria-label": "Palabra", style: "flex:1;min-width:10em;font-size:1rem;padding:4px 8px" });
+  const atajo = (rotulo, valor) => {
+    const b = html("button", { type: "button" }, rotulo);
+    b.addEventListener("click", () => { entrada.value = valor; dibujar(); });
+    return b;
+  };
+  const barra = html("div", { style: "display:flex;gap:6px;flex-wrap:wrap;align-items:center" },
+    entrada, atajo("A–Z", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"), atajo("0–9", "0123456789"), atajo("Q y 4", "Q4 AR"));
+  const lienzo = svg("svg", { role: "img", "aria-label": "La palabra dibujada como esqueletos de letras, coloreadas por clase de homeomorfismo", style: "width:100%;height:auto" });
+  const raiz = html("div", { class: "tc-g-tarjeta", style: "padding:8px;display:grid;gap:8px" }, barra, lienzo);
+  const leyenda = html("div", { class: "tc-g-tarjeta" });
+
+  function dibujar() {
+    const letras = glifosDe(entrada.value);
+    const grupos = agruparPorClase(entrada.value);
+    const colorDe = (ch) => tk(`--tc-c${(grupos.findIndex((g) => g.clave === claseDe(ch)) % 9) + 1}`);
+    const porFila = 13, paso = 82, filas = Math.max(1, Math.ceil(letras.length / porFila));
+    const ancho = Math.max(4, Math.min(letras.length, porFila)) * paso;
+    lienzo.setAttribute("viewBox", `-20 -112 ${ancho + 20} ${filas * 140}`);
+    lienzo.replaceChildren();
+    letras.forEach((ch, i) => {
+      const ox = (i % porFila) * paso, oy = Math.floor(i / porFila) * 140;
+      const g = svg("g", { transform: `translate(${ox} ${oy})` }, lienzo);
+      const esp = construirEspacio(GLIFOS[ch]);
+      const color = colorDe(ch);
+      for (const [a, b] of esp.aristas) {
+        const A = esp.puntos[a], B = esp.puntos[b];
+        svg("line", { x1: A[0], y1: -A[1], x2: B[0], y2: -B[1], stroke: color, "stroke-width": 8, "stroke-linecap": "round" }, g);
+      }
+      // los puntos donde se juntan 3 o más ramas: los que la topología ve
+      const gr = esp.puntos.map(() => 0);
+      for (const [a, b] of esp.aristas) { gr[a]++; gr[b]++; }
+      esp.puntos.forEach((q, v) => { if (gr[v] >= 3) svg("circle", { cx: q[0], cy: -q[1], r: 6.5, fill: tk("--tc-panel"), stroke: tk("--tc-tinta"), "stroke-width": 2.5 }, g); });
+    });
+    if (!letras.length) texto(lienzo, 0, -40, "Escribí letras o dígitos", { "font-size": 22, fill: tk("--tc-tenue") });
+    leyenda.replaceChildren(html("h4", {}, `${grupos.length} ${grupos.length === 1 ? "clase" : "clases"} de homeomorfismo`),
+      ...grupos.map((g) => html("div", { style: "margin:6px 0" },
+        html("div", { style: `color:${colorDe(g.letras[0])};font-weight:700;font-size:1.1rem;letter-spacing:0.12em;overflow-wrap:anywhere` }, g.letras.join(" ")),
+        html("div", { style: "font-size:0.85rem;color:var(--tc-tenue)" }, g.nombre))));
+    alCambiar?.();
+  }
+  entrada.addEventListener("input", dibujar);
+  return { raiz, leyenda, dibujar, palabra: () => entrada.value, poner(v) { entrada.value = v; dibujar(); } };
+}
+
 export function bisturi({ izquierda = "circulo", derecha = "theta", id = "g2" } = {}) {
-  const escena = html("div", { style: "display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px" });
+  const comparador = html("div", { style: "display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr));gap:8px" });
+  const escena = html("div", { style: "padding:8px" }, comparador);
   const tk = lector(escena);
   const veredicto = html("div", { class: "tc-veredicto", "aria-live": "polite" });
   const tablas = html("div", {});
@@ -216,8 +362,18 @@ export function bisturi({ izquierda = "circulo", derecha = "theta", id = "g2" } 
   let gadget = null;
   const A = panel(tk, izquierda, () => actualizar());
   const B = panel(tk, derecha, () => actualizar());
-  escena.append(A.raiz, B.raiz);
-  const lecturas = html("div", { style: "display:contents" }, veredicto, tablas);
+  comparador.append(A.raiz, B.raiz);
+  const T = modoTipografico(tk, () => gadget?.refrescarLentes());
+  T.raiz.hidden = true; T.leyenda.hidden = true;
+  escena.append(T.raiz);
+  const lecturasComparar = html("div", { style: "display:contents" }, veredicto, tablas);
+  const lecturas = html("div", { style: "display:contents" }, lecturasComparar, T.leyenda);
+  const ponerModo = (m) => {
+    const tipo = m === "tipografico";
+    comparador.hidden = tipo; lecturasComparar.hidden = tipo;
+    T.raiz.hidden = !tipo; T.leyenda.hidden = !tipo;
+    if (tipo) T.dibujar();
+  };
 
   gadget = montarGadget({
     id,
@@ -225,15 +381,18 @@ export function bisturi({ izquierda = "circulo", derecha = "theta", id = "g2" } 
     subtitulo: "cortá un punto y contá los pedazos",
     escenario: escena,
     lecturas,
+    modos: [{ id: "comparar", nombre: "Comparar" }, { id: "tipografico", nombre: "Tipográfico" }],
+    alCambiarModo: ponerModo,
     lentes: [
       { id: "mat", nombre: "Matemático", contenido: () => "<p>Un homeomorfismo \\(h: X \\to Y\\) se restringe a un homeomorfismo \\(X \\setminus \\{p\\} \\to Y \\setminus \\{h(p)\\}\\), y los homeomorfismos conservan la cantidad de componentes. Por eso \\(c(p)\\) se conserva, y con él la <b>firma</b>. El intervalo tiene puntos con \\(c = 2\\) y el círculo no: no son homeomorfos (el argumento del libro, p. 9).</p>" },
       { id: "prog", nombre: "Programador", contenido: () => "<p>Un <b>invariante</b> es una función que da lo mismo en objetos equivalentes: para probar que dos objetos <i>no</i> son equivalentes, alcanza con uno que los distinga. Acá el espacio es un grafo y \\(c(p)\\) se calcula con el <b>union-find de I.1</b>: se procesan todas las aristas salvo la cortada (o las del vértice cortado) y se cuentan las raíces.</p><pre>uf = UnionFind(n)\nfor e in aristas:\n    if not toca_el_corte(e):\n        uf.union(*e)\nc = uf.componentes</pre><p class='tc-pista'>Moraleja: un invariante distingue, pero no siempre identifica (círculo vs. θ).</p>" },
+      { id: "tipo", nombre: "Tipógrafo", contenido: () => "<p>El modo <b>Tipográfico</b> usa un invariante <b>completo</b>: se borran los puntos de grado 2 (que la topología no ve) y queda un multigrafo con los puntos especiales y los arcos entre ellos. Dos letras son homeomorfas si y solo si esos multigrafos son isomorfos. Sorpresas: <b>A ≅ R</b> y <b>Q ≅ 4</b> son, las dos, un círculo con dos colas, pero en A las colas salen de puntos distintos y en Q del mismo: no son homeomorfas entre sí. La respuesta depende de la tipografía: en Helvetica la pierna de la K sale del brazo y K ≅ H; en otras fuentes sale del asta y K ≅ X.</p>" },
       { id: "geo", nombre: "Geómetra", contenido: () => "<p>El homeomorfismo permite estirar, doblar y deformar, pero no cortar ni pegar. Por eso la forma no importa (el círculo y el cuadrado son lo mismo) y la cantidad de pedazos al cortar sí.</p>" },
     ],
-    reiniciar: () => { A.poner(izquierda); B.poner(derecha); actualizar(); },
+    reiniciar: () => { A.poner(izquierda); B.poner(derecha); T.poner("TOPOLOGIA"); actualizar(); },
     queVeo: () => [{ elemento: A.raiz.querySelector("svg"), texto: "pasá el mouse: previsualiza el corte" }, { elemento: B.raiz.querySelector("select"), texto: "cambiá el espacio a comparar" }],
   });
-  alCambiarTema(() => { A.dibujar(); B.dibujar(); });
+  alCambiarTema(() => { A.dibujar(); B.dibujar(); T.dibujar(); });
   A.dibujar(); B.dibujar(); actualizar();
   return gadget.raiz;
 }

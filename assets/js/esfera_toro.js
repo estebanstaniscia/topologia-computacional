@@ -202,7 +202,7 @@ function escena3D(superficie, tk, alPintar) {
 // ------------------------------------------------------------------ la pieza
 
 export function esferaToro({ id = "g5", verter: verterAlInicio = false } = {}) {
-  const escena = html("div", { style: "display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px" });
+  const escena = html("div", { style: "display:grid;grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr));gap:8px;padding:8px" });
   const tk = lector(escena);
   const lados = {};
   const sel = {};
@@ -232,7 +232,7 @@ export function esferaToro({ id = "g5", verter: verterAlInicio = false } = {}) {
   };
 
   for (const s of ["esfera", "toro"]) {
-    sel[s] = html("select", { "aria-label": `Curva sobre ${s}` }, ...Object.entries(CURVAS_SUP[s]).map(([k, c]) => html("option", { value: k }, c.nombre)));
+    sel[s] = html("select", { "aria-label": `Curva sobre ${s}`, style: "max-width:100%" }, ...Object.entries(CURVAS_SUP[s]).map(([k, c]) => html("option", { value: k }, c.nombre)));
     lados[s] = escena3D(s, tk, (i, j) => verter(s, i, j));
     const cargar = () => {
       lados[s].estado.muro = pared(CURVAS_SUP[s][sel[s].value].curvas);
