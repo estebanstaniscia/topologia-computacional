@@ -25,6 +25,7 @@ website:
             href: capitulos/01-grafos/index.qmd
             contents:
               - capitulos/01-grafos/1-1-componentes-conexas.qmd
+              - capitulos/01-grafos/1-2-curvas-en-el-plano.qmd
 
 format:
   html:
