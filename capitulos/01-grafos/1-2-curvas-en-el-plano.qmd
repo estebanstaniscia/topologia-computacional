@@ -284,29 +284,25 @@ lienzoJordan({ escenario: "circulo", id: "g1b" })
 ::: {.tc-scrolly-pasos}
 
 ::: {.tc-paso data-escenario="circulo"}
-**Círculo.** $W = 1$ adentro y $0$ afuera. Arrastrá $x$ a través de la curva: el número salta
-justo al cruzarla, y en ningún otro lugar.
+**Círculo.** $W = 1$ adentro, $0$ afuera. Arrastrá $x$: cambia solo al cruzar la curva.
 :::
 
 ::: {.tc-paso data-escenario="limacon"}
-**Limaçon.** En el lazo interior, $W = 2$. Prendé ♪ *Sonido* y ◉ *Faro*: cada vuelta antihoraria
-sube una octava de un **tono de Shepard**, la ilusión que sube para siempre. Con los ojos
-cerrados, el lazo se oye dos veces.
+**Limaçon.** El lazo interior da $W = 2$. Con ♪ *Sonido* y ◉ *Faro*, cada vuelta sube una octava
+de un **tono de Shepard**: el lazo se oye dos veces.
 :::
 
 ::: {.tc-paso data-escenario="ocho"}
-**Ocho.** Un lóbulo se recorre antihorario ($W = +1$) y el otro horario ($W = -1$). La paridad
-no los distingue; $W$ sí.
+**Ocho.** Un lóbulo antihorario ($W = 1$), el otro horario ($W = -1$): $W$ ve la orientación; la
+paridad, no.
 :::
 
 ::: {.tc-paso data-escenario="flor"}
-**Flor.** Los lazos de los pétalos giran al revés que el contorno: son regiones de **mínimo
-local** de $W$, rodeadas por la curva en sentido horario (figura I.6 del libro).
+**Flor.** Los pétalos giran al revés que el contorno: **mínimos locales** de $W$ (figura I.6).
 :::
 
 ::: {.tc-paso data-escenario="dibujar"}
-**Tu curva.** Dibujá una curva cerrada de un solo trazo, enredala todo lo que quieras y predecí
-$W$ en cada región antes de mirar el campo.
+**Tu curva.** Dibujá una bien enredada y predecí $W$ en cada región antes de mirar.
 :::
 
 :::
