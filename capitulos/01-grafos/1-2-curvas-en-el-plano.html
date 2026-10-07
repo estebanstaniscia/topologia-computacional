@@ -880,26 +880,26 @@ window.Quarto = {
 </div>
 <div class="tc-scrolly-pasos">
 <div class="tc-paso" data-escenario="circulo">
-<p><strong>Círculo.</strong> <span class="math inline">\(W = 1\)</span> adentro y <span class="math inline">\(0\)</span> afuera. Arrastrá <span class="math inline">\(x\)</span> a través de la curva: el número salta justo al cruzarla, y en ningún otro lugar.</p>
+<p><strong>Círculo.</strong> <span class="math inline">\(W = 1\)</span> adentro, <span class="math inline">\(0\)</span> afuera. Arrastrá <span class="math inline">\(x\)</span>: cambia solo al cruzar la curva.</p>
 </div>
 <div class="tc-paso" data-escenario="limacon">
-<p><strong>Limaçon.</strong> En el lazo interior, <span class="math inline">\(W = 2\)</span>. Prendé ♪ <em>Sonido</em> y ◉ <em>Faro</em>: cada vuelta antihoraria sube una octava de un <strong>tono de Shepard</strong>, la ilusión que sube para siempre. Con los ojos cerrados, el lazo se oye dos veces.</p>
+<p><strong>Limaçon.</strong> El lazo interior da <span class="math inline">\(W = 2\)</span>. Con ♪ <em>Sonido</em> y ◉ <em>Faro</em>, cada vuelta sube una octava de un <strong>tono de Shepard</strong>: el lazo se oye dos veces.</p>
 </div>
 <div class="tc-paso" data-escenario="ocho">
-<p><strong>Ocho.</strong> Un lóbulo se recorre antihorario (<span class="math inline">\(W = +1\)</span>) y el otro horario (<span class="math inline">\(W = -1\)</span>). La paridad no los distingue; <span class="math inline">\(W\)</span> sí.</p>
+<p><strong>Ocho.</strong> Un lóbulo antihorario (<span class="math inline">\(W = 1\)</span>), el otro horario (<span class="math inline">\(W = -1\)</span>): <span class="math inline">\(W\)</span> ve la orientación; la paridad, no.</p>
 </div>
 <div class="tc-paso" data-escenario="flor">
-<p><strong>Flor.</strong> Los lazos de los pétalos giran al revés que el contorno: son regiones de <strong>mínimo local</strong> de <span class="math inline">\(W\)</span>, rodeadas por la curva en sentido horario (figura I.6 del libro).</p>
+<p><strong>Flor.</strong> Los pétalos giran al revés que el contorno: <strong>mínimos locales</strong> de <span class="math inline">\(W\)</span> (figura I.6).</p>
 </div>
 <div class="tc-paso" data-escenario="dibujar">
-<p><strong>Tu curva.</strong> Dibujá una curva cerrada de un solo trazo, enredala todo lo que quieras y predecí <span class="math inline">\(W\)</span> en cada región antes de mirar el campo.</p>
+<p><strong>Tu curva.</strong> Dibujá una bien enredada y predecí <span class="math inline">\(W\)</span> en cada región antes de mirar.</p>
 </div>
 </div>
 </div>
 <div class="cell">
 <details class="code-fold hidden">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb13" data-startfrom="317" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 316;"><span id="cb13-317"><a href="#cb13-317" aria-hidden="true" tabindex="-1"></a><span class="fu">scrolly</span>(<span class="st">"scrolly-e5"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb13" data-startfrom="313" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 312;"><span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a><span class="fu">scrolly</span>(<span class="st">"scrolly-e5"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-13" data-nodetype="expression">
@@ -912,7 +912,7 @@ window.Quarto = {
 <div class="cell">
 <details class="code-fold hidden">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb14" data-startfrom="327" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 326;"><span id="cb14-327"><a href="#cb14-327" aria-hidden="true" tabindex="-1"></a><span class="fu">paisaje</span>({ <span class="dt">curva</span><span class="op">:</span> <span class="st">"flor"</span> })</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code hidden" id="cb14" data-startfrom="323" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 322;"><span id="cb14-323"><a href="#cb14-323" aria-hidden="true" tabindex="-1"></a><span class="fu">paisaje</span>({ <span class="dt">curva</span><span class="op">:</span> <span class="st">"flor"</span> })</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-14" data-nodetype="expression">
@@ -1808,115 +1808,111 @@ window._ojs.runtime.interpretFromScriptTags();
 <span id="cb15-308"><a href="#cb15-308" aria-hidden="true" tabindex="-1"></a>::: {.tc-scrolly-pasos}</span>
 <span id="cb15-309"><a href="#cb15-309" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-310"><a href="#cb15-310" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="circulo"}</span>
-<span id="cb15-311"><a href="#cb15-311" aria-hidden="true" tabindex="-1"></a>**Círculo.** $W = 1$ adentro y $0$ afuera. Arrastrá $x$ a través de la curva: el número salta</span>
-<span id="cb15-312"><a href="#cb15-312" aria-hidden="true" tabindex="-1"></a>justo al cruzarla, y en ningún otro lugar.</span>
-<span id="cb15-313"><a href="#cb15-313" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-314"><a href="#cb15-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-315"><a href="#cb15-315" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="limacon"}</span>
-<span id="cb15-316"><a href="#cb15-316" aria-hidden="true" tabindex="-1"></a>**Limaçon.** En el lazo interior, $W = 2$. Prendé ♪ *Sonido* y ◉ *Faro*: cada vuelta antihoraria</span>
-<span id="cb15-317"><a href="#cb15-317" aria-hidden="true" tabindex="-1"></a>sube una octava de un **tono de Shepard**, la ilusión que sube para siempre. Con los ojos</span>
-<span id="cb15-318"><a href="#cb15-318" aria-hidden="true" tabindex="-1"></a>cerrados, el lazo se oye dos veces.</span>
-<span id="cb15-319"><a href="#cb15-319" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-320"><a href="#cb15-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-321"><a href="#cb15-321" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="ocho"}</span>
-<span id="cb15-322"><a href="#cb15-322" aria-hidden="true" tabindex="-1"></a>**Ocho.** Un lóbulo se recorre antihorario ($W = +1$) y el otro horario ($W = -1$). La paridad</span>
-<span id="cb15-323"><a href="#cb15-323" aria-hidden="true" tabindex="-1"></a>no los distingue; $W$ sí.</span>
-<span id="cb15-324"><a href="#cb15-324" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-325"><a href="#cb15-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-326"><a href="#cb15-326" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="flor"}</span>
-<span id="cb15-327"><a href="#cb15-327" aria-hidden="true" tabindex="-1"></a>**Flor.** Los lazos de los pétalos giran al revés que el contorno: son regiones de **mínimo</span>
-<span id="cb15-328"><a href="#cb15-328" aria-hidden="true" tabindex="-1"></a>local** de $W$, rodeadas por la curva en sentido horario (figura I.6 del libro).</span>
-<span id="cb15-329"><a href="#cb15-329" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-330"><a href="#cb15-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-331"><a href="#cb15-331" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="dibujar"}</span>
-<span id="cb15-332"><a href="#cb15-332" aria-hidden="true" tabindex="-1"></a>**Tu curva.** Dibujá una curva cerrada de un solo trazo, enredala todo lo que quieras y predecí</span>
-<span id="cb15-333"><a href="#cb15-333" aria-hidden="true" tabindex="-1"></a>$W$ en cada región antes de mirar el campo.</span>
-<span id="cb15-334"><a href="#cb15-334" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-311"><a href="#cb15-311" aria-hidden="true" tabindex="-1"></a>**Círculo.** $W = 1$ adentro, $0$ afuera. Arrastrá $x$: cambia solo al cruzar la curva.</span>
+<span id="cb15-312"><a href="#cb15-312" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-313"><a href="#cb15-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-314"><a href="#cb15-314" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="limacon"}</span>
+<span id="cb15-315"><a href="#cb15-315" aria-hidden="true" tabindex="-1"></a>**Limaçon.** El lazo interior da $W = 2$. Con ♪ *Sonido* y ◉ *Faro*, cada vuelta sube una octava</span>
+<span id="cb15-316"><a href="#cb15-316" aria-hidden="true" tabindex="-1"></a>de un **tono de Shepard**: el lazo se oye dos veces.</span>
+<span id="cb15-317"><a href="#cb15-317" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-318"><a href="#cb15-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-319"><a href="#cb15-319" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="ocho"}</span>
+<span id="cb15-320"><a href="#cb15-320" aria-hidden="true" tabindex="-1"></a>**Ocho.** Un lóbulo antihorario ($W = 1$), el otro horario ($W = -1$): $W$ ve la orientación; la</span>
+<span id="cb15-321"><a href="#cb15-321" aria-hidden="true" tabindex="-1"></a>paridad, no.</span>
+<span id="cb15-322"><a href="#cb15-322" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-323"><a href="#cb15-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-324"><a href="#cb15-324" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="flor"}</span>
+<span id="cb15-325"><a href="#cb15-325" aria-hidden="true" tabindex="-1"></a>**Flor.** Los pétalos giran al revés que el contorno: **mínimos locales** de $W$ (figura I.6).</span>
+<span id="cb15-326"><a href="#cb15-326" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-327"><a href="#cb15-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-328"><a href="#cb15-328" aria-hidden="true" tabindex="-1"></a>::: {.tc-paso data-escenario="dibujar"}</span>
+<span id="cb15-329"><a href="#cb15-329" aria-hidden="true" tabindex="-1"></a>**Tu curva.** Dibujá una bien enredada y predecí $W$ en cada región antes de mirar.</span>
+<span id="cb15-330"><a href="#cb15-330" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-331"><a href="#cb15-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-332"><a href="#cb15-332" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-333"><a href="#cb15-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-334"><a href="#cb15-334" aria-hidden="true" tabindex="-1"></a>::::</span>
 <span id="cb15-335"><a href="#cb15-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-336"><a href="#cb15-336" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-337"><a href="#cb15-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-338"><a href="#cb15-338" aria-hidden="true" tabindex="-1"></a>::::</span>
-<span id="cb15-339"><a href="#cb15-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-342"><a href="#cb15-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
-<span id="cb15-343"><a href="#cb15-343" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
-<span id="cb15-344"><a href="#cb15-344" aria-hidden="true" tabindex="-1"></a><span class="fu">scrolly</span>(<span class="st">"scrolly-e5"</span>)</span>
-<span id="cb15-345"><a href="#cb15-345" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-346"><a href="#cb15-346" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-347"><a href="#cb15-347" aria-hidden="true" tabindex="-1"></a>{{&lt; video media/el_faro.mp4 title="El faro: el vector unitario desde x da dos vueltas alrededor del limacf5733e5-0370-4aae-8689-61bad1dd9ec0<span class="dv">&amp;#xe7;</span>on" aspect-ratio="16x9" &gt;}}</span>
-<span id="cb15-348"><a href="#cb15-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-349"><a href="#cb15-349" aria-hidden="true" tabindex="-1"></a>Si cada región sube a la altura de su $W$, el plano se vuelve un **terreno de mesetas**: la curva</span>
-<span id="cb15-350"><a href="#cb15-350" aria-hidden="true" tabindex="-1"></a>es la línea de acantilados y las regiones de máximo local son las cimas.</span>
-<span id="cb15-351"><a href="#cb15-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-354"><a href="#cb15-354" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
-<span id="cb15-355"><a href="#cb15-355" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
-<span id="cb15-356"><a href="#cb15-356" aria-hidden="true" tabindex="-1"></a><span class="fu">paisaje</span>({ <span class="dt">curva</span><span class="op">:</span> <span class="st">"flor"</span> })</span>
-<span id="cb15-357"><a href="#cb15-357" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb15-358"><a href="#cb15-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-359"><a href="#cb15-359" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: por qué los cruces con signo dan W ★"}</span>
-<span id="cb15-360"><a href="#cb15-360" aria-hidden="true" tabindex="-1"></a>**Cruces con signo = grado.** El rayo horizontal es el conjunto de puntos que se ven desde $x$ en</span>
-<span id="cb15-361"><a href="#cb15-361" aria-hidden="true" tabindex="-1"></a>la dirección $\theta_0 = 0$. Cada vez que la curva lo cruza, la cabeza del observador pasa por esa</span>
-<span id="cb15-362"><a href="#cb15-362" aria-hidden="true" tabindex="-1"></a>dirección: en sentido antihorario si la curva sube, horario si baja. En lenguaje de topología</span>
-<span id="cb15-363"><a href="#cb15-363" aria-hidden="true" tabindex="-1"></a>diferencial, **el grado es la suma de los signos de las preimágenes de un valor regular**, y el</span>
-<span id="cb15-364"><a href="#cb15-364" aria-hidden="true" tabindex="-1"></a>rayo es esa preimagen.</span>
-<span id="cb15-365"><a href="#cb15-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-366"><a href="#cb15-366" aria-hidden="true" tabindex="-1"></a>**W es constante por regiones ★.** Es una función continua de $x$ (fuera de la curva) con valores</span>
-<span id="cb15-367"><a href="#cb15-367" aria-hidden="true" tabindex="-1"></a>enteros: es constante en cada componente del complemento.</span>
-<span id="cb15-368"><a href="#cb15-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-369"><a href="#cb15-369" aria-hidden="true" tabindex="-1"></a>**El salto de ±1.** Cruzar la curva de derecha a izquierda (respecto de su orientación) sube $W$ en</span>
-<span id="cb15-370"><a href="#cb15-370" aria-hidden="true" tabindex="-1"></a>uno. Por eso una región de **máximo local** de $W$ tiene la curva corriendo antihoraria a su</span>
-<span id="cb15-371"><a href="#cb15-371" aria-hidden="true" tabindex="-1"></a>alrededor, y una de mínimo local, horaria (figura I.6 del libro; en el lienzo, la flor).</span>
-<span id="cb15-372"><a href="#cb15-372" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-373"><a href="#cb15-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-374"><a href="#cb15-374" aria-hidden="true" tabindex="-1"></a><span class="fu"># Puentes</span></span>
-<span id="cb15-375"><a href="#cb15-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-376"><a href="#cb15-376" aria-hidden="true" tabindex="-1"></a>**Los datos tienen forma (anticipo del capítulo VII).** Con puntos ruidosos tomados de una curva</span>
-<span id="cb15-377"><a href="#cb15-377" aria-hidden="true" tabindex="-1"></a>cerrada, la homología persistente en dimensión 1 muestra **una barra larga**: los datos «saben»</span>
-<span id="cb15-378"><a href="#cb15-378" aria-hidden="true" tabindex="-1"></a>que forman un lazo. Un ocho da dos. La persistencia detecta desde afuera el «rodear» que el número</span>
-<span id="cb15-379"><a href="#cb15-379" aria-hidden="true" tabindex="-1"></a>de vueltas mide desde adentro.</span>
-<span id="cb15-380"><a href="#cb15-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-381"><a href="#cb15-381" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip appearance="simple" icon=false title="Laboratorio: de la curva a la persistencia"}</span>
-<span id="cb15-382"><a href="#cb15-382" aria-hidden="true" tabindex="-1"></a>El notebook de marimo <span class="in">`notebooks/curvas_persistencia.py`</span> muestrea una curva con ruido regulable y</span>
-<span id="cb15-383"><a href="#cb15-383" aria-hidden="true" tabindex="-1"></a>calcula su homología persistente $H_1$ con <span class="in">`ripser`</span>: el círculo da una barra larga; el ocho, dos</span>
-<span id="cb15-384"><a href="#cb15-384" aria-hidden="true" tabindex="-1"></a>iguales; el limaçon, dos de distinta longitud. Abrí la</span>
-<span id="cb15-385"><a href="#cb15-385" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">versión estática con los cuatro casos</span><span class="co">](media/curvas_persistencia.html)</span>, o corrélo para mover los</span>
-<span id="cb15-386"><a href="#cb15-386" aria-hidden="true" tabindex="-1"></a>controles: <span class="in">`uv run marimo edit notebooks/curvas_persistencia.py`</span>.</span>
-<span id="cb15-387"><a href="#cb15-387" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-388"><a href="#cb15-388" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-389"><a href="#cb15-389" aria-hidden="true" tabindex="-1"></a>**Finanzas.** La trayectoria de un oscilador en el **plano de fases** (un indicador y su derivada)</span>
-<span id="cb15-390"><a href="#cb15-390" aria-hidden="true" tabindex="-1"></a>gira alrededor del origen; el número de vueltas cuenta **ciclos completos** y es robusto al ruido,</span>
-<span id="cb15-391"><a href="#cb15-391" aria-hidden="true" tabindex="-1"></a>porque es un entero. Y el algoritmo de paridad es la base de toda pregunta «¿este estado del</span>
-<span id="cb15-392"><a href="#cb15-392" aria-hidden="true" tabindex="-1"></a>mercado está dentro de la región de riesgo?» cuando la región es un polígono.</span>
-<span id="cb15-393"><a href="#cb15-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-394"><a href="#cb15-394" aria-hidden="true" tabindex="-1"></a><span class="fu"># Desafíos {#sec-desafios}</span></span>
-<span id="cb15-395"><a href="#cb15-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-396"><a href="#cb15-396" aria-hidden="true" tabindex="-1"></a>La autoevaluación de esta sección se hace con los gadgets. Cuando puedas resolver los cinco sin</span>
-<span id="cb15-397"><a href="#cb15-397" aria-hidden="true" tabindex="-1"></a>abrir las pistas, la sección está entendida.</span>
-<span id="cb15-398"><a href="#cb15-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-399"><a href="#cb15-399" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="1. Con el Bisturí: probá que <span class="co">[</span><span class="ot">0, 1</span><span class="co">]</span> y S¹ no son homeomorfos, y por qué la firma no distingue el círculo de la θ"}</span>
-<span id="cb15-400"><a href="#cb15-400" aria-hidden="true" tabindex="-1"></a>Cortá un punto interior del intervalo ($c = 2$) y cualquiera del círculo ($c = 1$). Después</span>
-<span id="cb15-401"><a href="#cb15-401" aria-hidden="true" tabindex="-1"></a>compará círculo y θ: misma firma, y el gadget recurre al invariante local.</span>
-<span id="cb15-402"><a href="#cb15-402" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-403"><a href="#cb15-403" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-404"><a href="#cb15-404" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="2. Con el Lienzo: decidí adentro o afuera en un caso degenerado, y explicá qué decide la perturbación"}</span>
-<span id="cb15-405"><a href="#cb15-405" aria-hidden="true" tabindex="-1"></a>Poné $x$ a la altura exacta de un vértice de un polígono. La perturbación lo sube apenas</span>
-<span id="cb15-406"><a href="#cb15-406" aria-hidden="true" tabindex="-1"></a>($\varepsilon_2$): cuentan las aristas que pasan por arriba del vértice. Todo con comparaciones</span>
-<span id="cb15-407"><a href="#cb15-407" aria-hidden="true" tabindex="-1"></a>exactas.</span>
+<span id="cb15-338"><a href="#cb15-338" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
+<span id="cb15-339"><a href="#cb15-339" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
+<span id="cb15-340"><a href="#cb15-340" aria-hidden="true" tabindex="-1"></a><span class="fu">scrolly</span>(<span class="st">"scrolly-e5"</span>)</span>
+<span id="cb15-341"><a href="#cb15-341" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-342"><a href="#cb15-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-343"><a href="#cb15-343" aria-hidden="true" tabindex="-1"></a>{{&lt; video media/el_faro.mp4 title="El faro: el vector unitario desde x da dos vueltas alrededor del limacf5733e5-0370-4aae-8689-61bad1dd9ec0<span class="dv">&amp;#xe7;</span>on" aspect-ratio="16x9" &gt;}}</span>
+<span id="cb15-344"><a href="#cb15-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-345"><a href="#cb15-345" aria-hidden="true" tabindex="-1"></a>Si cada región sube a la altura de su $W$, el plano se vuelve un **terreno de mesetas**: la curva</span>
+<span id="cb15-346"><a href="#cb15-346" aria-hidden="true" tabindex="-1"></a>es la línea de acantilados y las regiones de máximo local son las cimas.</span>
+<span id="cb15-347"><a href="#cb15-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-350"><a href="#cb15-350" aria-hidden="true" tabindex="-1"></a><span class="in">```{ojs}</span></span>
+<span id="cb15-351"><a href="#cb15-351" aria-hidden="true" tabindex="-1"></a><span class="co">//| echo: false</span></span>
+<span id="cb15-352"><a href="#cb15-352" aria-hidden="true" tabindex="-1"></a><span class="fu">paisaje</span>({ <span class="dt">curva</span><span class="op">:</span> <span class="st">"flor"</span> })</span>
+<span id="cb15-353"><a href="#cb15-353" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-354"><a href="#cb15-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-355"><a href="#cb15-355" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: por qué los cruces con signo dan W ★"}</span>
+<span id="cb15-356"><a href="#cb15-356" aria-hidden="true" tabindex="-1"></a>**Cruces con signo = grado.** El rayo horizontal es el conjunto de puntos que se ven desde $x$ en</span>
+<span id="cb15-357"><a href="#cb15-357" aria-hidden="true" tabindex="-1"></a>la dirección $\theta_0 = 0$. Cada vez que la curva lo cruza, la cabeza del observador pasa por esa</span>
+<span id="cb15-358"><a href="#cb15-358" aria-hidden="true" tabindex="-1"></a>dirección: en sentido antihorario si la curva sube, horario si baja. En lenguaje de topología</span>
+<span id="cb15-359"><a href="#cb15-359" aria-hidden="true" tabindex="-1"></a>diferencial, **el grado es la suma de los signos de las preimágenes de un valor regular**, y el</span>
+<span id="cb15-360"><a href="#cb15-360" aria-hidden="true" tabindex="-1"></a>rayo es esa preimagen.</span>
+<span id="cb15-361"><a href="#cb15-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-362"><a href="#cb15-362" aria-hidden="true" tabindex="-1"></a>**W es constante por regiones ★.** Es una función continua de $x$ (fuera de la curva) con valores</span>
+<span id="cb15-363"><a href="#cb15-363" aria-hidden="true" tabindex="-1"></a>enteros: es constante en cada componente del complemento.</span>
+<span id="cb15-364"><a href="#cb15-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-365"><a href="#cb15-365" aria-hidden="true" tabindex="-1"></a>**El salto de ±1.** Cruzar la curva de derecha a izquierda (respecto de su orientación) sube $W$ en</span>
+<span id="cb15-366"><a href="#cb15-366" aria-hidden="true" tabindex="-1"></a>uno. Por eso una región de **máximo local** de $W$ tiene la curva corriendo antihoraria a su</span>
+<span id="cb15-367"><a href="#cb15-367" aria-hidden="true" tabindex="-1"></a>alrededor, y una de mínimo local, horaria (figura I.6 del libro; en el lienzo, la flor).</span>
+<span id="cb15-368"><a href="#cb15-368" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-369"><a href="#cb15-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-370"><a href="#cb15-370" aria-hidden="true" tabindex="-1"></a><span class="fu"># Puentes</span></span>
+<span id="cb15-371"><a href="#cb15-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-372"><a href="#cb15-372" aria-hidden="true" tabindex="-1"></a>**Los datos tienen forma (anticipo del capítulo VII).** Con puntos ruidosos tomados de una curva</span>
+<span id="cb15-373"><a href="#cb15-373" aria-hidden="true" tabindex="-1"></a>cerrada, la homología persistente en dimensión 1 muestra **una barra larga**: los datos «saben»</span>
+<span id="cb15-374"><a href="#cb15-374" aria-hidden="true" tabindex="-1"></a>que forman un lazo. Un ocho da dos. La persistencia detecta desde afuera el «rodear» que el número</span>
+<span id="cb15-375"><a href="#cb15-375" aria-hidden="true" tabindex="-1"></a>de vueltas mide desde adentro.</span>
+<span id="cb15-376"><a href="#cb15-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-377"><a href="#cb15-377" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip appearance="simple" icon=false title="Laboratorio: de la curva a la persistencia"}</span>
+<span id="cb15-378"><a href="#cb15-378" aria-hidden="true" tabindex="-1"></a>El notebook de marimo <span class="in">`notebooks/curvas_persistencia.py`</span> muestrea una curva con ruido regulable y</span>
+<span id="cb15-379"><a href="#cb15-379" aria-hidden="true" tabindex="-1"></a>calcula su homología persistente $H_1$ con <span class="in">`ripser`</span>: el círculo da una barra larga; el ocho, dos</span>
+<span id="cb15-380"><a href="#cb15-380" aria-hidden="true" tabindex="-1"></a>iguales; el limaçon, dos de distinta longitud. Abrí la</span>
+<span id="cb15-381"><a href="#cb15-381" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">versión estática con los cuatro casos</span><span class="co">](media/curvas_persistencia.html)</span>, o corrélo para mover los</span>
+<span id="cb15-382"><a href="#cb15-382" aria-hidden="true" tabindex="-1"></a>controles: <span class="in">`uv run marimo edit notebooks/curvas_persistencia.py`</span>.</span>
+<span id="cb15-383"><a href="#cb15-383" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-384"><a href="#cb15-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-385"><a href="#cb15-385" aria-hidden="true" tabindex="-1"></a>**Finanzas.** La trayectoria de un oscilador en el **plano de fases** (un indicador y su derivada)</span>
+<span id="cb15-386"><a href="#cb15-386" aria-hidden="true" tabindex="-1"></a>gira alrededor del origen; el número de vueltas cuenta **ciclos completos** y es robusto al ruido,</span>
+<span id="cb15-387"><a href="#cb15-387" aria-hidden="true" tabindex="-1"></a>porque es un entero. Y el algoritmo de paridad es la base de toda pregunta «¿este estado del</span>
+<span id="cb15-388"><a href="#cb15-388" aria-hidden="true" tabindex="-1"></a>mercado está dentro de la región de riesgo?» cuando la región es un polígono.</span>
+<span id="cb15-389"><a href="#cb15-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-390"><a href="#cb15-390" aria-hidden="true" tabindex="-1"></a><span class="fu"># Desafíos {#sec-desafios}</span></span>
+<span id="cb15-391"><a href="#cb15-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-392"><a href="#cb15-392" aria-hidden="true" tabindex="-1"></a>La autoevaluación de esta sección se hace con los gadgets. Cuando puedas resolver los cinco sin</span>
+<span id="cb15-393"><a href="#cb15-393" aria-hidden="true" tabindex="-1"></a>abrir las pistas, la sección está entendida.</span>
+<span id="cb15-394"><a href="#cb15-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-395"><a href="#cb15-395" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="1. Con el Bisturí: probá que <span class="co">[</span><span class="ot">0, 1</span><span class="co">]</span> y S¹ no son homeomorfos, y por qué la firma no distingue el círculo de la θ"}</span>
+<span id="cb15-396"><a href="#cb15-396" aria-hidden="true" tabindex="-1"></a>Cortá un punto interior del intervalo ($c = 2$) y cualquiera del círculo ($c = 1$). Después</span>
+<span id="cb15-397"><a href="#cb15-397" aria-hidden="true" tabindex="-1"></a>compará círculo y θ: misma firma, y el gadget recurre al invariante local.</span>
+<span id="cb15-398"><a href="#cb15-398" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-399"><a href="#cb15-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-400"><a href="#cb15-400" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="2. Con el Lienzo: decidí adentro o afuera en un caso degenerado, y explicá qué decide la perturbación"}</span>
+<span id="cb15-401"><a href="#cb15-401" aria-hidden="true" tabindex="-1"></a>Poné $x$ a la altura exacta de un vértice de un polígono. La perturbación lo sube apenas</span>
+<span id="cb15-402"><a href="#cb15-402" aria-hidden="true" tabindex="-1"></a>($\varepsilon_2$): cuentan las aristas que pasan por arriba del vértice. Todo con comparaciones</span>
+<span id="cb15-403"><a href="#cb15-403" aria-hidden="true" tabindex="-1"></a>exactas.</span>
+<span id="cb15-404"><a href="#cb15-404" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-405"><a href="#cb15-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-406"><a href="#cb15-406" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="3. Con el Taller: triangulá siguiendo la prueba, señalá las dos orejas y reproducí la errata"}</span>
+<span id="cb15-407"><a href="#cb15-407" aria-hidden="true" tabindex="-1"></a>Modo *Demostración* en la estrella; después modo *Errata* y «Generar otro contraejemplo».</span>
 <span id="cb15-408"><a href="#cb15-408" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb15-409"><a href="#cb15-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-410"><a href="#cb15-410" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="3. Con el Taller: triangulá siguiendo la prueba, señalá las dos orejas y reproducí la errata"}</span>
-<span id="cb15-411"><a href="#cb15-411" aria-hidden="true" tabindex="-1"></a>Modo *Demostración* en la estrella; después modo *Errata* y «Generar otro contraejemplo».</span>
-<span id="cb15-412"><a href="#cb15-412" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-413"><a href="#cb15-413" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-414"><a href="#cb15-414" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="4. Con el Lienzo en modo Desafío: predecí W de una curva dibujada a mano"}</span>
-<span id="cb15-415"><a href="#cb15-415" aria-hidden="true" tabindex="-1"></a>Dibujá una curva con lazos, poné $x$ y elegí $W$ antes de revelarlo. Contá los cruces del rayo con</span>
-<span id="cb15-416"><a href="#cb15-416" aria-hidden="true" tabindex="-1"></a>signo: $+$ si la curva lo cruza hacia arriba, $-$ hacia abajo. La paridad del conteo sin signo es</span>
-<span id="cb15-417"><a href="#cb15-417" aria-hidden="true" tabindex="-1"></a>$W \bmod 2$.</span>
-<span id="cb15-418"><a href="#cb15-418" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb15-419"><a href="#cb15-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-420"><a href="#cb15-420" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="5. Explicá por qué Jordan falla en el toro y Schönflies en dimensión 3"}</span>
-<span id="cb15-421"><a href="#cb15-421" aria-hidden="true" tabindex="-1"></a>Lente *Geómetra* de «¿Adentro o afuera?»: en el toro, el complemento de un meridiano es un cilindro</span>
-<span id="cb15-422"><a href="#cb15-422" aria-hidden="true" tabindex="-1"></a>(conexo); en $\mathbb{R}^3$, la esfera cornuda de Alexander.</span>
-<span id="cb15-423"><a href="#cb15-423" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-410"><a href="#cb15-410" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="4. Con el Lienzo en modo Desafío: predecí W de una curva dibujada a mano"}</span>
+<span id="cb15-411"><a href="#cb15-411" aria-hidden="true" tabindex="-1"></a>Dibujá una curva con lazos, poné $x$ y elegí $W$ antes de revelarlo. Contá los cruces del rayo con</span>
+<span id="cb15-412"><a href="#cb15-412" aria-hidden="true" tabindex="-1"></a>signo: $+$ si la curva lo cruza hacia arriba, $-$ hacia abajo. La paridad del conteo sin signo es</span>
+<span id="cb15-413"><a href="#cb15-413" aria-hidden="true" tabindex="-1"></a>$W \bmod 2$.</span>
+<span id="cb15-414"><a href="#cb15-414" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-415"><a href="#cb15-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-416"><a href="#cb15-416" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse="true" appearance="simple" icon=false title="5. Explicá por qué Jordan falla en el toro y Schönflies en dimensión 3"}</span>
+<span id="cb15-417"><a href="#cb15-417" aria-hidden="true" tabindex="-1"></a>Lente *Geómetra* de «¿Adentro o afuera?»: en el toro, el complemento de un meridiano es un cilindro</span>
+<span id="cb15-418"><a href="#cb15-418" aria-hidden="true" tabindex="-1"></a>(conexo); en $\mathbb{R}^3$, la esfera cornuda de Alexander.</span>
+<span id="cb15-419"><a href="#cb15-419" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
