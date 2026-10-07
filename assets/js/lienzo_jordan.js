@@ -528,5 +528,12 @@ assert (c - w) % 2 == 0        # la paridad es W mod 2</pre>
   observador.observe(escena);
   alCambiarTema(() => { pintarCampo(); dibujarTodo(); });
   cargar(clave);
+  // para el scrollytelling (scrolly.js): cambiar de escenario desde afuera; "dibujar" deja
+  // el lienzo listo para la curva del lector
+  gadget.raiz.tcEscenario = (k) => {
+    if (k === "dibujar") { if (!dibujar) bDibujar.click(); return; }
+    if (dibujar) bDibujar.click();
+    if (k !== clave) { selEsc.value = k; cargar(k); }
+  };
   return gadget.raiz;
 }

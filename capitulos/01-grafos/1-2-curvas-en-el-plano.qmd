@@ -17,6 +17,7 @@ import { paisaje } from "../../assets/js/paisaje.js"
 import { microscopio } from "../../assets/js/microscopio.js"
 import { proyectorEstereografico } from "../../assets/js/estereografica.js"
 import { schonhardt } from "../../assets/js/schonhardt.js"
+import { scrolly } from "../../assets/js/scrolly.js"
 ```
 
 ::: {.column-page}
@@ -78,7 +79,10 @@ el círculo.** La firma no es un invariante completo; los distingue un invariant
 
 **Topología tipográfica.** En una tipografía sin serifa: C, I, J, L, M, N, S, U, V, W, Z son
 intervalos; D y O, círculos; E, F, T, Y, trípodes; A y R son homeomorfas, H y K también; X es una
-cruz (un punto con $c = 4$).
+cruz (un punto con $c = 4$). El modo *Tipográfico* del bisturí lo calcula con un invariante
+**completo**: borra los puntos de grado 2 y compara los multigrafos que quedan. Con los dígitos
+aparecen B ≅ 8, P ≅ 6 ≅ 9 y una sorpresa: **Q ≅ 4**, pero Q ≇ A (en Q las dos colas salen del mismo
+punto). La respuesta depende de la fuente: si la pierna de la K sale del asta, K ≅ X.
 
 **Ejercicio 4, resuelto ★.** $\mathbb{R} \to (0,1)$ con la **logística** $x \mapsto 1/(1 + e^{-x})$
 (la de la regresión logística); $(0,1) \to S^1 \setminus \{N\}$ con
@@ -163,8 +167,9 @@ microscopio({ configuracion: "valle" })
 ```
 
 ::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: la perturbación resuelta exactamente ★"}
-**El determinante es área.** $\det \Delta(x,a,b) = (a_1 - x_1)(b_2 - x_2) - (a_2 - x_2)(b_1 - x_1)$,
-el producto vectorial de $a - x$ y $b - x$: el doble del área con signo del triángulo.
+**El determinante es área.**
+$$\det \Delta(x,a,b) = (a_1 - x_1)(b_2 - x_2) - (a_2 - x_2)(b_1 - x_1)$$
+es el producto vectorial de $a - x$ y $b - x$: el doble del área con signo del triángulo.
 
 **La perturbación, sin números chicos.** Desarrollando el determinante con
 $x' = (x_1 + \varepsilon_1, x_2 + \varepsilon_2)$ (los términos $\varepsilon_1\varepsilon_2$ se cancelan):
@@ -210,7 +215,7 @@ tallerTriangulacion()
 ::: {.callout-warning appearance="simple" icon=false title="Errata del libro (p. 12), verificada"}
 El paso inductivo dice: si hay vértices dentro del triángulo $abc$, unir $b$ con **el de más a la
 izquierda**. Esa regla **puede fallar**: en el pentágono
-$(42,-71), (-16,46), (-8,-18), (28,-48), (21,-47)$ da un segmento que corta una arista. La regla
+$(42,-71)$, $(-16,46)$, $(-8,-18)$, $(28,-48)$, $(21,-47)$ da un segmento que corta una arista. La regla
 correcta es **el vértice dentro de $abc$ más lejano de la recta $ac$**. Modo *Errata* del taller;
 en los tests, la regla del libro falla en una de cada ~200 triangulaciones completas al azar y la
 corregida nunca.
@@ -253,13 +258,54 @@ Parate en $x$, mirá un punto que recorre la curva y contá cuántas vueltas da 
 entero: no cambia mientras $x$ no cruce la curva, y al cruzarla salta en uno.
 :::
 
-Prendé ♪ *Sonido* y después ◉ *Faro*: cada vuelta antihoraria es una octava «hacia arriba» de un
-**tono de Shepard**, la ilusión auditiva que sube para siempre. Con los ojos cerrados se distingue
-un círculo ($W = 1$) del lazo de un limaçon ($W = 2$).
+Bajá despacio: cada tarjeta le cambia la curva al lienzo (o tocala para cargarla).
+
+:::: {#scrolly-e5 .tc-scrolly .column-page}
+
+::: {.tc-scrolly-gadget}
 
 ```{ojs}
 //| echo: false
-lienzoJordan({ escenario: "limacon", id: "g1b" })
+lienzoJordan({ escenario: "circulo", id: "g1b" })
+```
+
+:::
+
+::: {.tc-scrolly-pasos}
+
+::: {.tc-paso data-escenario="circulo"}
+**Círculo.** $W = 1$ adentro y $0$ afuera. Arrastrá $x$ a través de la curva: el número salta
+justo al cruzarla, y en ningún otro lugar.
+:::
+
+::: {.tc-paso data-escenario="limacon"}
+**Limaçon.** En el lazo interior, $W = 2$. Prendé ♪ *Sonido* y ◉ *Faro*: cada vuelta antihoraria
+sube una octava de un **tono de Shepard**, la ilusión que sube para siempre. Con los ojos
+cerrados, el lazo se oye dos veces.
+:::
+
+::: {.tc-paso data-escenario="ocho"}
+**Ocho.** Un lóbulo se recorre antihorario ($W = +1$) y el otro horario ($W = -1$). La paridad
+no los distingue; $W$ sí.
+:::
+
+::: {.tc-paso data-escenario="flor"}
+**Flor.** Los lazos de los pétalos giran al revés que el contorno: son regiones de **mínimo
+local** de $W$, rodeadas por la curva en sentido horario (figura I.6 del libro).
+:::
+
+::: {.tc-paso data-escenario="dibujar"}
+**Tu curva.** Dibujá una curva cerrada de un solo trazo, enredala todo lo que quieras y predecí
+$W$ en cada región antes de mirar el campo.
+:::
+
+:::
+
+::::
+
+```{ojs}
+//| echo: false
+scrolly("scrolly-e5")
 ```
 
 {{< video media/el_faro.mp4 title="El faro: el vector unitario desde x da dos vueltas alrededor del limaçon" aspect-ratio="16x9" >}}
