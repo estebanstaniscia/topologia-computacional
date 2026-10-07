@@ -13,6 +13,7 @@ import { areaConSigno } from "../../assets/js/area_signo.js"
 import { tallerTriangulacion } from "../../assets/js/taller_triangulacion.js"
 import { mapaEstaciones } from "../../assets/js/estaciones.js"
 import { esferaToro } from "../../assets/js/esfera_toro.js"
+import { paisaje } from "../../assets/js/paisaje.js"
 ```
 
 ::: {.column-page}
@@ -168,7 +169,9 @@ En el lienzo de arriba, elegí una curva y poné $x$ a la altura exacta de un v�
 no se inmuta. `tcomp.curvas.orient_perturbado` y su gemelo en JS implementan exactamente esto.
 
 **Paridad ≡ vueltas (mod 2) ★.** Cada cruce aporta $\pm 1$ al conteo con signo y $1$ al conteo sin
-signo; como $\pm 1 \equiv 1 \pmod 2$, tienen la misma paridad.
+signo; como $\pm 1 \equiv 1 \pmod 2$, tienen la misma paridad. Está **verificado en Lean**
+(`lean/TComp/Curvas.lean`): si cada término de una lista de enteros vale $\pm 1$, la suma es
+congruente con la longitud módulo 2.
 :::
 
 # 4 · Triangulación de polígonos {#sec-e4}
@@ -233,6 +236,14 @@ lienzoJordan({ escenario: "limacon", id: "g1b" })
 ```
 
 {{< video media/el_faro.mp4 title="El faro: el vector unitario desde x da dos vueltas alrededor del limaçon" aspect-ratio="16x9" >}}
+
+Si cada región sube a la altura de su $W$, el plano se vuelve un **terreno de mesetas**: la curva
+es la línea de acantilados y las regiones de máximo local son las cimas.
+
+```{ojs}
+//| echo: false
+paisaje({ curva: "flor" })
+```
 
 ::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: por qué los cruces con signo dan W ★"}
 **Cruces con signo = grado.** El rayo horizontal es el conjunto de puntos que se ven desde $x$ en
