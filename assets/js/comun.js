@@ -87,3 +87,22 @@ export function idUnico(prefijo) {
   contadorIds += 1;
   return `${prefijo}-${contadorIds}`;
 }
+
+/**
+ * Tipografía matemática de un elemento insertado dinámicamente. Usa MathJax.typeset
+ * (sincrónico, como Quarto): en MathJax 4 la variante con promesa puede quedar colgada.
+ * Reintenta mientras el elemento no esté en la página o MathJax no haya cargado.
+ */
+export function tipografiar(elemento, intentos = 40) {
+  const mj = globalThis.MathJax;
+  if (!elemento.isConnected || typeof mj?.typeset !== "function") {
+    if (intentos > 0) setTimeout(() => tipografiar(elemento, intentos - 1), 250);
+    return;
+  }
+  try {
+    mj.typesetClear?.([elemento]);
+    mj.typeset([elemento]);
+  } catch {
+    if (intentos > 0) setTimeout(() => tipografiar(elemento, intentos - 1), 250);
+  }
+}

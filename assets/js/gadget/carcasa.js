@@ -7,7 +7,7 @@
 // completa, pestañas de lentes y selector de modo. El gadget solo aporta su escenario,
 // sus lecturas y su lógica (que vive aparte y se testea en Node).
 
-import { html } from "../comun.js";
+import { html, tipografiar } from "../comun.js";
 
 // ------------------------------------------------------------------ lógica pura
 
@@ -50,8 +50,31 @@ export function escribirEnHash(hash, clave, valor) {
 
 // ------------------------------------------------------------------ utilidades DOM
 
-function boton(etiqueta, titulo, accion) {
-  const b = html("button", { class: "tc-g-boton", title: titulo, "aria-label": titulo, type: "button" }, etiqueta);
+const ICONOS = {
+  info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16.5"/><circle cx="12" cy="7.6" r="0.6" fill="currentColor"/>',
+  enlace: '<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/>',
+  exportar: '<path d="M12 4v11"/><path d="M7 10.5l5 5 5-5"/><path d="M5 19.5h14"/>',
+  reiniciar: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5v4h4"/>',
+  pantalla: '<path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/>',
+};
+
+function icono(nombre) {
+  const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  s.setAttribute("viewBox", "0 0 24 24");
+  s.setAttribute("width", "18");
+  s.setAttribute("height", "18");
+  s.setAttribute("fill", "none");
+  s.setAttribute("stroke", "currentColor");
+  s.setAttribute("stroke-width", "1.8");
+  s.setAttribute("stroke-linecap", "round");
+  s.setAttribute("stroke-linejoin", "round");
+  s.setAttribute("aria-hidden", "true");
+  s.innerHTML = ICONOS[nombre];
+  return s;
+}
+
+function boton(nombre, titulo, accion) {
+  const b = html("button", { class: "tc-g-boton", title: titulo, "aria-label": titulo, type: "button" }, icono(nombre));
   b.addEventListener("click", accion);
   return b;
 }
@@ -60,11 +83,6 @@ function aviso(raiz, texto) {
   const a = html("div", { class: "tc-g-aviso", role: "status" }, texto);
   raiz.append(a);
   setTimeout(() => a.remove(), 2200);
-}
-
-function tipografiar(elemento) {
-  const mj = globalThis.MathJax;
-  if (mj?.typesetPromise) mj.typesetPromise([elemento]).catch(() => {});
 }
 
 /** Compone las capas (canvas y svg) del escenario en un PNG. */
@@ -125,11 +143,11 @@ export function montarGadget(op) {
   });
 
   // barra superior
-  const bQue = boton("ⓘ", "¿Qué estoy viendo?", () => alternarQueVeo());
-  const bEnlace = boton("🔗", "Copiar un enlace a este estado", () => copiarEnlace());
-  const bExportar = boton("⤓", "Exportar imagen (PNG; con Mayúscula: SVG)", (e) => exportar(e.shiftKey));
-  const bReiniciar = boton("⟲", "Reiniciar", () => { op.reiniciar?.(); quitarQueVeo(); });
-  const bPantalla = boton("⛶", "Pantalla completa (modo estudio)", () => alternarPantalla());
+  const bQue = boton("info", "¿Qué estoy viendo?", () => alternarQueVeo());
+  const bEnlace = boton("enlace", "Copiar un enlace a este estado", () => copiarEnlace());
+  const bExportar = boton("exportar", "Exportar imagen (PNG; con Mayúscula: SVG)", (e) => exportar(e.shiftKey));
+  const bReiniciar = boton("reiniciar", "Reiniciar", () => { op.reiniciar?.(); quitarQueVeo(); });
+  const bPantalla = boton("pantalla", "Pantalla completa (modo estudio)", () => alternarPantalla());
   if (!op.estado) bEnlace.hidden = true;
   if (!op.reiniciar) bReiniciar.hidden = true;
   if (!op.queVeo) bQue.hidden = true;
@@ -151,10 +169,12 @@ export function montarGadget(op) {
   // escenario y lecturas
   const contEscenario = html("div", { class: "tc-g-escenario" }, op.escenario);
   const cuerpo = html("div", { class: "tc-g-cuerpo" + (op.lecturas ? " con-lecturas" : "") },
-    contEscenario, op.lecturas ? html("aside", { class: "tc-g-lecturas" }, op.lecturas) : null);
+    // (no <aside>: Quarto lo manda a la columna de márgenes de su grilla de página)
+    contEscenario, op.lecturas ? html("div", { class: "tc-g-lecturas" }, op.lecturas) : null);
 
   // lentes
   let lenteActual = op.lentes?.[0]?.id ?? null;
+  let ultimoContenido = null;
   const cuerpoLente = html("div", { class: "tc-g-lente", role: "tabpanel", "aria-live": "polite" });
   const pestanas = op.lentes?.length
     ? html("div", { class: "tc-g-pestanas", role: "tablist", "aria-label": "Lentes" },
@@ -166,16 +186,21 @@ export function montarGadget(op) {
     : null;
   const bloqueLentes = pestanas ? html("div", { class: "tc-g-lentes" }, html("span", { class: "tc-g-rotulo" }, "Lentes"), pestanas, cuerpoLente) : null;
 
-  raiz.append(barra,
+  // (append convertiría un null en el texto "null")
+  raiz.append(...[barra,
     (op.controles || selModos) ? html("div", { class: "tc-g-controles" }, selModos, op.controles) : null,
-    cuerpo, bloqueLentes);
+    cuerpo, bloqueLentes].filter(Boolean));
 
   // ------------------------------------------------------------- comportamiento
   function refrescarLentes() {
     if (!bloqueLentes) return;
     pestanas.querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.lente === lenteActual)));
     const lente = op.lentes.find((l) => l.id === lenteActual);
-    cuerpoLente.innerHTML = lente ? lente.contenido() : "";
+    const nuevo = lente ? lente.contenido() : "";
+    // solo si cambió: rehacerlo en cada cuadro pisaría la tipografía de MathJax
+    if (nuevo === ultimoContenido) return;
+    ultimoContenido = nuevo;
+    cuerpoLente.innerHTML = nuevo;
     tipografiar(cuerpoLente);
   }
 
@@ -254,6 +279,5 @@ export function montarGadget(op) {
 
 /** Ficha «Libro · p. X · nombre»: cita el libro en lugar de repetirlo. */
 export function fichaLibro(paginas, nombre) {
-  return html("span", { class: "tc-ficha" }, html("span", { class: "tc-ficha-icono", "aria-hidden": "true" }, "📖"),
-    html("span", {}, "Libro"), html("b", {}, paginas), html("span", {}, nombre));
+  return html("span", { class: "tc-ficha" }, html("span", {}, "Libro"), html("b", {}, paginas), html("span", {}, nombre));
 }
