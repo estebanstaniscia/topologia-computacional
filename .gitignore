@@ -33,3 +33,6 @@ Thumbs.db
 
 # Caché de sesión de marimo
 notebooks/__marimo__/
+
+# Dependencias de desarrollo de JS (package.json)
+node_modules/

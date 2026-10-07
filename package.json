@@ -1,0 +1,13 @@
+{
+  "name": "topologia-computacional-tests",
+  "private": true,
+  "description": "Dependencias de desarrollo para los tests de las piezas interactivas (node --test). El sitio no las usa: en el navegador se cargan por CDN.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/js/*.test.mjs"
+  },
+  "devDependencies": {
+    "earcut": "^3.2.4",
+    "robust-predicates": "^3.0.3"
+  }
+}

@@ -12,7 +12,9 @@ Contexto completo: @docs/contexto-proyecto.md
 **Criterio rector de calidad:** `bocetos/_proyecto/FILOSOFIA.md` (el manifiesto pedagógico).
 Leelo SIEMPRE antes de construir cualquier pieza del producto; si una decisión de diseño
 choca con ese documento, gana el documento. Estado del proyecto, ubicaciones y registro de
-decisiones: `bocetos/_proyecto/ESTADO.md`.
+decisiones: `bocetos/_proyecto/ESTADO.md`. Mejoras pendientes (por ejemplo, la revisión v2 de
+I.1): `bocetos/_proyecto/TAREAS.md` (lo mantiene Cowork; no tocar sus ítems sin indicación de
+Esteban).
 
 ## Usuario
 Esteban: estudiante de Matemática (UNLP) que trabaja en finanzas cuantitativas.
@@ -31,10 +33,13 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
 - `assets/`: estilo compartido del sitio. `assets/estilo.css` define la paleta (tokens de color,
   modo claro y oscuro) que usan TODAS las piezas; `assets/js/` tiene las piezas interactivas
   como módulos ES (lógica pura separada del dibujo, testeada con `node --test 'tests/js/*.test.mjs'`).
-- `tests/`: validación de `tcomp` contra GUDHI, ripser y networkx.
+  `assets/js/gadget/` es la **carcasa común de gadgets** (paradigma v2): todo gadget nuevo se
+  monta con ella.
+- `tests/`: validación de `tcomp` contra GUDHI, ripser, networkx, shapely y earcut; `tests/js/`
+  valida las piezas en Node (referencias en `package.json`: robust-predicates, earcut).
 - `animaciones/`: escenas de Manim; los videos finales van a `capitulos/*/media/`.
 - `notebooks/`: exploraciones en marimo (archivos .py).
-- `lean/`: formalizaciones selectas con Lean 4 + Mathlib (aún no creado; se genera con `lake new`).
+- `lean/`: formalizaciones selectas con Lean 4 + Mathlib (`lake build`; `.lake/` ignorado).
 - `bocetos/`: zona de trabajo de Cowork (ver "Flujo con Cowork"). Solo lectura para Claude Code.
 - `docs/`: documentación interna (contexto del proyecto, notas previas). No se publica.
 - `_freeze/`: resultados congelados de Quarto. SÍ se commitea. `_site/` NO.
@@ -46,7 +51,7 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
   (`Tecnologias.txt`, notas de NotebookLM). Son largas: leerlas solo si Esteban lo pide.
 
 ## Comandos
-- Entorno: `uv sync`
+- Entorno: `uv sync` (Python) y `npm install` (referencias de los tests JS)
 - Tests: `uv run pytest` (uno solo: `uv run pytest tests/test_x.py::test_nombre`)
 - Tests de la lógica de las piezas JS: `node --test 'tests/js/*.test.mjs'`
 - Lint / formato: `uv run ruff check . && uv run ruff format .`
@@ -60,16 +65,36 @@ Todo el contenido, comentarios, docstrings y mensajes de commit en español.
 1. Nunca copiar texto extenso del libro al producto: escribir disección propia.
 2. Todo algoritmo nuevo en `src/tcomp/` va acompañado de tests contra una librería de referencia.
 3. Antes de commitear un capítulo con código, ejecutar `uv run quarto render` para actualizar `_freeze/`.
-4. Agregar dependencias solo con `uv add` y consultar antes de sumar dependencias pesadas.
+4. Agregar dependencias solo con `uv add` (o `npm i -D` para tests JS) y consultar con Esteban
+   antes de instalar dependencias de desarrollo o pesadas. En el navegador, las librerías se
+   cargan por CDN desde OJS (no se instalan).
 5. Cada nueva sección se agrega a `_quarto.yml` (sidebar).
 6. Commits pequeños con prefijo de área: `cap1:`, `tcomp:`, `anim:`, `lean:`, `infra:`.
 7. Lean es selectivo: proponer formalizaciones accesibles, no intentar formalizar el libro entero.
 8. La comprensión manda: cada pieza debe ayudar a entender algo mejor.
 
-## Estructura de cada sección del producto
-Motivación e intuición → definiciones y resultados (disección) → algoritmo e
-implementación → visualización → ejercicios resueltos → puente a finanzas →
-notas para formalización.
+## Estructura de cada sección del producto (paradigma v2, desde I.2)
+La fuente es `bocetos/_proyecto/FILOSOFIA.md` §6-11: leerla antes de construir. Resumen:
+
+- **Visualización primero.** El gadget es el contenido principal; el texto lo acompaña
+  (leyenda, nota, «Profundizar»). No se transcriben definiciones del libro: se **citan** con una
+  ficha «Libro · p. X · nombre» (`.tc-ficha` en `assets/estilo.css`). El texto propio se
+  reserva para aportes: interpretaciones, demostraciones ★, ejemplos inusuales, puentes, erratas.
+- **Arquitectura de página:** gadget estrella a ancho completo arriba → mapa de estaciones →
+  cada estación con ficha del libro, la idea en 1-2 líneas, su gadget y un «Profundizar»
+  desplegable → puentes → desafíos finales (la autoevaluación, como desafíos dentro de los
+  gadgets).
+- **Presupuesto de texto:** ~1.500 palabras visibles por sección y ~120 por estación, sin contar
+  los desplegables.
+- **Anatomía de un gadget** (carcasa común `assets/js/gadget/`): escenario, lecturas, capas,
+  lentes (Matemático / Programador / Físico / Algebraico / Geómetra), modos (Explorar /
+  Demostración / Desafío), escenarios precargados, pantalla completa, reinicio, enlace al
+  estado en la URL, exportar imagen, «¿qué estoy viendo?», y un **gemelo verificado**: su lógica
+  coincide con `tcomp` y está testeada en Node.
+- **Hipermodernidad:** en cada sección, al menos un recurso nunca visto en material de
+  matemática (3D, sonido, «los datos tienen forma», desafíos humano vs. algoritmo). Catálogo de
+  patrones y radar tecnológico: FILOSOFIA.md §10-11.
+- La sección I.1 sigue con la estructura v1 hasta su revisión (`TAREAS.md`).
 
 ## Flujo con Cowork (rama `bocetos`)
 
