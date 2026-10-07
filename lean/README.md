@@ -6,6 +6,7 @@ forma selectiva: resultados accesibles y valiosos, no el libro entero.
 | Archivo | Contenido |
 |---|---|
 | `TComp/Grafos.lean` | Sección I.1: apretones de manos y árboles (vía Mathlib); Proposición 1, conexo ⟺ sin separación, con prueba propia; el certificado de desconexión del ejemplo 1 |
+| `TComp/Curvas.lean` | Sección I.2: si cada término de una lista vale ±1, la suma ≡ la longitud (mod 2); es decir, paridad ≡ número de vueltas (mod 2) |
 
 ## Uso
 
