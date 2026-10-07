@@ -19,7 +19,7 @@ análisis topológico de datos (TDA).
 | Fase | Descripción | Estado |
 |---|---|---|
 | 0 | Infraestructura: uv, Quarto, Manim, marimo, GUDHI, pruebas de humo, publicación automática | Hecha |
-| 1 | Corte vertical: sección I.1 *Componentes conexas* tocando todas las capas | Próxima |
+| 1 | Corte vertical: sección I.1 *Componentes conexas* tocando todas las capas | Construida |
 
 ## El libro y su mapa
 
@@ -60,12 +60,11 @@ conflictos. El protocolo completo está en [`bocetos/README.md`](bocetos/README.
 ├── tests/                   # Validación de tcomp contra GUDHI, ripser y networkx
 ├── animaciones/             # Escenas de Manim
 ├── notebooks/               # Exploraciones en marimo (.py)
+├── lean/                    # Formalizaciones selectas con Lean 4 + Mathlib
 ├── bocetos/                 # Taller de diseño (rama bocetos, Cowork)
 ├── docs/                    # Contexto del proyecto y notas internas (no se publica)
 └── _freeze/                 # Resultados de ejecución congelados de Quarto (se versiona)
 ```
-
-Más adelante se sumará `lean/` (formalizaciones con Lean 4 + Mathlib).
 
 Cada push a `main` dispara `.github/workflows/publicar.yml`, que compila el sitio con
 Quarto (usando `_freeze/`, sin volver a ejecutar Python) y lo publica en la rama `gh-pages`.
@@ -76,7 +75,7 @@ Quarto (usando `_freeze/`, sin volver a ejecutar Python) y lo publica en la rama
 - **Visualización:** Manim CE, Observable JS, Mermaid.
 - **Cálculo y TDA:** NumPy, SciPy, networkx, GUDHI, ripser, persim.
 - **Infraestructura:** uv (Python 3.12), Git y GitHub, GitHub Actions + Pages, Claude Code y Claude Cowork.
-- **Pendiente:** Lean 4 + Mathlib.
+- **Verificación formal:** Lean 4 + Mathlib (`cd lean && lake build`).
 
 ## Uso local
 
@@ -88,6 +87,7 @@ uv run pytest              # corre los tests
 uv run quarto preview      # abre el sitio en el navegador
 uv run quarto render       # compila el sitio y actualiza _freeze/
 uv run marimo edit notebooks/<archivo>.py
+node --test 'tests/js/*.test.mjs'   # tests de las piezas interactivas
 uv run manim -ql animaciones/<archivo>.py <Escena>
 ```
 

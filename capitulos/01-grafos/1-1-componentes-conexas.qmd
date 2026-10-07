@@ -10,6 +10,8 @@ import { laboratorio } from "../../assets/js/union_find_lab.js"
 import { olaTijera } from "../../assets/js/ola_tijera.js"
 import { continuidad } from "../../assets/js/continuidad.js"
 import { peine } from "../../assets/js/peine.js"
+import { tallerTopologias } from "../../assets/js/topologias_finitas.js"
+import { topologiaFormas } from "../../assets/js/topologia_formas.js"
 ```
 
 ```{python}
@@ -334,7 +336,13 @@ Dos estrategias opuestas llegan al mismo objeto:
 
 El albañil es exactamente union-find procesando las aristas ([bloque 4](#sec-union-find)), y si
 los ladrillos llegan ordenados por peso es el **algoritmo de Kruskal**. Las aristas que el
-albañil descarta son exactamente las que el escultor podría haber sacado. En resumen:
+albañil descarta son exactamente las que el escultor podría haber sacado. Miralos trabajar sobre
+el mismo grafo: terminan en árboles generadores **distintos**, pero los dos con $n - 1$ aristas.
+Es el mismo *tipo* de objeto, no el mismo objeto.
+
+{{< video media/dos_estrategias.mp4 title="El escultor y el albañil: dos caminos opuestos al mismo tipo de objeto" aspect-ratio="16x9" >}}
+
+En resumen:
 
 $$
 \text{hay caminos entre todo par}
@@ -419,6 +427,16 @@ margen de maniobra**: se puede mover un poco en cualquier dirección sin salirse
   todo abierto que contiene a $x$ contiene a $y$), así que **los espacios finitos se dibujan
   como grafos dirigidos**. Es un puente inesperado entre topología y combinatoria.
 
+Probalo en el taller: marcá abiertos y mirá qué axioma se rompe y con qué conjuntos; pedile que
+complete lo que falta; cargá Sierpiński y mirá su preorden ($a \to b$: todo abierto que contiene
+a $a$ contiene a $b$). La pieza reconoce en cuál de las 9 clases de homeomorfismo cae cada una de
+las 29 topologías sobre 3 puntos.
+
+```{ojs}
+//| echo: false
+tallerTopologias({ escenario: "rota" })
+```
+
 El **espacio de Sierpiński** es la estrella de esta sección. Con la clave de las observaciones
 es el espacio de los **valores de verdad observables**: $b$ es «confirmado» y $a$ es «todavía
 no confirmado». Se puede observar que algo pasó, pero no que no pasó. Lo vamos a usar en la
@@ -446,45 +464,14 @@ $\mathbb{R}^2$.** Alrededor de cualquier punto, dentro de cada disco cabe un cua
 en el punto, dentro de ese cuadrado cabe un disco, y así indefinidamente. Ese **anidamiento
 alternado** implica que las dos bases generan los mismos abiertos.
 
-::: {#fig-anidamiento}
+Los dos primeros paneles lo muestran: a la izquierda, un abierto con forma de mancha; arrastrá
+$x$ y mirá que alrededor siempre caben las tres formas (y que contra el borde se achican tanto
+como haga falta). A la derecha, el anidamiento alternado, con un zoom que no termina nunca.
 
-```{python}
-#| fig-alt: "Discos, cuadrados y rombos concéntricos alternados alrededor de un punto, cada uno contenido en el anterior, achicándose hacia el centro."
-#| renderings: [light, dark]
-from matplotlib.patches import Circle, Polygon, Rectangle
-
-for modo in MODOS:
-    with tema(modo) as p:
-        fig, ax = plt.subplots(figsize=(4.2, 4.2))
-        r = 1.0
-        formas = []
-        for paso in range(9):
-            tipo = paso % 3
-            if tipo == 0:   # disco de radio r; adentro, el cuadrado inscripto (semilado r/√2)
-                formas.append(Circle((0, 0), r))
-                r = r / math.sqrt(2)
-            elif tipo == 1:  # cuadrado de semilado r; adentro, el rombo inscripto (semidiagonal r)
-                formas.append(Rectangle((-r, -r), 2 * r, 2 * r))
-            else:            # rombo de semidiagonal r; adentro, el disco inscripto (radio r/√2)
-                formas.append(Polygon([(r, 0), (0, r), (-r, 0), (0, -r)]))
-                r = r / math.sqrt(2)
-        colores = [p["acento"], p["seco"], p["enlace"]]
-        for k, f in enumerate(formas):
-            f.set_fill(False)
-            f.set_edgecolor(colores[k % 3])
-            f.set_linewidth(2)
-            ax.add_patch(f)
-        ax.plot(0, 0, "o", color=p["tinta"], ms=4)
-        ax.set_xlim(-1.08, 1.08)
-        ax.set_ylim(-1.08, 1.08)
-        ax.set_aspect("equal")
-        ax.axis("off")
-        plt.show()
+```{ojs}
+//| echo: false
+topologiaFormas()
 ```
-
-Anidamiento alternado alrededor de un punto: disco ⊃ cuadrado ⊃ rombo ⊃ disco ⊃ … Cada forma contiene a la siguiente, así que las tres bases generan la misma topología.
-
-:::
 
 Moraleja: **la topología no ve formas, solo cercanía.** Un disco y un cuadrado son la misma
 noción de «alrededor».
@@ -493,7 +480,7 @@ noción de «alrededor».
 usamos como base los intervalos semiabiertos $[a, b)$ en lugar de los abiertos $(a, b)$,
 obtenemos **otra** topología sobre el mismo conjunto. En ella $[0, 1)$ es abierto, y su
 complemento $(-\infty, 0) \cup [1, \infty)$ también (es unión de semiabiertos). Así que $[0, 1)$
-es a la vez abierto y cerrado, y la recta de Sorgenfrey **no es conexa**
+es a la vez abierto y cerrado (tercer panel de la pieza de arriba), y la recta de Sorgenfrey **no es conexa**
 ([sección 3.5](#sec-separaciones)). El mismo conjunto $\mathbb{R}$ es conexo o no según la
 topología: **la conexidad es una propiedad del espacio topológico, no del conjunto.**
 
@@ -617,7 +604,11 @@ $$
 G \text{ conexo} \iff |G| \text{ conexo por caminos} \iff |G| \text{ conexo}.
 $$
 
-Para grafos, los tres mundos coinciden.
+Para grafos, los tres mundos coinciden. La animación muestra el pasaje: primero el camino
+discreto, un vértice por instante entero; después el reloj $t \in [0, 1]$ corre y el mismo
+recorrido se vuelve continuo.
+
+{{< video media/de_camino_discreto_a_continuo.mp4 title="Un camino discreto se derrite en un camino continuo" aspect-ratio="16x9" >}}
 
 **Caminos raros, para calibrar la intuición.**
 
@@ -1021,7 +1012,10 @@ director de la empresa más chica le reporta al de la más grande**, así que la
 cualquier empleado crece un nivel solo cuando su empresa al menos se duplica. El **árbol
 binomial**, que se obtiene fusionando siempre árboles de igual tamaño, alcanza la cota
 exactamente: es el peor caso de la unión por tamaño (escenario «Árbol binomial» del
-laboratorio).
+laboratorio). En la animación, seguí al nodo 1: baja tres escalones y en cada bajada su árbol
+se duplica.
+
+{{< video media/union_por_tamano.mp4 title="Unión por tamaño: cada vez que un nodo baja, su árbol se duplica" aspect-ratio="16x9" >}}
 
 ## 5.2 Compresión de caminos
 
@@ -1043,6 +1037,10 @@ límite de recursión de Python en cadenas largas; el resultado es idéntico.)
 
 En la empresa: **después de escalar una consulta hasta el director, todos los que participaron de
 la cadena reciben línea directa con él.** La burocracia se aplana sola, justo donde se usa.
+En la animación, el orden de los re-apuntados es el de la recursión, y sale de la traza de
+`tcomp`: a la vuelta se re-apuntan 4, 3, 2 y 1; el 5 ya apuntaba a la raíz.
+
+{{< video media/compresion_de_caminos.mp4 title="Compresión de caminos: a la vuelta de la recursión, todos saltan a la raíz" aspect-ratio="16x9" >}}
 
 Efecto medido: árbol binomial de altura $\log_2 n$ y $n$ consultas `Find` sobre la hoja más
 profunda.
@@ -1140,6 +1138,14 @@ no en la teoría, porque $\alpha(n) \to \infty$.
 | Básica | $n - 1$ | $\Theta(m\,n)$ en el peor caso |
 | Unión por tamaño | $\log_2 n$ | $O(m \log n)$ |
 | Tamaño + compresión | $\log_2 n$, y se aplana con el uso | $O(m\,\alpha(n))$ |
+
+::: {.callout-tip appearance="simple" icon=false title="Laboratorio: el costo, medido"}
+El notebook de marimo `notebooks/union_find_complejidad.py` mide saltos por operación y altura
+máxima en función de $n$, en escala log-log (donde cada potencia de $n$ es una recta), para las
+tres estrategias y tres secuencias de operaciones. Abrí la
+[versión estática con sus resultados](media/union_find_complejidad.html), o corrélo en tu máquina
+para mover los controles: `uv run marimo edit notebooks/union_find_complejidad.py`.
+:::
 
 # 6. Ejercicio 1 y puentes {#sec-puentes}
 
@@ -1307,15 +1313,87 @@ print(f"Última fusión (los dos sectores se conectan): d = {fusiones[-1][0]:.3f
       f"es decir ρ = {1 - fusiones[-1][0] ** 2 / 2:.2f}.")
 ```
 
-## 6.4 Notas para formalización (Lean)
+## 6.4 Formalización en Lean
 
-- **Lema de los apretones de manos** (la suma de los grados es $2m$): primer contacto con Lean;
-  está en Mathlib como `SimpleGraph.sum_degrees_eq_twice_card_edges`.
-- **Un árbol con $n$ vértices tiene $n - 1$ aristas:** también está en Mathlib, en torno a
-  `SimpleGraph.IsTree.card_edgeFinset` (verificar el nombre en la versión instalada).
-- **[Proposición 1](#prp-separacion)** (conexo ⟺ sin separación): buen candidato a formalización
-  **propia**, porque su prueba es corta y constructiva y probablemente no esté en Mathlib con esta
-  forma.
+Lean se usa de forma selectiva: resultados accesibles que valga la pena verificar. Para esta
+sección, `lean/TComp/Grafos.lean` contiene:
+
+- el **lema de los apretones de manos** (la suma de los grados es $2m$) y **«un árbol con $n$
+  vértices tiene $n - 1$ aristas»**, que ya están en Mathlib
+  (`SimpleGraph.sum_degrees_eq_twice_card_edges`, `SimpleGraph.IsTree.card_edgeFinset`): el primer
+  contacto con la herramienta;
+- la **[Proposición 1](#prp-separacion) con prueba propia**, que no está en Mathlib con esta forma;
+- el certificado de desconexión del ejemplo 1, verificado por Lean.
+
+La prueba sigue las dos direcciones de la página al pie de la letra. El «primer cruce» de (⇒) se
+vuelve una **inducción sobre el camino** (`mem_de_camino`), y el (⇐) toma como $U$ el conjunto de
+los alcanzables desde $u$. El código que sigue se lee directamente del archivo que verifica
+`lake build`:
+
+```{python}
+#| output: asis
+from pathlib import Path
+
+fuente = Path("../../lean/TComp/Grafos.lean").read_text(encoding="utf-8")
+inicio = fuente.index("/-- Una **separación**")
+fin = fuente.index("/-! ## Un ejemplo calculado")
+print("```lean")
+print(fuente[inicio:fin].strip())
+print("```")
+```
+
+Para verificarlo: `cd lean && lake build` (la primera vez, `lake exe cache get` descarga Mathlib).
+
+# Autoevaluación: ¿lo podés explicar sin mirar? {#sec-autoevaluacion}
+
+El objetivo de la sección es poder explicar estos cinco puntos sin el libro. Intentá cada uno en
+voz alta o por escrito, y recién después abrí la respuesta modelo para comparar.
+
+::: {.callout-note collapse="true" appearance="simple" icon=false title="1. Las dos definiciones de conexidad: por qué coinciden en grafos y no en espacios"}
+**Constructiva:** hay un camino entre todo par («se puede llegar»). **Por obstrucción:** no hay
+separación («no se puede cortar»). En grafos coinciden ([Proposición 1](#prp-separacion)): un
+camino de $U$ a $W$ tendría un primer cruce, que es una arista entre ellos; y los alcanzables
+desde un vértice forman un conjunto sin aristas que salgan, que si no fuera todo sería una
+separación. En espacios, conexo por caminos implica conexo (el mismo argumento con un supremo en
+lugar de un primer índice, gracias a que $[0, 1]$ es conexo), pero la vuelta falla: el peine es
+conexo ($p$ está en la clausura del resto) y ningún camino llega a $p$ (cerca de $p$, el peine se
+parte en trozos clopen). La grieta es local: con conexidad local por caminos, coinciden.
+:::
+
+::: {.callout-note collapse="true" appearance="simple" icon=false title="2. Qué es una topología y por qué sus axiomas son los que son"}
+Una colección de abiertos que contiene a $\emptyset$ y $X$, es cerrada por intersecciones
+**finitas** y por uniones **arbitrarias**. La clave: un abierto es una propiedad que se confirma
+con una observación finita. «Y» de dos pruebas termina (intersección finita); «O» de muchas
+alcanza con que una confirme (unión arbitraria); «Y» de infinitas pruebas no termina nunca (por
+eso $\bigcap (-\tfrac1k, \tfrac1k) = \{0\}$ no es abierto). Abierto = semidecidible.
+:::
+
+::: {.callout-note collapse="true" appearance="simple" icon=false title="3. Por qué la continuidad usa preimágenes, y el giro de Sierpiński"}
+Continuidad es «si la entrada se mueve poco, la salida se mueve poco»: fijada la tolerancia de la
+salida (un abierto $U$), tiene que haber una de la entrada, y eso dice que $f^{-1}(U)$ es abierto.
+Con imágenes falla hasta la constante. El escalón no es continuo hacia $\mathbb{R}$, pero **sí**
+hacia $\{0, 1\}$ con Sierpiński ($\{1\}$ abierto): es el test «$x > 0$», que es semidecidible.
+La continuidad es una relación entre dos topologías, no una propiedad de la fórmula.
+:::
+
+::: {.callout-note collapse="true" appearance="simple" icon=false title="4. Union-find completo: representación, operaciones, la cota log₂ k, la compresión y α(n)"}
+Un bosque de up-trees en un arreglo `parent` (la raíz se apunta a sí misma y es el nombre del
+conjunto). `Find` sube hasta la raíz; `Union` cuelga una raíz de la otra. Con **unión por
+tamaño**, un nodo baja solo cuando su árbol se fusiona con otro al menos tan grande, así que su
+árbol se duplica en cada bajada: a lo sumo $\log_2 k$ bajadas. La **compresión** re-apunta a la
+raíz todo el camino recorrido, a la vuelta de la recursión. Con las dos, $m$ operaciones cuestan
+$O(m\,\alpha(n))$, con $\alpha$ la inversa de Ackermann: $\le 4$ en la práctica, pero no acotada
+en la teoría.
+:::
+
+::: {.callout-note collapse="true" appearance="simple" icon=false title="5. Union-find calcula β₀ y β₁, y eso lleva a la persistencia"}
+Cada arista o fusiona dos componentes o se rechaza. Al final quedan $\beta_0$ componentes, hubo
+$n - \beta_0$ fusiones y $\beta_1$ rechazos, así que $n - m = \beta_0 - \beta_1$ (la característica
+de Euler). Cada rechazo cierra un ciclo independiente. Si las aristas llegan ordenadas por
+longitud (Kruskal), cada fusión es la **muerte** de una componente en el tiempo $\varepsilon$ =
+longitud: ese registro es el código de barras de dimensión 0, el mismo objeto que el dendrograma
+de enlace simple.
+:::
 
 # Ejercicios propuestos
 

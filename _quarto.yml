@@ -6,6 +6,7 @@ project:
     - capitulos/**/*.qmd
   resources:
     - assets/js/
+    - capitulos/**/media/*.html
 
 lang: es
 
