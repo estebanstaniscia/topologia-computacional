@@ -30,3 +30,6 @@ lean/.lake/
 .DS_Store
 Thumbs.db
 *:Zone.Identifier
+
+# Caché de sesión de marimo
+notebooks/__marimo__/
