@@ -101,8 +101,8 @@ test("curvas de los escenarios: las simples son de Jordan; W del limaçon llega 
     assert.ok(areaConSigno(Q) > 0);
   }
   const L = aEnteros(CURVAS.limacon());
-  assert.equal(rayo([-30, 0], L).w, 2);
-  assert.equal(vueltasPorAngulos([-30, 0], L), 2);
+  assert.equal(rayo([-45, 0], L).w, 2);
+  assert.equal(vueltasPorAngulos([-45, 0], L), 2);
   assert.ok(autointersecciones(aEnteros(CURVAS.ocho())).length >= 1);
 });
 
@@ -111,4 +111,16 @@ test("remuestrear produce m puntos equiespaciados", () => {
   assert.equal(R.length, 40);
   const d = R.map((p, i) => Math.hypot(R[(i + 1) % 40][0] - p[0], R[(i + 1) % 40][1] - p[1]));
   for (const x of d) assert.ok(Math.abs(x - 1) < 1e-9);
+});
+
+test("polígonos desenredados son simples, y se encuentran contraejemplos a la regla del libro", async () => {
+  const { poligonoDesenredado, buscarContraejemplo, triangular: tri, esDiagonal: esD } = await import("../../assets/js/curvas.js");
+  const rnd = aleatorio(21);
+  for (let k = 0; k < 50; k++) assert.ok(esSimple(poligonoDesenredado(4 + (k % 15), rnd)));
+  const c = buscarContraejemplo(aleatorio(5));
+  assert.ok(c, "debería encontrar un contraejemplo");
+  // y la regla corregida triangula ese mismo polígono sin problemas
+  const T = tri(c.P);
+  assert.equal(T.triangulos.length, c.P.length - 2);
+  assert.ok(T.diagonales.every(([i, j]) => esD(c.P, i, j)));
 });

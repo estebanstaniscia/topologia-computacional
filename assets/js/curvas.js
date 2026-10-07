@@ -56,7 +56,7 @@ export function vueltasPorAngulos(x, P) {
     d = ((d + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
     total += d;
   }
-  return Math.round(total / (2 * Math.PI));
+  return Math.round(total / (2 * Math.PI)) || 0; // sin −0
 }
 
 export function sobreElPoligono(x, P) {
@@ -260,7 +260,9 @@ export function aEnteros(P) {
   return out;
 }
 
-const anillo = (n, f) => Array.from({ length: n }, (_, k) => f((2 * Math.PI * k) / n));
+// desfasado media muestra: los puntos dobles de las curvas quedan como cruces propios y no
+// como vértices repetidos (como en una curva dibujada a mano)
+const anillo = (n, f) => Array.from({ length: n }, (_, k) => f((2 * Math.PI * (k + 0.5)) / n));
 
 /** Laberinto espiral: una banda que se enrosca (una curva de Jordan muy larga). */
 export function laberintoEspiral(vueltas = 3.4, separacion = 34, n = 160) {
@@ -350,11 +352,56 @@ function contornoDeCeldas(lleno, H, W) {
 
 export const CURVAS = {
   circulo: () => anillo(72, (t) => [200 * Math.cos(t), 200 * Math.sin(t)]),
-  // desfasado media muestra: así el punto doble es un cruce propio y no un vértice repetido
-  ocho: () => anillo(120, (t) => [300 * Math.sin(t + Math.PI / 120), 190 * Math.sin(2 * (t + Math.PI / 120))]),
-  limacon: () => anillo(150, (t) => { const r = 150 * (0.5 + Math.cos(t)); return [r * Math.cos(t) - 60, r * Math.sin(t)]; }),
+  ocho: () => anillo(120, (t) => [300 * Math.sin(t), 190 * Math.sin(2 * t)]),
+  limacon: () => anillo(150, (t) => { const r = 190 * (0.5 + Math.cos(t)); return [r * Math.cos(t) - 90, r * Math.sin(t)]; }),
   doble: () => anillo(144, (t) => [190 * Math.cos(2 * t) * (1 + 0.06 * Math.sin(t)), 190 * Math.sin(2 * t) * (1 + 0.06 * Math.sin(t))]),
   flor: () => anillo(240, (t) => [150 * Math.cos(t) + 95 * Math.cos(4 * t), 150 * Math.sin(t) - 95 * Math.sin(4 * t)]),
   espiral: () => laberintoEspiral(),
   errata: () => CONTRAEJEMPLO_LIBRO.map(([x, y]) => [x * 7 - 90, y * 3.9 + 20]),
 };
+
+// ------------------------------------------------------------------ polígonos aleatorios
+
+/** Polígono simple arbitrario: puntos al azar y «2-opt» hasta desenredarlo (como tcomp). */
+export function poligonoDesenredado(n, rnd, rango = 100) {
+  const vistos = new Set(), P = [];
+  while (P.length < n) {
+    const p = [Math.round((rnd() * 2 - 1) * rango), Math.round((rnd() * 2 - 1) * rango)];
+    if (!vistos.has(p.join(","))) { vistos.add(p.join(",")); P.push(p); }
+  }
+  let cambio = true, vueltas = 0;
+  while (cambio && vueltas++ < 500) {
+    cambio = false;
+    const m = P.length;
+    for (let i = 0; i < m; i++) for (let j = i + 2; j < m; j++) {
+      if (i === 0 && j === m - 1) continue;
+      if (seCortan(P[i], P[(i + 1) % m], P[j], P[(j + 1) % m])) {
+        const tramo = P.slice(i + 1, j + 1).reverse();
+        P.splice(i + 1, tramo.length, ...tramo);
+        cambio = true;
+      }
+    }
+  }
+  return P;
+}
+
+/**
+ * Busca al azar un polígono en posición general donde la regla del libro (el vértice de
+ * más a la izquierda dentro de abc) produce un segmento que NO es diagonal en algún paso
+ * de la triangulación. Devuelve {P, paso} o null.
+ */
+export function buscarContraejemplo(rnd, intentos = 4000) {
+  for (let k = 0; k < intentos; k++) {
+    const P = poligonoDesenredado(5 + Math.floor(rnd() * 6), rnd);
+    if (!esSimple(P) || !posicionGeneral(P)) continue;
+    const Q = antihorario(P);
+    const { pasos } = triangular(Q, "libro");
+    for (const paso of pasos) {
+      if (!paso.diagonal) continue;
+      const sub = paso.poligono.map((i) => Q[i]);
+      const [i, j] = paso.diagonal.map((v) => paso.poligono.indexOf(v));
+      if (!esDiagonal(sub, i, j)) return { P: Q, paso };
+    }
+  }
+  return null;
+}
