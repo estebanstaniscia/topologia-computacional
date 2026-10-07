@@ -14,6 +14,7 @@ import { tallerTriangulacion } from "../../assets/js/taller_triangulacion.js"
 import { mapaEstaciones } from "../../assets/js/estaciones.js"
 import { esferaToro } from "../../assets/js/esfera_toro.js"
 import { paisaje } from "../../assets/js/paisaje.js"
+import { microscopio } from "../../assets/js/microscopio.js"
 ```
 
 ::: {.column-page}
@@ -143,6 +144,14 @@ la paridad es del punto, no del rayo.
 
 {{< video media/rayo_que_gira.mp4 title="El rayo gira: los cruces cambian, la paridad no" aspect-ratio="16x9" >}}
 
+¿Y si el rayo pasa justo por un vértice? Bajo el microscopio, la perturbación del libro decide
+cada caso con comparaciones exactas:
+
+```{ojs}
+//| echo: false
+microscopio({ configuracion: "valle" })
+```
+
 ::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: la perturbación resuelta exactamente ★"}
 **El determinante es área.** $\det \Delta(x,a,b) = (a_1 - x_1)(b_2 - x_2) - (a_2 - x_2)(b_1 - x_1)$,
 el producto vectorial de $a - x$ y $b - x$: el doble del área con signo del triángulo.
@@ -266,6 +275,14 @@ alrededor, y una de mínimo local, horaria (figura I.6 del libro; en el lienzo, 
 cerrada, la homología persistente en dimensión 1 muestra **una barra larga**: los datos «saben»
 que forman un lazo. Un ocho da dos. La persistencia detecta desde afuera el «rodear» que el número
 de vueltas mide desde adentro.
+
+::: {.callout-tip appearance="simple" icon=false title="Laboratorio: de la curva a la persistencia"}
+El notebook de marimo `notebooks/curvas_persistencia.py` muestrea una curva con ruido regulable y
+calcula su homología persistente $H_1$ con `ripser`: el círculo da una barra larga; el ocho, dos
+iguales; el limaçon, dos de distinta longitud. Abrí la
+[versión estática con los cuatro casos](media/curvas_persistencia.html), o corrélo para mover los
+controles: `uv run marimo edit notebooks/curvas_persistencia.py`.
+:::
 
 **Finanzas.** La trayectoria de un oscilador en el **plano de fases** (un indicador y su derivada)
 gira alrededor del origen; el número de vueltas cuenta **ciclos completos** y es robusto al ruido,
