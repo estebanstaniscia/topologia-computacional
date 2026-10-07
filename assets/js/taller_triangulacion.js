@@ -10,7 +10,7 @@
 import { svg, html, texto, lector, alCambiarTema, puntoSVG, aleatorio, tipografiar } from "./comun.js";
 import { montarGadget } from "./gadget/carcasa.js";
 import {
-  triangular, arbolDual, orejas, caminoDual, tresColoreo, esSimple, antihorario, enTriangulo,
+  triangular, arbolDual, orejas, caminoDual, coloreoConOrden, guardiasFisk, visibilidad, esSimple, antihorario, enTriangulo,
   CONTRAEJEMPLO_LIBRO, esDiagonal, poligonoDesenredado, buscarContraejemplo, autointersecciones,
   posicionGeneral, laberintoEspiral,
 } from "./curvas.js";
@@ -35,6 +35,9 @@ export function tallerTriangulacion({ escenario = "peine", id = "g8" } = {}) {
   let P = antihorario(ESCENARIOS_T[escenario].P());
   let modo = "explorar", paso = 0, regla = "corregida", guardias = false;
   let navegar = { a: null, b: null }, arrastre = null;
+  // galería de arte: cuántos vértices del 3-coloreo ya se pintaron (animación) y la guardia
+  // bajo el mouse
+  let pintados = Infinity, temporizador = null, resaltada = null;
 
   const lienzo = svg("svg", { viewBox: `${-W / 2} ${-H / 2} ${W} ${H}`, role: "img", "aria-label": "Polígono con su triangulación, árbol dual y orejas" });
   const escena = html("div", {}, lienzo);
@@ -71,9 +74,17 @@ export function tallerTriangulacion({ escenario = "peine", id = "g8" } = {}) {
     const hechos = enDemo ? R.pasos.slice(0, paso + 1) : null;
     const triVisibles = R ? (enDemo ? R.triangulos.filter((t) => hechos.some((p) => p.triangulo && p.triangulo.join() === t.join())) : R.triangulos) : [];
     const diagVisibles = R ? (enDemo ? hechos.filter((p) => p.diagonal).map((p) => p.diagonal) : R.diagonales) : [];
-    const color = tresColoreo(P.length, R?.triangulos ?? []);
+    const { color, orden } = coloreoConOrden(P.length, R?.triangulos ?? []);
+    const yaPintado = new Set(orden.slice(0, pintados));
+    const coloreoCompleto = guardias && R && pintados >= P.length;
+    const G = coloreoCompleto ? guardiasFisk(P.length, R.triangulos) : [];
 
     if (P.length >= 3) svg("polygon", { points: P.map((p) => aS(p).join(",")).join(" "), fill: tk("--tc-mojado-suave"), "fill-opacity": 0.55, stroke: "none" }, lienzo);
+    // lo que ve cada guardia: juntas cubren todo el polígono
+    for (const g of G) {
+      if (resaltada !== null && g !== resaltada) continue;
+      svg("polygon", { points: visibilidad(P, g).map((p) => aS(p).join(",")).join(" "), fill: tk(`--tc-c${color[g] + 1}`), "fill-opacity": resaltada === null ? 0.2 : 0.4, stroke: resaltada === null ? "none" : tk(`--tc-c${color[g] + 1}`), "stroke-width": 1.5 }, lienzo);
+    }
     // camino de navegación
     if (modo === "navegar" && R && navegar.a && navegar.b) {
       const ta = R.triangulos.findIndex(([i, j, k]) => enTriangulo(navegar.a, P[i], P[j], P[k]));
@@ -137,18 +148,21 @@ export function tallerTriangulacion({ escenario = "peine", id = "g8" } = {}) {
     }
     P.forEach((p, v) => {
       const q = aS(p);
-      const c = guardias && R ? tk(`--tc-c${[1, 2, 3][color[v]] ?? 1}`) : tk("--tc-tinta");
-      svg("circle", { cx: q[0], cy: q[1], r: guardias ? 6 : 3.5, fill: c }, lienzo);
+      const pintado = guardias && R && yaPintado.has(v);
+      const c = pintado ? tk(`--tc-c${[1, 2, 3][color[v]] ?? 1}`) : tk("--tc-tinta");
+      svg("circle", { cx: q[0], cy: q[1], r: pintado ? 6 : 3.5, fill: c }, lienzo);
     });
-    if (guardias && R) {
-      const cuenta = [0, 1, 2].map((c) => color.filter((x) => x === c).length);
-      const menor = cuenta.indexOf(Math.min(...cuenta));
-      P.forEach((p, v) => {
-        if (color[v] !== menor) return;
-        const q = aS(p);
-        svg("circle", { cx: q[0], cy: q[1], r: 12, fill: "none", stroke: tk(`--tc-c${menor + 1}`), "stroke-width": 3 }, lienzo);
-      });
-      narr.innerHTML = `<b>Galería de arte (Fisk).</b> El 3-coloreo da a cada triángulo un vértice de cada color. El color menos usado tiene ${cuenta[menor]} vértices (con un anillo): ${cuenta[menor]} ≤ ⌊${P.length}/3⌋ = ${Math.floor(P.length / 3)} guardias que vigilan todo.`;
+    if (guardias && R && !coloreoCompleto) {
+      narr.innerHTML = `<b>Coloreando (${Math.min(pintados, P.length)} de ${P.length}).</b> Se recorre el árbol dual: cada triángulo nuevo comparte una diagonal con uno ya pintado, así que tiene dos vértices con color y el tercero recibe el que falta.`;
+    }
+    if (coloreoCompleto) {
+      for (const g of G) {
+        const q = aS(P[g]);
+        const anillo = svg("circle", { cx: q[0], cy: q[1], r: 12, fill: "transparent", stroke: tk(`--tc-c${color[g] + 1}`), "stroke-width": 3, style: "cursor:help" }, lienzo);
+        anillo.addEventListener("pointerenter", () => { resaltada = g; dibujar(); });
+        anillo.addEventListener("pointerleave", () => { resaltada = null; dibujar(); });
+      }
+      narr.innerHTML = `<b>Galería de arte (Fisk).</b> El 3-coloreo da a cada triángulo un vértice de cada color, y cada guardia ve sus triángulos enteros. El color menos usado tiene ${G.length} vértices (con un anillo): ${G.length} ≤ ⌊${P.length}/3⌋ = ${Math.floor(P.length / 3)} guardias. Lo sombreado es lo que ve cada una (pasá el mouse por un anillo): juntas cubren todo.`;
     }
     if (modo === "navegar") {
       for (const k of ["a", "b"]) {
@@ -242,7 +256,24 @@ export function tallerTriangulacion({ escenario = "peine", id = "g8" } = {}) {
   bAtras.addEventListener("click", () => { paso = Math.max(0, paso - 1); dibujar(); });
   bAdelante.addEventListener("click", () => { paso++; dibujar(); });
   selRegla.addEventListener("change", () => { regla = selRegla.value; paso = 0; dibujar(); });
-  bGuardias.addEventListener("click", () => { guardias = !guardias; bGuardias.setAttribute("aria-pressed", String(guardias)); dibujar(); });
+  function animarColoreo() {
+    clearInterval(temporizador);
+    resaltada = null;
+    const quieto = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    pintados = quieto ? Infinity : 0;
+    dibujar();
+    if (quieto) return;
+    temporizador = setInterval(() => {
+      pintados++;
+      if (!guardias || pintados >= P.length) { clearInterval(temporizador); pintados = Infinity; }
+      dibujar();
+    }, 260);
+  }
+  bGuardias.addEventListener("click", () => {
+    guardias = !guardias;
+    bGuardias.setAttribute("aria-pressed", String(guardias));
+    if (guardias) animarColoreo(); else { clearInterval(temporizador); pintados = Infinity; dibujar(); }
+  });
   bContra.addEventListener("click", () => {
     const c = buscarContraejemplo(rnd);
     if (!c) { gadget.avisar("No apareció ninguno en este intento: probá otra vez."); return; }
@@ -269,7 +300,7 @@ export function tallerTriangulacion({ escenario = "peine", id = "g8" } = {}) {
     alCambiarModo: (m) => {
       modo = m;
       paso = 0;
-      guardias = false; bGuardias.setAttribute("aria-pressed", "false");
+      guardias = false; bGuardias.setAttribute("aria-pressed", "false"); clearInterval(temporizador); pintados = Infinity;
       if (m === "errata") { selEsc.value = "errata"; regla = "libro"; selRegla.value = "libro"; P = antihorario(ESCENARIOS_T.errata.P()); }
       else if (m !== "demo") { regla = "corregida"; selRegla.value = "corregida"; }
       if (m === "navegar") { if (selEsc.value === "errata" || selEsc.value === "vacio") { selEsc.value = "espiral"; P = antihorario(ESCENARIOS_T.espiral.P()); } ubicarNavegantes(); }

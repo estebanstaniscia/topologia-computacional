@@ -114,6 +114,11 @@ contra el algoritmo, con laberintos y con puntos a un pelo del borde.
 adentroAfuera()
 ```
 
+El caso extremo es el copo de Koch: en el límite no tiene tangente en ningún punto y su longitud
+es infinita, pero la paridad del rayo nunca duda.
+
+{{< video media/copo_de_koch.mp4 title="Jordan sin tangentes: el copo de Koch, nivel a nivel, con dos rayos de paridad" aspect-ratio="16x9" >}}
+
 ¿Y en otras superficies? En la esfera, Jordan sigue valiendo; en el toro, no. Verté pintura:
 
 ```{ojs}
@@ -220,6 +225,10 @@ correcta es **el vértice dentro de $abc$ más lejano de la recta $ac$**. Modo *
 en los tests, la regla del libro falla en una de cada ~200 triangulaciones completas al azar y la
 corregida nunca.
 :::
+
+La prueba completa, sobre un decágono donde la regla del libro falla en el primer paso:
+
+{{< video media/prueba_triangulacion.mp4 title="La prueba inductiva de la triangulación, con la regla corregida y el árbol dual" aspect-ratio="16x9" >}}
 
 ::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: dos orejas, la galería de arte y el poliedro que no se deja"}
 **$n - 2$ triángulos, en una línea ★.** Los ángulos de los triángulos llenan los ángulos interiores

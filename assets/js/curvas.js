@@ -206,9 +206,18 @@ export function caminoDual(triangulos, arcos, origen, destino) {
 
 /** 3-coloreo de Fisk: se colorea un triángulo y se recorre el árbol dual. */
 export function tresColoreo(n, triangulos) {
-  const color = Array(n).fill(-1);
-  if (!triangulos.length) return color;
-  triangulos[0].forEach((v, c) => { color[v] = c; });
+  return coloreoConOrden(n, triangulos).color;
+}
+
+/**
+ * El 3-coloreo de tresColoreo y el orden en que se pintan los vértices (el primer
+ * triángulo y después uno nuevo por cada triángulo del recorrido del árbol dual): sirve
+ * para animarlo.
+ */
+export function coloreoConOrden(n, triangulos) {
+  const color = Array(n).fill(-1), orden = [];
+  if (!triangulos.length) return { color, orden };
+  triangulos[0].forEach((v, c) => { color[v] = c; orden.push(v); });
   const arcos = arbolDual(triangulos);
   const vecinos = triangulos.map(() => []);
   for (const [s, t] of arcos) { vecinos[s].push(t); vecinos[t].push(s); }
@@ -219,11 +228,62 @@ export function tresColoreo(n, triangulos) {
       if (vistos.has(t)) continue;
       vistos.add(t);
       const usados = new Set(triangulos[t].map((v) => color[v]).filter((c) => c >= 0));
-      for (const v of triangulos[t]) if (color[v] < 0) color[v] = [0, 1, 2].find((c) => !usados.has(c));
+      for (const v of triangulos[t]) if (color[v] < 0) { color[v] = [0, 1, 2].find((c) => !usados.has(c)); orden.push(v); }
       cola.push(t);
     }
   }
-  return color;
+  return { color, orden };
+}
+
+/** Guardias de Fisk: los vértices del color menos usado (a lo sumo ⌊n/3⌋). */
+export function guardiasFisk(n, triangulos) {
+  const color = tresColoreo(n, triangulos);
+  const cuenta = [0, 1, 2].map((c) => color.filter((x) => x === c).length);
+  const menor = cuenta.indexOf(Math.min(...cuenta));
+  return color.flatMap((c, v) => (c === menor ? [v] : []));
+}
+
+// ------------------------------------------------------------------ visibilidad
+
+/** ¿El punto x (adentro de P) se ve desde el vértice i? El segmento no cruza el borde. */
+export function veDesde(P, i, x) {
+  const g = P[i];
+  return aristas(P).every(([a, b]) => a === g || b === g || !seCortan(g, x, a, b));
+}
+
+/**
+ * Polígono de visibilidad del vértice i (P simple y antihorario): se lanza un rayo hacia
+ * cada vértice, y otros dos apenas desviados a cada lado, para ver detrás de las esquinas;
+ * cada rayo se corta en la primera arista que encuentra. Los puntos se ordenan por ángulo
+ * dentro de la cuña interior del vértice, que va de la arista saliente a la entrante.
+ */
+export function visibilidad(P, i) {
+  const n = P.length, g = P[i], sig = P[(i + 1) % n], ant = P[(i - 1 + n) % n];
+  const dosPi = 2 * Math.PI, mod = (a) => ((a % dosPi) + dosPi) % dosPi;
+  const th0 = Math.atan2(sig[1] - g[1], sig[0] - g[0]);
+  const ancho = mod(Math.atan2(ant[1] - g[1], ant[0] - g[0]) - th0);
+  const puntos = [];
+  for (let k = 0; k < n; k++) {
+    if (k === i) continue;
+    const th = Math.atan2(P[k][1] - g[1], P[k][0] - g[0]);
+    for (const d of [-1e-7, 0, 1e-7]) {
+      const desvio = mod(th + d - th0);
+      if (desvio <= 1e-9 || desvio >= ancho - 1e-9) continue; // fuera de la cuña interior
+      const u = [Math.cos(th + d), Math.sin(th + d)];
+      let mejor = Infinity;
+      for (const [a, b] of aristas(P)) {
+        if (a === g || b === g) continue;
+        const e = [b[0] - a[0], b[1] - a[1]], w = [a[0] - g[0], a[1] - g[1]];
+        const den = u[0] * e[1] - u[1] * e[0];
+        if (Math.abs(den) < 1e-15) continue;
+        const t = (w[0] * e[1] - w[1] * e[0]) / den, s = (w[0] * u[1] - w[1] * u[0]) / den;
+        if (t > 1e-9 && s >= -1e-12 && s <= 1 + 1e-12 && t < mejor) mejor = t;
+      }
+      if (mejor < Infinity) puntos.push({ desvio, p: [g[0] + mejor * u[0], g[1] + mejor * u[1]] });
+    }
+  }
+  puntos.sort((a, b) => a.desvio - b.desvio);
+  return [g, sig, ...puntos.map((q) => q.p), ant];
 }
 
 /** En qué triángulo cae el punto x (o -1). */
