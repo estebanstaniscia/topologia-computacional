@@ -15,6 +15,8 @@ import { mapaEstaciones } from "../../assets/js/estaciones.js"
 import { esferaToro } from "../../assets/js/esfera_toro.js"
 import { paisaje } from "../../assets/js/paisaje.js"
 import { microscopio } from "../../assets/js/microscopio.js"
+import { proyectorEstereografico } from "../../assets/js/estereografica.js"
+import { schonhardt } from "../../assets/js/schonhardt.js"
 ```
 
 ::: {.column-page}
@@ -85,6 +87,14 @@ estereográfica** $(x, y) \mapsto x / (1 - y)$. En dimensión 2: $v \mapsto v/(1
 $\mathbb{R}^2$ al disco abierto, y $(x,y,z) \mapsto (x,y)/(1-z)$ lleva la esfera menos un punto a
 $\mathbb{R}^2$.
 :::
+
+El ejercicio 4, como instrumento: arrastrá $p$ hacia el polo norte y mirá cómo su sombra se va al
+infinito.
+
+```{ojs}
+//| echo: false
+proyectorEstereografico()
+```
 
 # 2 · El teorema de la curva de Jordan {#sec-e2}
 
@@ -223,8 +233,16 @@ de Fisk (1978): se triangula, se **3-colorea** (cada triángulo con un vértice 
 color menos usado tiene a lo sumo $\lfloor n/3 \rfloor$ vértices que ven todo (botón *Guardias*).
 
 **En 3D no funciona.** El **poliedro de Schönhardt** (1928), un prisma con la tapa girada, no se
-puede descomponer en tetraedros sin agregar vértices.
+puede descomponer en tetraedros sin agregar vértices (gadget de abajo).
 :::
+
+En el plano, todo polígono se triangula. En el espacio, no: girá la tapa del prisma y mirá cómo,
+apenas el giro es positivo, ninguno de los 15 tetraedros posibles queda adentro.
+
+```{ojs}
+//| echo: false
+schonhardt()
+```
 
 # 5 · Número de vueltas {#sec-e5}
 
