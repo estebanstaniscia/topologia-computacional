@@ -12,6 +12,7 @@ import { adentroAfuera } from "../../assets/js/adentro_afuera.js"
 import { areaConSigno } from "../../assets/js/area_signo.js"
 import { tallerTriangulacion } from "../../assets/js/taller_triangulacion.js"
 import { mapaEstaciones } from "../../assets/js/estaciones.js"
+import { esferaToro } from "../../assets/js/esfera_toro.js"
 ```
 
 ::: {.column-page}
@@ -97,6 +98,13 @@ contra el algoritmo, con laberintos y con puntos a un pelo del borde.
 adentroAfuera()
 ```
 
+¿Y en otras superficies? En la esfera, Jordan sigue valiendo; en el toro, no. Verté pintura:
+
+```{ojs}
+//| echo: false
+esferaToro()
+```
+
 ::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: por qué no es obvio, Jordan para polígonos y el toro"}
 **Por qué no es obvio.** El **copo de Koch** es una curva de Jordan sin tangente en ningún punto,
 y hay curvas de Jordan con **área positiva** (Osgood). La primera demostración se consideró
@@ -128,6 +136,11 @@ degenerados y el signo de un determinante casi nulo.
 //| echo: false
 areaConSigno()
 ```
+
+¿Y si el rayo apuntara a otro lado? Los cruces cambian, pero aparecen y desaparecen **de a pares**:
+la paridad es del punto, no del rayo.
+
+{{< video media/rayo_que_gira.mp4 title="El rayo gira: los cruces cambian, la paridad no" aspect-ratio="16x9" >}}
 
 ::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: la perturbación resuelta exactamente ★"}
 **El determinante es área.** $\det \Delta(x,a,b) = (a_1 - x_1)(b_2 - x_2) - (a_2 - x_2)(b_1 - x_1)$,
@@ -218,6 +231,8 @@ un círculo ($W = 1$) del lazo de un limaçon ($W = 2$).
 //| echo: false
 lienzoJordan({ escenario: "limacon", id: "g1b" })
 ```
+
+{{< video media/el_faro.mp4 title="El faro: el vector unitario desde x da dos vueltas alrededor del limaçon" aspect-ratio="16x9" >}}
 
 ::: {.callout-note collapse="true" appearance="simple" icon=false title="Profundizar: por qué los cruces con signo dan W ★"}
 **Cruces con signo = grado.** El rayo horizontal es el conjunto de puntos que se ven desde $x$ en
