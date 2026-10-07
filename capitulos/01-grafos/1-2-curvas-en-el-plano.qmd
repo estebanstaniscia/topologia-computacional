@@ -93,7 +93,8 @@ $\mathbb{R}^2$.
 :::
 
 El ejercicio 4, como instrumento: arrastrá $p$ hacia el polo norte y mirá cómo su sombra se va al
-infinito.
+infinito. En modo *Esfera (3D)*, el ejercicio 3(i): agrandá una curva del plano y mirá dónde
+queda el polo.
 
 ```{ojs}
 //| echo: false

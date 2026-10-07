@@ -30,3 +30,33 @@ test("paridad en 3D: el centro adentro, puntos lejanos afuera", () => {
   assert.equal(adentro([3, 0, 0.8], V, F), false);
   assert.equal(adentro([0, 0, 5], V, F), false);
 });
+
+import { estereoTangente, estereoTangenteInversa, curvaPlano, ladoEnEsfera, fraccionAdentro } from "../../assets/js/estereografica.js";
+
+test("3D: la proyección al plano tangente y su inversa son inversas", () => {
+  for (const q of [[0, 0], [1, 0], [-3, 2.5], [10, -7], [0.01, 0.02]]) {
+    const p = estereoTangenteInversa(q);
+    assert.ok(Math.abs(Math.hypot(...p) - 1) < 1e-12);
+    const r = estereoTangente(p);
+    assert.ok(Math.hypot(r[0] - q[0], r[1] - q[1]) < 1e-9 * Math.max(1, Math.hypot(...q)));
+  }
+  assert.deepEqual(estereoTangenteInversa([0, 0]), [0, 0, -1]); // el origen del plano es S
+});
+
+test("ejercicio 3(i): N siempre está afuera, y un círculo de radio R encierra R²/(R² + 4) de la esfera", () => {
+  for (const R of [0.5, 1, 2, 4, 8]) {
+    const c = curvaPlano("circulo", R, 400);
+    assert.equal(ladoEnEsfera([0, 0, 1], c), "afuera");
+    assert.equal(ladoEnEsfera([0, 0, -1], c), "adentro");
+    // el polígono inscripto encierra un poco menos que el círculo: tolerancia 1.5 %
+    assert.ok(Math.abs(fraccionAdentro(c) - (R * R) / (R * R + 4)) < 0.015, `R = ${R}`);
+  }
+  for (const k of ["estrella", "elipse"]) {
+    assert.equal(ladoEnEsfera([0, 0, 1], curvaPlano(k, 5)), "afuera");
+  }
+});
+
+test("una recta del plano parte la esfera en dos hemisferios por N", () => {
+  const recta = curvaPlano("recta", 0);
+  assert.ok(Math.abs(fraccionAdentro(recta) - 0.5) < 0.01);
+});
