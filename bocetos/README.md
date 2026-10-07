@@ -41,7 +41,8 @@ bocetos/
 ├── README.md                       # este archivo (protocolo)
 ├── _proyecto/                      # documentos rectores del proyecto, escritos por Cowork
 │   ├── FILOSOFIA.md                #   manifiesto pedagógico: manda sobre todo lo demás
-│   └── ESTADO.md                   #   dónde está cada cosa, cómo retomar, decisiones
+│   ├── ESTADO.md                   #   dónde está cada cosa, cómo retomar, decisiones
+│   └── TAREAS.md                   #   revisiones y mejoras pendientes (p. ej. I.1 → paradigma v2)
 └── capNN-tema/
     └── N-M-nombre-seccion/
         ├── diseccion.md            # la sección desarmada: intuición, definiciones,

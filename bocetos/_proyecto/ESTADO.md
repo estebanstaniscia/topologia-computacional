@@ -2,9 +2,10 @@
 
 > **Para cualquier sesión nueva (Cowork o Claude Code):** este archivo resume dónde está cada
 > cosa, cómo se trabaja y en qué punto estamos. Leelo junto con `FILOSOFIA.md` (misma
-> carpeta), `bocetos/README.md` y `docs/contexto-proyecto.md`.
+> carpeta, **incluido el paradigma v2**, §6-11), `TAREAS.md`, `bocetos/README.md` y
+> `docs/contexto-proyecto.md`.
 >
-> Última actualización: 5 de octubre de 2026 (Cowork).
+> Última actualización: 7 de octubre de 2026 (Cowork).
 
 ## 1. Qué es esto
 
@@ -55,13 +56,20 @@ está desactivada.)
 | Fase | Estado |
 |---|---|
 | 0. Infraestructura (uv, Quarto, Manim, marimo, GUDHI, Pages, Actions) | Hecha |
-| 1. Corte vertical: sección I.1 | **Bocetos listos** (`bocetos/cap01-grafos/1-1-componentes-conexas/`); falta la construcción en Claude Code |
+| 1. Corte vertical: sección I.1 | **Hecha** (2026-10-07): P0, P1 y P2 construidos; Lean con la Proposición 1 |
+| 2. Régimen de crucero, paradigma v2 | **En curso**: I.2 con bocetos listos para construir |
+
+| Sección | Bocetos | Construcción |
+|---|---|---|
+| I.1 Componentes conexas | listos | construida (revisiones v2 pendientes en `TAREAS.md`) |
+| I.2 Curvas en el plano | **listos** (paradigma v2) | pendiente |
 
 ## 5. Próximos pasos
 
-1. Claude Code: integrar `FILOSOFIA.md` y `ESTADO.md` en `CLAUDE.md` (referencias) y construir
-   la sección I.1 según su `spec.md`.
-2. Cowork: seguir con la sección I.2 (*Curves in the Plane*).
+1. Claude Code: construir I.2 según su `spec.md` (primera sección v2; incluye la carcasa común de
+   gadgets) y actualizar la sección "Estructura de cada sección" de `CLAUDE.md` al paradigma v2.
+2. Cowork: sección I.3 (*Knots and Links*).
+3. Más adelante: revisiones v2 de I.1 (`TAREAS.md`).
 
 ## 6. Registro de decisiones
 
@@ -72,3 +80,6 @@ está desactivada.)
 | 2026-10-05 | Filosofía pedagógica fijada en `FILOSOFIA.md` |
 | 2026-10-05 | Los documentos de proyecto que escribe Cowork viven en `bocetos/_proyecto/` |
 | 2026-10-05 | Cada sección produce en `bocetos/`: `diseccion.md`, `spec.md` y `prototipos/` |
+| 2026-10-07 | Fase 1 cerrada. Convenciones de Claude Code: `tcomp` con índices 0..n-1; paleta propia sobre cosmo en `assets/estilo.css`; piezas como módulos JS testeados con Node; notebooks publicados como export estático |
+| 2026-10-07 | **Paradigma v2** (visualization-first, gadgets, lentes, presupuesto de texto): `FILOSOFIA.md` §6-11. I.1 queda como está; sus mejoras van a `TAREAS.md` |
+| 2026-10-07 | Errata detectada en el libro (p. 12, regla de triangulación); se usa la regla clásica corregida |

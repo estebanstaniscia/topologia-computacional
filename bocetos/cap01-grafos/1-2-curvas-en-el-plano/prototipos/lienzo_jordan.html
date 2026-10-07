@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lienzo de Jordan</title>
+<!--
+  PROTOTIPO (boceto) del gadget estrella de I.2 (spec.md, G1). HTML + JS puro,
+  sin dependencias. Semántica idéntica a prototipos/curvas.py:
+  - W por cruces con signo del rayo horizontal (exacto en posición genérica);
+  - paridad = cantidad de cruces sin signo; siempre W ≡ paridad (mod 2);
+  - triangulación por la prueba del libro con la regla CORREGIDA (más lejano de ac).
+  Todas las cuentas se hacen en coordenadas matemáticas (y hacia arriba).
+-->
+<style>
+  :root { --bg:#f7f6f2; --panel:#ffffff; --ink:#1c1c1f; --muted:#6c6c73; --line:#dcd8cf;
+    --curve:#1c1c1f; --accent:#2f6fdf; --pos:#2f6fdf; --neg:#d9622b; --ok:#2e8b57; --warn:#c4452f;
+    --gold:#e3a016; --tri:#8e44ad; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#121214; --panel:#1b1b1f; --ink:#ececf0; --muted:#9b9ba4;
+    --line:#33333a; --curve:#f2f2f5; --accent:#7aa5ff; --pos:#6f9dff; --neg:#ff9a5c; --ok:#5fd08f; --warn:#ff7a63;
+    --gold:#ffc24d; --tri:#c98bff; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  .app { max-width:1280px; margin:0 auto; padding:14px 16px 28px; display:grid; gap:12px;
+    grid-template-columns:minmax(0,1fr) 330px; }
+  header { grid-column:1/-1; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  h1 { font-size:21px; margin:0; letter-spacing:-.01em; }
+  header .sub { color:var(--muted); }
+  .bar { grid-column:1/-1; display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .bar .sep { width:1px; height:24px; background:var(--line); margin:0 6px; }
+  button, select { font:inherit; color:var(--ink); background:var(--panel); border:1px solid var(--line);
+    border-radius:999px; padding:5px 12px; cursor:pointer; }
+  button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:hover { border-color:var(--accent); }
+  .stage { position:relative; background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    touch-action:none; aspect-ratio: 800 / 560; }
+  .stage canvas, .stage svg { position:absolute; inset:0; width:100%; height:100%; }
+  .hint { position:absolute; left:12px; bottom:10px; color:var(--muted); font-size:12px; pointer-events:none; }
+  aside { display:flex; flex-direction:column; gap:10px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .card h2 { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 8px; }
+  .big { display:flex; align-items:baseline; gap:10px; }
+  .big b { font-size:44px; line-height:1; font-variant-numeric:tabular-nums; }
+  .grid2 { display:grid; grid-template-columns:1fr auto; gap:3px 10px; font-variant-numeric:tabular-nums; }
+  .grid2 span:nth-child(odd) { color:var(--muted); }
+  .check { color:var(--ok); font-weight:600; }
+  .lenses { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
+  .lenses button { padding:3px 10px; font-size:13px; }
+  .lens-body { min-height:120px; }
+  .lens-body code, .lens-body pre { font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+  .lens-body pre { background:var(--bg); padding:8px; border-radius:8px; overflow:auto; margin:6px 0 0; }
+  .dial { display:flex; gap:12px; align-items:center; }
+  .muted { color:var(--muted); }
+  @media (max-width:900px) { .app { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Lienzo de Jordan</h1>
+    <span class="sub">Sección I.2 · Dibujá una curva cerrada. Mové el punto x. Todo lo demás se calcula solo.</span>
+  </header>
+
+  <div class="bar">
+    <button id="bDraw" aria-pressed="false" title="Dibujar una curva a mano alzada">✎ Dibujar</button>
+    <select id="preset" title="Curvas de ejemplo"></select>
+    <button id="bRev" title="Invertir la orientación de la curva">⇄ Invertir</button>
+    <span class="sep"></span>
+    <button data-layer="field" aria-pressed="true">Campo W</button>
+    <button data-layer="ray" aria-pressed="true">Rayo de paridad</button>
+    <button data-layer="arrows" aria-pressed="true">Orientación</button>
+    <button data-layer="tri" aria-pressed="false">Triangulación</button>
+    <span class="sep"></span>
+    <button id="bBeacon" title="Recorrer la curva y mirar el vector desde x">◉ Faro</button>
+    <button id="bSound" aria-pressed="false" title="Escuchar el ángulo como un tono de Shepard">♪ Sonido</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="heat"></canvas>
+    <svg id="svg" viewBox="0 0 800 560" role="img" aria-label="Curva cerrada, punto de consulta, rayo y regiones coloreadas por número de vueltas"></svg>
+    <div class="hint" id="hint">Arrastrá el punto x · ✎ para dibujar tu propia curva</div>
+  </div>
+
+  <aside>
+    <div class="card">
+      <h2>Número de vueltas W(γ, x)</h2>
+      <div class="big"><b id="oW">0</b><span class="muted" id="oWtxt"></span></div>
+      <div class="grid2" style="margin-top:8px">
+        <span>Cruces del rayo (sin signo)</span><b id="oC">0</b>
+        <span>Cruces con signo (+ / −)</span><b id="oCs">0</b>
+        <span>Paridad</span><b id="oP">–</b>
+        <span>Paridad ≡ W (mod 2)</span><b id="oChk" class="check">✓</b>
+        <span>¿Curva simple?</span><b id="oS">–</b>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Faro: el vector (γ(s) − x)/‖γ(s) − x‖</h2>
+      <div class="dial">
+        <svg id="dial" viewBox="-60 -60 120 120" width="120" height="120" aria-label="Brújula del vector unitario"></svg>
+        <div><div class="muted">vueltas acumuladas</div><b id="oTurns" style="font-size:30px;font-variant-numeric:tabular-nums">0.00</b>
+          <div class="muted" style="font-size:12px">s recorre el círculo una vez</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Lentes</h2>
+      <div class="lenses" id="lenses">
+        <button data-lens="mat" aria-pressed="true">Matemático</button>
+        <button data-lens="prog" aria-pressed="false">Programador</button>
+        <button data-lens="fis" aria-pressed="false">Físico</button>
+        <button data-lens="alg" aria-pressed="false">Algebraico</button>
+      </div>
+      <div class="lens-body" id="lensBody"></div>
+    </div>
+  </aside>
+</div>
+
+<script>
+// ===================================================================== geometría
+// Coordenadas matemáticas: x hacia la derecha, y hacia ARRIBA. La pantalla (SVG) tiene y hacia abajo.
+const W_ = 800, H_ = 560;
+const toM = ([sx, sy]) => [sx - W_ / 2, H_ / 2 - sy];
+const toS = ([mx, my]) => [mx + W_ / 2, H_ / 2 - my];
+
+const orient = (x, a, b) => (a[0] - x[0]) * (b[1] - x[1]) - (a[1] - x[1]) * (b[0] - x[0]);
+// Signo de det Δ(x', a, b) con x' = x + (ε1, ε2), 0 < ε1 << ε2 (ver curvas.py)
+function orientP(x, a, b) {
+  for (const t of [orient(x, a, b), b[0] - a[0], a[1] - b[1]]) if (t !== 0) return Math.sign(t);
+  return 0;
+}
+const edges = P => P.map((p, i) => [p, P[(i + 1) % P.length]]);
+
+function rayInfo(x, P) {         // cruces del rayo horizontal a la derecha
+  let w = 0, n = 0; const hits = [];
+  for (const [a, b] of edges(P)) {
+    let s = 0;
+    if (a[1] <= x[1] && x[1] < b[1] && orientP(x, a, b) > 0) s = 1;
+    else if (b[1] <= x[1] && x[1] < a[1] && orientP(x, a, b) < 0) s = -1;
+    if (s) { w += s; n++; const t = (x[1] - a[1]) / (b[1] - a[1]); hits.push([[a[0] + t * (b[0] - a[0]), x[1]], s]); }
+  }
+  return { w, n, hits };
+}
+const windingAt = (x, P) => rayInfo(x, P).w;
+
+function selfIntersections(P) {
+  const E = edges(P), out = [];
+  for (let i = 0; i < E.length; i++) for (let j = i + 2; j < E.length; j++) {
+    if (i === 0 && j === E.length - 1) continue;
+    const [p1, p2] = E[i], [q1, q2] = E[j];
+    const d1 = orient(q1, q2, p1), d2 = orient(q1, q2, p2), d3 = orient(p1, p2, q1), d4 = orient(p1, p2, q2);
+    if (d1 * d2 < 0 && d3 * d4 < 0) { const t = d1 / (d1 - d2); out.push([p1[0] + t * (p2[0] - p1[0]), p1[1] + t * (p2[1] - p1[1])]); }
+  }
+  return out;
+}
+const signedArea = P => edges(P).reduce((s, [a, b]) => s + a[0] * b[1] - b[0] * a[1], 0) / 2;
+
+// Triangulación por la prueba del libro, regla corregida (más lejano de la recta ac). P antihorario.
+function triangulate(P) {
+  const tris = [], diags = [], stack = [P.map((_, i) => i)];
+  const inTri = (p, a, b, c) => orient(p, a, b) >= 0 && orient(p, b, c) >= 0 && orient(p, c, a) >= 0;
+  while (stack.length) {
+    const idx = stack.pop(), n = idx.length;
+    if (n === 3) { tris.push(idx); continue; }
+    let k = 0; for (let t = 1; t < n; t++) { const p = P[idx[t]], q = P[idx[k]]; if (p[0] < q[0] || (p[0] === q[0] && p[1] < q[1])) k = t; }
+    const ka = (k - 1 + n) % n, kc = (k + 1) % n, a = P[idx[ka]], b = P[idx[k]], c = P[idx[kc]];
+    let best = -1, bestD = -1;
+    for (let t = 0; t < n; t++) { if (t === ka || t === k || t === kc) continue;
+      if (inTri(P[idx[t]], a, b, c)) { const d = Math.abs(orient(P[idx[t]], a, c)); if (d > bestD) { bestD = d; best = t; } } }
+    let [i, j] = best < 0 ? [ka, kc] : [k, best]; if (i > j) [i, j] = [j, i];
+    diags.push([idx[i], idx[j]]);
+    stack.push(idx.slice(i, j + 1), idx.slice(j).concat(idx.slice(0, i + 1)));
+  }
+  // árbol dual
+  const side = new Map(), arcs = [];
+  tris.forEach((t, ti) => [[t[0], t[1]], [t[1], t[2]], [t[2], t[0]]].forEach(([p, q]) => {
+    const key = Math.min(p, q) + "," + Math.max(p, q); if (!side.has(key)) side.set(key, []); side.get(key).push(ti); }));
+  for (const v of side.values()) if (v.length === 2) arcs.push(v);
+  const deg = tris.map(() => 0); arcs.forEach(([s, t]) => { deg[s]++; deg[t]++; });
+  return { tris, diags, arcs, ears: deg.map((d, i) => d <= 1 ? i : -1).filter(i => i >= 0) };
+}
+
+// ===================================================================== curvas de ejemplo
+const ring = (n, f) => Array.from({ length: n }, (_, k) => f(2 * Math.PI * k / n));
+const PRESETS = {
+  circulo:  { name: "Círculo", P: ring(64, t => [200 * Math.cos(t), 200 * Math.sin(t)]) },
+  ocho:     { name: "Ocho (W = +1 y −1)", P: ring(96, t => [300 * Math.sin(t), 190 * Math.sin(2 * t)]) },
+  limacon:  { name: "Limaçon (W = 2 en el lazo)", x: [-22, 0], P: ring(120, t => { const r = 150 * (0.5 + Math.cos(t)); return [r * Math.cos(t) - 60, r * Math.sin(t)]; }) },
+  doble:    { name: "Círculo recorrido dos veces", P: ring(128, t => [190 * Math.cos(2 * t) * (1 + 0.06 * Math.sin(t)), 190 * Math.sin(2 * t) * (1 + 0.06 * Math.sin(t))]) },
+  flor:     { name: "Flor con lazos (W de −1 a 2)", P: ring(240, t => [150 * Math.cos(t) + 95 * Math.cos(4 * t), 150 * Math.sin(t) - 95 * Math.sin(4 * t)]) },
+  espiral:  { name: "Laberinto espiral (¿adentro o afuera?)", P: (() => {
+      const out = [], inn = [], N = 140;
+      for (let k = 0; k <= N; k++) { const th = 1.6 + 3.4 * Math.PI * k / N, r = 10 + 24 * th;
+        out.push([r * Math.cos(th), r * Math.sin(th) * 0.8]); inn.push([(r - 34) * Math.cos(th), (r - 34) * Math.sin(th) * 0.8]); }
+      return out.concat(inn.reverse()); })() },
+  errata:   { name: "Errata del libro (p. 12): el pentágono", P: [[42, -71], [-16, 46], [-8, -18], [28, -48], [21, -47]].map(([x, y]) => [x * 7 - 90, y * 3.9 + 20]), errata: true, x: [-330, 230] },
+};
+
+// ===================================================================== estado
+let P = PRESETS.ocho.P.map(p => p.slice()), probe = [-120, 30], drawing = null, presetKey = "ocho";
+const layers = { field: true, ray: true, arrows: true, tri: false };
+let beacon = null, lens = "mat";
+const $ = id => document.getElementById(id);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, at, par) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); par && par.appendChild(e); return e; };
+
+// ===================================================================== campo de W (canvas)
+let heatCache = null;
+function drawHeat() {
+  const cv = $("heat"), stage = $("stage"), dpr = Math.min(2, devicePixelRatio || 1);
+  const w = stage.clientWidth, h = stage.clientHeight;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const ctx = cv.getContext("2d"); ctx.clearRect(0, 0, cv.width, cv.height);
+  heatCache = null;
+  if (!layers.field || P.length < 3) return;
+  const cell = 4, gx = Math.ceil(W_ / cell), gy = Math.ceil(H_ / cell), G = new Int16Array(gx * gy);
+  for (let j = 0; j < gy; j++) for (let i = 0; i < gx; i++) G[j * gx + i] = windingAt(toM([(i + .5) * cell, (j + .5) * cell]), P);
+  heatCache = { G, gx, gy, cell };
+  const hex = c => { const m = c.replace("#", ""); return [0, 2, 4].map(i => parseInt(m.slice(i, i + 2), 16)); };
+  const pos = hex(css("--pos")), neg = hex(css("--neg"));
+  const off = new OffscreenCanvas(gx, gy), octx = off.getContext("2d"), img = octx.createImageData(gx, gy);
+  for (let q = 0; q < gx * gy; q++) { const v = G[q]; if (!v) continue; const c = v > 0 ? pos : neg;
+    img.data.set([c[0], c[1], c[2], Math.round(255 * Math.min(0.7, 0.16 + 0.18 * Math.abs(v)))], 4 * q); }
+  octx.putImageData(img, 0, 0); ctx.imageSmoothingEnabled = true; ctx.drawImage(off, 0, 0, cv.width, cv.height);
+  ctx.globalAlpha = 1;
+}
+// etiquetas: una por región (componente conexa del complemento, vía inundación en la grilla)
+function regionLabels(g) {
+  if (!heatCache) return;
+  const { G, gx, gy, cell } = heatCache, seen = new Uint8Array(gx * gy);
+  for (let s = 0; s < gx * gy; s++) {
+    if (seen[s]) continue;
+    const v = G[s], st = [s], cells = []; seen[s] = 1;
+    while (st.length) { const c = st.pop(); cells.push(c); const i = c % gx, j = (c / gx) | 0;
+      for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const ii = i + di, jj = j + dj;
+        if (ii < 0 || jj < 0 || ii >= gx || jj >= gy) continue; const d = jj * gx + ii;
+        if (!seen[d] && G[d] === v) { seen[d] = 1; st.push(d); } } }
+    if (cells.length < 60) continue;
+    // punto de la región más alejado de su borde (aprox.: el centro de la celda con más vecinos iguales en un radio)
+    let best = cells[0], bestScore = -1;
+    for (let q = 0; q < cells.length; q += Math.max(1, (cells.length / 300) | 0)) {
+      const c = cells[q], i = c % gx, j = (c / gx) | 0; let r = 1;
+      while (r < 40) { let ok = true; for (const [di, dj] of [[r, 0], [-r, 0], [0, r], [0, -r], [r, r], [-r, -r], [r, -r], [-r, r]]) {
+        const ii = i + di, jj = j + dj; if (ii < 0 || jj < 0 || ii >= gx || jj >= gy || G[jj * gx + ii] !== v) { ok = false; break; } }
+        if (!ok) break; r++; }
+      if (r > bestScore) { bestScore = r; best = c; } }
+    const bx = (best % gx + .5) * cell, by = (((best / gx) | 0) + .5) * cell;
+    const t = el("text", { x: bx, y: by + 6, "text-anchor": "middle", "font-size": 18, "font-weight": 700,
+      fill: v > 0 ? css("--pos") : v < 0 ? css("--neg") : css("--muted"), opacity: .9 }, g);
+    t.textContent = (v > 0 ? "+" : "") + v;
+  }
+}
+
+// ===================================================================== dibujo SVG
+function render() {
+  const svg = $("svg"); svg.innerHTML = "";
+  const defs = el("defs", {}, svg);
+  defs.innerHTML = `<marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="${css("--curve")}"/></marker>`;
+  if (P.length >= 3) {
+    if (layers.field) regionLabels(el("g", {}, svg));
+    const simple = selfIntersections(P).length === 0;
+    if (layers.tri && simple) drawTriangulation(svg);
+    const d = P.map((p, i) => (i ? "L" : "M") + toS(p).join(",")).join(" ") + "Z";
+    el("path", { d, fill: "none", stroke: css("--curve"), "stroke-width": 2.4, "stroke-linejoin": "round" }, svg);
+    if (layers.arrows) { const step = Math.max(1, Math.round(P.length / 14));
+      for (let i = 0; i < P.length; i += step) { const a = toS(P[i]), b = toS(P[(i + 1) % P.length]);
+        el("line", { x1: a[0], y1: a[1], x2: (a[0] + b[0]) / 2, y2: (a[1] + b[1]) / 2, stroke: "transparent", "marker-end": "url(#ar)" }, svg); } }
+    for (const q of selfIntersections(P)) { const s = toS(q); el("circle", { cx: s[0], cy: s[1], r: 4, fill: "none", stroke: css("--warn"), "stroke-width": 2 }, svg); }
+    if (PRESETS[presetKey] && PRESETS[presetKey].errata) drawErrata(svg);
+  }
+  if (drawing && drawing.length > 1) el("path", { d: drawing.map((p, i) => (i ? "L" : "M") + p.join(",")).join(" "), fill: "none", stroke: css("--accent"), "stroke-width": 3, "stroke-linecap": "round" }, svg);
+  const info = P.length >= 3 ? rayInfo(probe, P) : { w: 0, n: 0, hits: [] };
+  const ps = toS(probe);
+  if (layers.ray && P.length >= 3) {
+    el("line", { x1: ps[0], y1: ps[1], x2: W_, y2: ps[1], stroke: css("--gold"), "stroke-width": 2, "stroke-dasharray": "6 5" }, svg);
+    info.hits.forEach(([h, s], k) => { const q = toS(h);
+      el("circle", { cx: q[0], cy: q[1], r: 9, fill: s > 0 ? css("--pos") : css("--neg") }, svg);
+      const t = el("text", { x: q[0], y: q[1] + 4, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "#fff" }, svg); t.textContent = s > 0 ? "+" : "−"; });
+  }
+  if (beacon) { const g = toS(beacon.pt);
+    el("line", { x1: ps[0], y1: ps[1], x2: g[0], y2: g[1], stroke: css("--gold"), "stroke-width": 3 }, svg);
+    el("circle", { cx: g[0], cy: g[1], r: 7, fill: css("--gold") }, svg); }
+  el("circle", { cx: ps[0], cy: ps[1], r: 9, fill: css("--panel"), stroke: css("--ink"), "stroke-width": 2.5, style: "cursor:grab" }, svg);
+  const lx = el("text", { x: ps[0] + 12, y: ps[1] - 10, "font-size": 15, "font-style": "italic", "font-weight": 700, fill: css("--ink") }, svg); lx.textContent = "x";
+  // lecturas
+  const simple = P.length >= 3 && selfIntersections(P).length === 0;
+  $("oW").textContent = info.w; $("oC").textContent = info.n;
+  const pos = info.hits.filter(h => h[1] > 0).length; $("oCs").textContent = `${pos} − ${info.n - pos} = ${info.w}`;
+  $("oP").textContent = info.n % 2 ? "impar" : "par";
+  $("oChk").textContent = (((info.n - info.w) % 2) + 2) % 2 === 0 ? "✓ siempre" : "✗";
+  const ints = selfIntersections(P).length; $("oS").textContent = simple ? "sí (Jordan)" : `no (${ints} autointersecciones)`;
+  $("oWtxt").textContent = simple ? (info.w ? "adentro" : "afuera") : (info.w ? `${Math.abs(info.w)} vuelta${Math.abs(info.w) > 1 ? "s" : ""} ${info.w > 0 ? "antihoraria" : "horaria"}${Math.abs(info.w) > 1 ? "s" : ""}` : "sin vuelta neta");
+  drawDial(); renderLens(info);
+}
+
+function drawTriangulation(svg) {
+  let Q = P.slice(), flip = signedArea(Q) < 0; if (flip) Q = Q.reverse();
+  const n = Q.length, map = i => flip ? n - 1 - i : i;   // índices de Q → P (solo para dibujar no hace falta)
+  const T = triangulate(Q), g = el("g", {}, svg);
+  T.tris.forEach((t, ti) => { const pts = t.map(i => toS(Q[i]).join(",")).join(" ");
+    el("polygon", { points: pts, fill: T.ears.includes(ti) ? css("--tri") : "none", "fill-opacity": .16, stroke: "none" }, g); });
+  T.diags.forEach(([i, j]) => { const a = toS(Q[i]), b = toS(Q[j]);
+    el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: css("--tri"), "stroke-width": 1, opacity: .7 }, g); });
+  const cen = t => toS([(Q[t[0]][0] + Q[t[1]][0] + Q[t[2]][0]) / 3, (Q[t[0]][1] + Q[t[1]][1] + Q[t[2]][1]) / 3]);
+  T.arcs.forEach(([s, t]) => { const a = cen(T.tris[s]), b = cen(T.tris[t]);
+    el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: css("--tri"), "stroke-width": 2.2 }, g); });
+  T.tris.forEach((t, ti) => { const c = cen(t); el("circle", { cx: c[0], cy: c[1], r: T.ears.includes(ti) ? 4.5 : 2.6, fill: css("--tri") }, g); });
+  const lab = el("text", { x: 12, y: 22, "font-size": 13, fill: css("--tri"), "font-weight": 600 }, g);
+  lab.textContent = `n = ${n}: ${T.tris.length} triángulos (n−2), ${T.diags.length} diagonales (n−3), árbol dual con ${T.ears.length} hojas = orejas`;
+}
+
+function drawErrata(svg) {
+  // b = vértice de más a la izquierda; a, c sus vecinos; u_libro = más a la izquierda dentro de abc; u_ok = más lejano de ac
+  const Q = P, n = Q.length; let k = 0; Q.forEach((p, i) => { if (p[0] < Q[k][0]) k = i; });
+  const a = Q[(k - 1 + n) % n], b = Q[k], c = Q[(k + 1) % n];
+  const inside = Q.filter((p, i) => i !== k && i !== (k + 1) % n && i !== (k - 1 + n) % n && orient(p, a, b) >= 0 && orient(p, b, c) >= 0 && orient(p, c, a) >= 0);
+  const uL = inside.reduce((m, p) => p[0] < m[0] ? p : m), uF = inside.reduce((m, p) => Math.abs(orient(p, a, c)) > Math.abs(orient(m, a, c)) ? p : m);
+  const S = p => toS(p);
+  el("polygon", { points: [a, b, c].map(p => S(p).join(",")).join(" "), fill: css("--gold"), "fill-opacity": .12, stroke: css("--gold"), "stroke-dasharray": "4 4" }, svg);
+  el("line", { x1: S(b)[0], y1: S(b)[1], x2: S(uL)[0], y2: S(uL)[1], stroke: css("--warn"), "stroke-width": 3 }, svg);
+  el("line", { x1: S(b)[0], y1: S(b)[1], x2: S(uF)[0], y2: S(uF)[1], stroke: css("--ok"), "stroke-width": 3, "stroke-dasharray": "8 5" }, svg);
+  [[b, "b", 8, -8], [a, "a", 8, 4], [c, "c", -18, 4], [uL, "u (libro)", -78, 18], [uF, "u (corregido)", 10, -10]].forEach(([p, s, dx, dy]) => { const q = S(p);
+    const t = el("text", { x: q[0] + dx, y: q[1] + dy, "font-size": 13, "font-weight": 700, fill: css("--ink") }, svg); t.textContent = s; });
+  const t = el("text", { x: 12, y: H_ - 34, "font-size": 13, fill: css("--warn"), "font-weight": 600 }, svg);
+  t.textContent = "Rojo: la regla del libro (el más a la izquierda en abc) corta una arista: no es diagonal.";
+  const t2 = el("text", { x: 12, y: H_ - 16, "font-size": 13, fill: css("--ok"), "font-weight": 600 }, svg);
+  t2.textContent = "Verde: la regla clásica (el más lejano de la recta ac) siempre da una diagonal.";
+}
+
+// ===================================================================== faro + sonido
+function drawDial() {
+  const d = $("dial"); d.innerHTML = "";
+  el("circle", { cx: 0, cy: 0, r: 46, fill: "none", stroke: css("--line"), "stroke-width": 2 }, d);
+  for (let k = 0; k < 12; k++) { const t = k * Math.PI / 6; el("line", { x1: 40 * Math.cos(t), y1: 40 * Math.sin(t), x2: 46 * Math.cos(t), y2: 46 * Math.sin(t), stroke: css("--line") }, d); }
+  if (!beacon) { $("oTurns").textContent = "0.00"; return; }
+  const th = beacon.ang;   // ángulo matemático; en pantalla y invertida
+  // traza en espiral: radio que crece con las vueltas acumuladas, para "ver" el enrollamiento
+  const pts = beacon.trail.map(([a, acc]) => { const r = 14 + 6 * Math.abs(acc) / (2 * Math.PI); return [r * Math.cos(a), -r * Math.sin(a)]; });
+  if (pts.length > 1) el("path", { d: pts.map((p, i) => (i ? "L" : "M") + p.join(",")).join(" "), fill: "none", stroke: beacon.acc >= 0 ? css("--pos") : css("--neg"), "stroke-width": 1.6 }, d);
+  el("line", { x1: 0, y1: 0, x2: 44 * Math.cos(th), y2: -44 * Math.sin(th), stroke: css("--gold"), "stroke-width": 3, "stroke-linecap": "round" }, d);
+  el("circle", { cx: 0, cy: 0, r: 4, fill: css("--ink") }, d);
+  $("oTurns").textContent = (beacon.acc / (2 * Math.PI)).toFixed(2);
+}
+
+let audio = null;
+function startAudio() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)(), master = ctx.createGain();
+  master.gain.value = 0.0; master.connect(ctx.destination);
+  const oscs = Array.from({ length: 7 }, () => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "sine"; o.connect(g); g.connect(master); o.start(); return { o, g }; });
+  audio = { ctx, master, oscs };
+}
+// Tono de Shepard: la altura "sube para siempre" mientras el ángulo crece. Una vuelta antihoraria = una octava.
+function setShepard(acc) {
+  if (!audio) return;
+  const frac = acc / (2 * Math.PI), base = 55, now = audio.ctx.currentTime;
+  audio.oscs.forEach(({ o, g }, k) => {
+    let x = ((k + frac) % 7 + 7) % 7;                     // posición en octavas, 0..7
+    o.frequency.setTargetAtTime(base * Math.pow(2, x), now, 0.01);
+    g.gain.setTargetAtTime(Math.exp(-Math.pow(x - 3.5, 2) / 2) * 0.22, now, 0.01);
+  });
+}
+function tick(sign) {
+  if (!audio) return; const o = audio.ctx.createOscillator(), g = audio.ctx.createGain(), t = audio.ctx.currentTime;
+  o.frequency.value = sign > 0 ? 1320 : 440; g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+  o.connect(g); g.connect(audio.ctx.destination); o.start(t); o.stop(t + 0.13);
+}
+
+function runBeacon() {
+  if (P.length < 3) return;
+  const total = 5200, t0 = performance.now(), n = P.length;
+  const angOf = p => Math.atan2(p[1] - probe[1], p[0] - probe[0]);
+  beacon = { pt: P[0], ang: angOf(P[0]), acc: 0, trail: [] };
+  if (audio) audio.master.gain.setTargetAtTime(0.9, audio.ctx.currentTime, 0.05);
+  let prev = beacon.ang, lastTurn = 0;
+  const step = now => {
+    const s = Math.min(1, (now - t0) / total), f = s * n, i = Math.floor(f) % n, u = f - Math.floor(f);
+    const a = P[i], b = P[(i + 1) % n], pt = [a[0] + u * (b[0] - a[0]), a[1] + u * (b[1] - a[1])];
+    const ang = angOf(pt); let d = ang - prev; while (d <= -Math.PI) d += 2 * Math.PI; while (d > Math.PI) d -= 2 * Math.PI;
+    beacon.acc += d; prev = ang; beacon.pt = pt; beacon.ang = ang; beacon.trail.push([ang, beacon.acc]);
+    const turns = Math.trunc(beacon.acc / (2 * Math.PI)); if (turns !== lastTurn) { tick(turns > lastTurn ? 1 : -1); lastTurn = turns; }
+    setShepard(beacon.acc); render();
+    if (s < 1) requestAnimationFrame(step);
+    else { if (audio) audio.master.gain.setTargetAtTime(0, audio.ctx.currentTime, 0.2); setTimeout(() => { beacon = null; render(); }, 1600); }
+  };
+  requestAnimationFrame(step);
+}
+
+// ===================================================================== lentes
+function renderLens(info) {
+  const w = info.w, n = info.n, B = $("lensBody");
+  const L = {
+    mat: `<p><b>Grado de una función.</b> El vector unitario define una función <i>u</i>: S¹ → S¹. W(γ, x) es su <b>grado</b>: cuántas veces <i>u</i> cubre el círculo, con signo.</p>
+          <p>W(γ, x) = (1/2π) ∮ dθ = <b>${w}</b>. Es constante en cada región del complemento de la curva: <b>W es una función continua con valores enteros</b>, así que solo puede saltar al cruzar γ.</p>`,
+    prog: `<p>Dos algoritmos, el mismo recorrido de aristas, O(n):</p>
+<pre>w = 0                 # en ℤ:  número de vueltas
+c = 0                 # en ℤ/2: paridad
+for a, b in aristas:
+    s = cruce_con_signo(x, a, b)   # +1, −1 o 0
+    w += s
+    c += abs(s)
+# c ≡ w (mod 2): la paridad es la
+# sombra módulo 2 de W</pre><p class="muted">Ahora: w = ${w}, c = ${n}.</p>`,
+    fis: `<p><b>Ley de Ampère.</b> Si por <i>x</i> pasa un cable perpendicular al plano con corriente <i>I</i>, la circulación del campo magnético a lo largo de γ es</p>
+          <p style="text-align:center">∮<sub>γ</sub> <b>B</b> · d<b>ℓ</b> = μ₀ · I · <b>W(γ, x)</b></p>
+          <p>La física "cuenta" las vueltas: un lazo que rodea el cable dos veces mide el doble. Acá: ${w} × μ₀I.</p>`,
+    alg: `<p><b>ℤ contra ℤ/2.</b> El algoritmo de paridad cuenta cruces <b>sin signo</b>: trabaja módulo 2. El número de vueltas los cuenta <b>con signo</b>: trabaja en los enteros.</p>
+          <p>Para curvas simples alcanza ℤ/2 (W ∈ {0, 1}). Para curvas con autointersecciones, ℤ/2 pierde información: acá ℤ dice <b>${w}</b> y ℤ/2 dice <b>${((w % 2) + 2) % 2}</b>.</p>
+          <p class="muted">Anticipo del capítulo IV: el libro calcula homología con coeficientes en ℤ/2, justamente por esta economía.</p>`,
+  };
+  B.innerHTML = L[lens];
+}
+
+// ===================================================================== interacción
+function resample(pts, m) {           // remuestreo uniforme por longitud de arco (cerrado)
+  const C = pts.concat([pts[0]]), L = [0]; for (let i = 1; i < C.length; i++) L.push(L[i - 1] + Math.hypot(C[i][0] - C[i - 1][0], C[i][1] - C[i - 1][1]));
+  const tot = L[L.length - 1], out = []; let j = 0;
+  for (let k = 0; k < m; k++) { const s = tot * k / m; while (L[j + 1] < s) j++; const u = (s - L[j]) / ((L[j + 1] - L[j]) || 1);
+    out.push([C[j][0] + u * (C[j + 1][0] - C[j][0]), C[j][1] + u * (C[j + 1][1] - C[j][1])]); }
+  return out;
+}
+const svgPoint = e => { const r = $("svg").getBoundingClientRect(); return [(e.clientX - r.left) * W_ / r.width, (e.clientY - r.top) * H_ / r.height]; };
+const stage = $("stage"); let dragging = false;
+stage.addEventListener("pointerdown", e => { stage.setPointerCapture(e.pointerId);
+  if ($("bDraw").getAttribute("aria-pressed") === "true") { drawing = [svgPoint(e)]; render(); }
+  else { dragging = true; probe = toM(svgPoint(e)); render(); } });
+stage.addEventListener("pointermove", e => {
+  if (drawing) { const p = svgPoint(e), q = drawing[drawing.length - 1]; if (Math.hypot(p[0] - q[0], p[1] - q[1]) > 4) { drawing.push(p); render(); } }
+  else if (dragging) { probe = toM(svgPoint(e)); render(); } });
+stage.addEventListener("pointerup", () => {
+  if (drawing) { if (drawing.length > 8) { P = resample(drawing.map(toM), 90); presetKey = "propia"; $("preset").value = ""; drawHeat(); }
+    drawing = null; $("bDraw").setAttribute("aria-pressed", "false"); $("hint").textContent = "Arrastrá el punto x · ✎ para dibujar otra curva"; render(); }
+  dragging = false; });
+
+$("bDraw").onclick = () => { const on = $("bDraw").getAttribute("aria-pressed") !== "true"; $("bDraw").setAttribute("aria-pressed", on);
+  $("hint").textContent = on ? "Dibujá una curva cerrada de un solo trazo: al soltar, se cierra sola" : "Arrastrá el punto x · ✎ para dibujar tu propia curva"; };
+$("bRev").onclick = () => { P = P.slice().reverse(); drawHeat(); render(); };
+document.querySelectorAll("[data-layer]").forEach(b => b.onclick = () => { const k = b.dataset.layer; layers[k] = !layers[k];
+  b.setAttribute("aria-pressed", layers[k]); if (k === "field") drawHeat(); render(); });
+document.querySelectorAll("[data-lens]").forEach(b => b.onclick = () => { lens = b.dataset.lens;
+  document.querySelectorAll("[data-lens]").forEach(c => c.setAttribute("aria-pressed", c === b)); render(); });
+$("bBeacon").onclick = () => runBeacon();
+$("bSound").onclick = () => { const on = $("bSound").getAttribute("aria-pressed") !== "true"; $("bSound").setAttribute("aria-pressed", on);
+  if (on && !audio) startAudio(); if (audio) { on ? audio.ctx.resume() : audio.ctx.suspend(); } };
+for (const k in PRESETS) { const o = document.createElement("option"); o.value = k; o.textContent = PRESETS[k].name; $("preset").appendChild(o); }
+$("preset").value = presetKey;
+$("preset").onchange = () => { presetKey = $("preset").value; const pr = PRESETS[presetKey]; P = pr.P.map(p => p.slice());
+  layers.field = !pr.errata; layers.tri = !!pr.errata;
+  document.querySelector('[data-layer="field"]').setAttribute("aria-pressed", layers.field);
+  document.querySelector('[data-layer="tri"]').setAttribute("aria-pressed", layers.tri);
+  if (pr.x) probe = pr.x.slice();
+  $("hint").style.display = pr.errata ? "none" : "";
+  drawHeat(); render(); };
+addEventListener("resize", () => { drawHeat(); render(); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { drawHeat(); render(); });
+drawHeat(); render();
+// API mínima para tests automáticos
+window.__lienzo = { setCurve: q => { P = q; drawHeat(); render(); }, setProbe: q => { probe = q; render(); }, windingAt, rayInfo, triangulate, selfIntersections };
+</script>
+</body>
+</html>
