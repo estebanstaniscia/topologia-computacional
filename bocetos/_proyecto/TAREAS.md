@@ -43,18 +43,23 @@ hasta que Esteban lo indique.**
       fórmulas no se renderizan. Evaluar **empaquetar localmente** las dependencias críticas
       (MathJax, D3, runtime de OJS) para que el sitio funcione sin conexión o en redes
       restringidas.
-- [ ] Verificar que los videos `.mp4` usen un códec compatible con todos los navegadores
-      (H.264 + AAC, `faststart`).
+- [x] Verificar que los videos `.mp4` usen un códec compatible con todos los navegadores
+      (H.264 + AAC, `faststart`). *Resuelto 2026-10-08 (Claude Code): todos en h264/yuv420p con
+      faststart.*
+- [ ] **Desborde horizontal en el celular** en I.1, por los paneles `.tc-ancho` de la versión
+      anterior (detectado por Claude Code el 2026-10-08). Resolverlo en la revisión v2 de I.1.
 
 ## Sección I.2
 
-- [ ] Construir según `bocetos/cap01-grafos/1-2-curvas-en-el-plano/spec.md`.
-- [ ] Reportar la **errata** de la p. 12 (regla "el vértice de más a la izquierda") a la fe de
+- [x] Construir según `bocetos/cap01-grafos/1-2-curvas-en-el-plano/spec.md`. *Hecho
+      2026-10-08: P0, P1 y P2 completos; 1.299 palabras visibles.*
+- [ ] Reportar la **errata** de la p. 12 (confirmada por Claude Code: la regla del libro falla en
+      ~1 de cada 200 triangulaciones; la corregida, nunca) (regla "el vértice de más a la izquierda") a la fe de
       erratas del libro, si existe un canal. Contraejemplo verificado en
       `prototipos/curvas.py` (`CONTRAEJEMPLO_LIBRO`).
 
 ## Transversales
 
-- [ ] **Carcasa común de gadgets** (Web Components): construirla en I.2 y migrar I.1.
+- [~] **Carcasa común de gadgets**: construida en I.2 (`assets/js/gadget/`); falta migrar I.1.
 - [ ] Enlaces permanentes al estado de cada gadget (compartir "esta curva con este punto").
 - [ ] Modo "estudio" a pantalla completa para el gadget estrella de cada sección.

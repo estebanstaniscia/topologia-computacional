@@ -5,7 +5,7 @@
 > carpeta, **incluido el paradigma v2**, §6-11), `TAREAS.md`, `bocetos/README.md` y
 > `docs/contexto-proyecto.md`.
 >
-> Última actualización: 7 de octubre de 2026 (Cowork).
+> Última actualización: 8 de octubre de 2026 (Cowork).
 
 ## 1. Qué es esto
 
@@ -57,19 +57,19 @@ está desactivada.)
 |---|---|
 | 0. Infraestructura (uv, Quarto, Manim, marimo, GUDHI, Pages, Actions) | Hecha |
 | 1. Corte vertical: sección I.1 | **Hecha** (2026-10-07): P0, P1 y P2 construidos; Lean con la Proposición 1 |
-| 2. Régimen de crucero, paradigma v2 | **En curso**: I.2 con bocetos listos para construir |
+| 2. Régimen de crucero, paradigma v2 | **En curso**: I.2 construida (primera sección v2) |
 
 | Sección | Bocetos | Construcción |
 |---|---|---|
 | I.1 Componentes conexas | listos | construida (revisiones v2 pendientes en `TAREAS.md`) |
-| I.2 Curvas en el plano | **listos** (paradigma v2) | pendiente |
+| I.2 Curvas en el plano | listos (paradigma v2) | **construida** (2026-10-08): P0, P1 y P2; 1.299 palabras visibles |
+| I.3 Nudos y enlaces | pendiente | — |
 
 ## 5. Próximos pasos
 
-1. Claude Code: construir I.2 según su `spec.md` (primera sección v2; incluye la carcasa común de
-   gadgets) y actualizar la sección "Estructura de cada sección" de `CLAUDE.md` al paradigma v2.
-2. Cowork: sección I.3 (*Knots and Links*).
-3. Más adelante: revisiones v2 de I.1 (`TAREAS.md`).
+1. Cowork: sección I.3 (*Knots and Links*) con el paradigma v2.
+2. Más adelante: revisiones v2 de I.1 (`TAREAS.md`), incluida la migración a la carcasa común de
+   gadgets y el desborde horizontal en el celular.
 
 ## 6. Registro de decisiones
 
@@ -83,3 +83,5 @@ está desactivada.)
 | 2026-10-07 | Fase 1 cerrada. Convenciones de Claude Code: `tcomp` con índices 0..n-1; paleta propia sobre cosmo en `assets/estilo.css`; piezas como módulos JS testeados con Node; notebooks publicados como export estático |
 | 2026-10-07 | **Paradigma v2** (visualization-first, gadgets, lentes, presupuesto de texto): `FILOSOFIA.md` §6-11. I.1 queda como está; sus mejoras van a `TAREAS.md` |
 | 2026-10-07 | Errata detectada en el libro (p. 12, regla de triangulación); se usa la regla clásica corregida |
+| 2026-10-08 | I.2 construida. Carcasa común de gadgets en `assets/js/gadget/`. Dependencias de desarrollo del proyecto: shapely, mapbox-earcut, hypothesis (Python); robust-predicates, earcut (Node). MathJax 4 con `typeset` sincrónico; scrollytelling con listener de scroll nativo (sin librería); paleta ampliada con `--tc-c8` y `--tc-c9` |
+| 2026-10-08 | Errata de la p. 12 confirmada por Claude Code (~1 de cada 200 triangulaciones con la regla del libro) |

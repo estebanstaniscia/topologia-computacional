@@ -1,6 +1,6 @@
 ---
 seccion: "I.2 Curvas en el plano"
-estado: listo para construir
+estado: construido (2026-10-08, Claude Code)
 paradigma: v2 (visualization-first)
 fecha: 2026-10-07
 fuente: diseccion.md (misma carpeta) · filosofía: bocetos/_proyecto/FILOSOFIA.md (§6-11 son NUEVAS: leerlas)
